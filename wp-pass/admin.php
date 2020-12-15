@@ -26,39 +26,64 @@ final class WP_Pass_Admin {
 
     public function wp_pass_admin_page() {
         global $wpdb;
-        $query = new WP_Query( array( 'has_password' => true, 'post_type' => 'page', 'post_status' => 'publish' ) );
-        if( $query->have_posts() ) {
-            $results = $wpdb->get_results("select post_id, count(id) as pv, count(distinct email) as uv from " . $wpdb->prefix . "wpp_page_views group by post_id");
-            $views = [];
-            foreach($results as $res) {
-                $views[$res->post_id] = $res;
-            }
-
+        switch($_GET['action']) {
+        case 'list':
+            $results = $wpdb->get_results("select * from " . $wpdb->prefix . "wpp_page_views where post_id = " . (int)$_GET['post_id'] . ' ORDER BY id desc');
             echo '
-<div class="wrap">
-    <div id="icon-options-general" class="icon32"><br /></div>
-    <h2>'.  __( 'Page Views', 'wp-pass' ) . '</h2>
-    <table class="wp-list-table widefat fixed striped table-view-list pages">
-    <thead>
-        <tr>
-            <th scope="col" class="manage-column column-title column-primary sortable desc" id="title"><a href="#"><span>Title</span></a></th>
-            <th scope="col" class="manage-column column-title column-primary sortable desc" id="page-view">Page View</th>
-            <th scope="col" class="manage-column column-title column-primary sortable desc" id="unique-view">Unique View</th>
-        </tr>
-    </thead>
-    <tbody>
+    <div class="wrap">
+        <div id="icon-options-general" class="icon32"><br /></div>
+        <h2>'.  __( 'Page Views', 'wp-pass' ) . '</h2>
+        <table class="wp-list-table widefat fixed striped table-view-list pages">
+        <thead>
+            <tr>
+                <th scope="col" class="manage-column column-title column-primary sortable desc" id="email"><a href="#"><span>Email</span></a></th>
+                <th scope="col" class="manage-column column-title column-primary sortable desc" id="page-view">Time</th>
+            </tr>
+        </thead>
+        <tbody>
 ';
-            while( $query->have_posts() ) {
-                $query->the_post();
+            foreach($results as $res) {
                 echo '<tr>' .
-                    '<td class="title column-title has-row-actions column-primary page-title"><strong><a class="row-title" href="' . get_the_permalink() . '">' . get_the_title() . '</a></td>' .
-                    '<td>' . (isset($views[get_the_ID()]) ? $views[get_the_ID()]->pv : '') . '</td>' .
-                    '<td>' . (isset($views[get_the_ID()]) ? $views[get_the_ID()]->uv : '') . '</td>' .
-                    '</tr>';
+                    '<td class="title column-title has-row-actions column-primary page-title"><strong>' . $res->email . '</strong></td>' .
+                    '<td>' . $res->view_date . '</td>' .
+                '</tr>';
             }
-            echo '<tbody></table></div>';
+            break;
+        default:
+            $query = new WP_Query( array( 'has_password' => true, 'post_type' => 'page', 'post_status' => 'publish' ) );
+            if( $query->have_posts() ) {
+                $results = $wpdb->get_results("select post_id, count(id) as pv, count(distinct email) as uv from " . $wpdb->prefix . "wpp_page_views group by post_id");
+                $views = [];
+                foreach($results as $res) {
+                    $views[$res->post_id] = $res;
+                }
+
+                echo '
+    <div class="wrap">
+        <div id="icon-options-general" class="icon32"><br /></div>
+        <h2>'.  __( 'Page Views', 'wp-pass' ) . '</h2>
+        <table class="wp-list-table widefat fixed striped table-view-list pages">
+        <thead>
+            <tr>
+                <th scope="col" class="manage-column column-title column-primary sortable desc" id="title"><a href="#"><span>Title</span></a></th>
+                <th scope="col" class="manage-column column-title column-primary sortable desc" id="page-view">Page View</th>
+                <th scope="col" class="manage-column column-title column-primary sortable desc" id="unique-view">Unique View</th>
+            </tr>
+        </thead>
+        <tbody>
+    ';
+                while( $query->have_posts() ) {
+                    $query->the_post();
+                    echo '<tr>' .
+                        '<td class="title column-title has-row-actions column-primary page-title"><strong><a class="row-title" href="' . esc_url( site_url( 'wp-admin/admin.php?page=wp-pass-admin&action=list&post_id=' . get_the_ID(), 'wp-pass' ) ) . '">' . get_the_title() . '</a></strong></td>' .
+                        '<td>' . (isset($views[get_the_ID()]) ? $views[get_the_ID()]->pv : '') . '</td>' .
+                        '<td>' . (isset($views[get_the_ID()]) ? $views[get_the_ID()]->uv : '') . '</td>' .
+                        '</tr>';
+                }
+                echo '<tbody></table></div>';
+            }
+            wp_reset_postdata();
         }
-        wp_reset_postdata();
     }
 }
 
