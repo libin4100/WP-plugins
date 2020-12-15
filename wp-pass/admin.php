@@ -33,7 +33,7 @@ final class WP_Pass_Admin {
     <div class="wrap">
         <div id="icon-options-general" class="icon32"><br /></div>
         <h2>'.  __( 'Page Views', 'wp-pass' ) . '</h2>
-        <table class="wp-list-table widefat fixed striped table-view-list pages">
+        <table class="widefat fixed striped table-view-list pages">
         <thead>
             <tr>
                 <th scope="col" class="manage-column column-title column-primary sortable desc" id="email"><a href="#"><span>Email</span></a></th>
@@ -62,7 +62,7 @@ final class WP_Pass_Admin {
     <div class="wrap">
         <div id="icon-options-general" class="icon32"><br /></div>
         <h2>'.  __( 'Page Views', 'wp-pass' ) . '</h2>
-        <table class="wp-list-table widefat fixed striped table-view-list pages">
+        <table class="widefat fixed striped table-view-list pages">
         <thead>
             <tr>
                 <th scope="col" class="manage-column column-title column-primary sortable desc" id="title"><a href="#"><span>Title</span></a></th>

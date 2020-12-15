@@ -49,9 +49,9 @@ final class WPPass {
 
         $labelEmail  = 'pw-email-' . ( empty( $post->ID ) ? rand() : $post->ID );
         $label  = 'pwbox-' . ( empty( $post->ID ) ? rand() : $post->ID );
-        $output = '<form action="' . esc_url( site_url( 'wp-login.php?action=custom_pass', 'login_post' ) ) . '" class="post-password-form" method="post">
-            <p>' . __( 'This content is password protected. To view it please enter your password below:' ) . '</p>
-            <p><label for="' . $labelEmail . '">' . __( 'Email:' ) . ' <input name="post_email" id="' . $labelEmail . '" type="email" size="20" /></label> </p>
+        $output = '<form action="' . esc_url( site_url( 'wp-login.php?action=custom_pass', 'login_post' ) ) . '" class="post-password-form" method="post" style="margin-top:50px; text-align:center;">
+            <p>' . __( 'This page is password protected, strictly private and confidential. Please enter your email and password to access this page:' ) . '</p>
+            <p><label for="' . $labelEmail . '">' . __( 'Email:&nbsp;&nbsp;&nbsp;' ) . ' <input name="post_email" id="' . $labelEmail . '" type="email" size="20" /></label> </p>
             <p><label for="' . $label . '">' . __( 'Password:' ) . ' <input name="post_password" id="' . $label . '" type="password" size="20" /></label></p>
             <p><input type="submit" name="Submit" value="' . esc_attr_x( 'Enter', 'post password form' ) . '" /></p></form>
 ';
