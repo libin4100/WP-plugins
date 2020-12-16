@@ -81,7 +81,7 @@ final class WPPass {
                     'post_id' => $post->ID,
                     'email' => $_COOKIE[ 'wp-postemail_' . COOKIEHASH],
                     'ip_address' => (!empty($_SERVER['HTTP_CLIENT_IP']) ? $_SERVER['HTTP_CLIENT_IP'] :
-                        (!empty($_SERVER['HTTP_X_FORWARDER_FOR']) ? $_SERVER['HTTP_X_FORWARDER_FOR'] : 
+                        (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : 
                             $_SERVER['REMOTE_ADDR']
                         )
                     )

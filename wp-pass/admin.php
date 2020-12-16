@@ -38,14 +38,18 @@ final class WP_Pass_Admin {
             <tr>
                 <th scope="col" class="manage-column column-title column-primary sortable desc" id="email"><a href="#"><span>Email</span></a></th>
                 <th scope="col" class="manage-column column-title column-primary sortable desc" id="page-view">Time</th>
+                <th scope="col" class="manage-column column-title column-primary sortable desc" id="page-view">IP</th>
             </tr>
         </thead>
         <tbody>
 ';
             foreach($results as $res) {
+                $date = new DateTime($res->view_date, new DateTimeZone('UTC'));
+                $date->setTimezone(new DateTimeZone('America/New_York'));
                 echo '<tr>' .
                     '<td class="title column-title has-row-actions column-primary page-title"><strong>' . $res->email . '</strong></td>' .
-                    '<td>' . $res->view_date . '</td>' .
+                    '<td>' . $date->format('Y-m-d H:i:s') . '</td>' .
+                    '<td>' . preg_replace('/:.*/', '', $res->ip_address) . '</td>' .
                 '</tr>';
             }
             break;
