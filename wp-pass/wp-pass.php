@@ -49,11 +49,19 @@ final class WPPass {
 
         $labelEmail  = 'pw-email-' . ( empty( $post->ID ) ? rand() : $post->ID );
         $label  = 'pwbox-' . ( empty( $post->ID ) ? rand() : $post->ID );
-        $output = '<form action="' . esc_url( site_url( 'wp-login.php?action=custom_pass', 'login_post' ) ) . '" class="post-password-form" method="post" style="margin-top:50px; text-align:center;">
-            <p>' . __( 'This page is password protected, strictly private and confidential. Please enter your email and password to access this page:' ) . '</p>
-            <p><label for="' . $labelEmail . '">' . __( 'Email:&nbsp;&nbsp;&nbsp;' ) . ' <input name="post_email" id="' . $labelEmail . '" type="email" size="20" /></label> </p>
-            <p><label for="' . $label . '">' . __( 'Password:' ) . ' <input name="post_password" id="' . $label . '" type="password" size="20" /></label></p>
-            <p><input type="submit" name="Submit" value="' . esc_attr_x( 'Enter', 'post password form' ) . '" /></p></form>
+        $output = '<form action="' . esc_url( site_url( 'wp-login.php?action=custom_pass', 'login_post' ) ) . '" class="post-password-form" method="post" style="margin-top:50px; text-align:center;">';
+        if($post->post_password == 'emailonly') {
+            $output .= '<p>' . __( 'This page is protected, strictly private and confidential. Please enter your email to access this page:' ) . '</p>';
+        } else {
+            $output .= '<p>' . __( 'This page is password protected, strictly private and confidential. Please enter your email and password to access this page:' ) . '</p>';
+        }
+        $output .= '<p><label for="' . $labelEmail . '">' . __( 'Email:&nbsp;&nbsp;&nbsp;' ) . ' <input name="post_email" id="' . $labelEmail . '" type="email" size="20" /></label> </p>';
+        if($post->post_password == 'emailonly') {
+            $output .= '<input name="post_password" type="hidden" value="' . $post->post_password . '" />';
+        } else {
+            $output .= '<p><label for="' . $label . '">' . __( 'Password:' ) . ' <input name="post_password" id="' . $label . '" type="password" size="20" /></label></p>';
+        }
+            $output .= '<p><input type="submit" name="Submit" value="' . esc_attr_x( 'Enter', 'post password form' ) . '" /></p></form>
 ';
         return $output;
     }
