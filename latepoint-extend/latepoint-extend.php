@@ -246,10 +246,10 @@ final class LatePointExt {
                 'currency' => 'cad',
                 'referral' => 'covid_' . ($booking->id ?: ''),
             ];
-            $id = wp_remote_post($db . 'api/payment/create', $data);
+            $payment = wp_remote_post($db . 'api/payment/create', $data);
 
-            if($id)
-                echo '<div class="latepoint-footer request-move"><a href="' . $db . 'checkout/' . $id . '" target="_blank" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Checkout"><span>Checkout</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
+            if($payment)
+                echo '<div class="latepoint-footer request-move"><a href="' . $db . 'checkout/' . $payment->id . '" target="_blank" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Checkout"><span>Checkout</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
         }
     }
 
