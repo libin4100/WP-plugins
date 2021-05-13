@@ -236,6 +236,21 @@ final class LatePointExt {
                 }
             }
         }
+        if($this->covid) {
+            $db = 'https://dev88.doctorsready.ca:3000/dashboard/';
+            $data = [
+                'email' => $booking->customer ? $booking->customer->email : '',
+                'invoice_type' => 'Covid Test',
+                'message' => $booking->service ? $booking->service->name : '',
+                'amount' => $booking->service ? $booking->service->charge_amount : '',
+                'currency' => 'cad',
+                'referral' => 'covid_' . ($booking->id ?: ''),
+            ];
+            $id = wp_remote_post($db . 'api/payment/create', $data);
+
+            if($id)
+                echo '<div class="latepoint-footer request-move"><a href="' . $db . 'checkout/' . $id . '" target="_blank" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Checkout"><span>Checkout</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
+        }
     }
 
     public function adminScripts() {
