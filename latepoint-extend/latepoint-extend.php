@@ -43,7 +43,7 @@ final class LatePointExt {
         add_action('latepoint_booking_quick_edit_form_after',[$this, 'outputQuickForm']);
         add_action('latepoint_step_confirmation_head_info_before',[$this, 'confirmationInfoBefore']);
         add_action('latepoint_step_confirmation_before',[$this, 'confirmationInfoAfter']);
-        add_action('latepoint_booking_steps_contact_after', [$this, 'contactCovid'], 5, 2);
+        add_action('latepoint_booking_steps_contact_after', [$this, 'contactCovid'], 5);
 
         add_filter('latepoint_installed_addons', [$this, 'registerAddon']);
         add_filter('latepoint_side_menu', [$this, 'addMenu']);
@@ -81,8 +81,9 @@ final class LatePointExt {
                     echo OsFormHelper::checkbox_field('customer[custom_fields]['.$custom_field['id'].']', $custom_field['label'], 'on', ($customer->get_meta_by_key($custom_field['id'], 'off') == 'on') , ['class' => $required_class], array('class' => $custom_field['width']));
                     break;
                 }
-            } 
+            }
         }
+        remove_all_actions('latepoint_booking_steps_contact_after');
     }
 
     public function loadStep($stepName, $bookingObject, $format = 'json') {
