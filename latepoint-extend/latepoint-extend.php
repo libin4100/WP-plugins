@@ -23,6 +23,8 @@ final class LatePointExt {
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
+    protected $covid;
+
     public function __construct() {
         $this->defines();
         $this->hooks();
@@ -41,6 +43,7 @@ final class LatePointExt {
         add_action('latepoint_booking_quick_edit_form_after',[$this, 'outputQuickForm']);
         add_action('latepoint_step_confirmation_head_info_before',[$this, 'confirmationInfoBefore']);
         add_action('latepoint_step_confirmation_before',[$this, 'confirmationInfoAfter']);
+        add_action('latepoint_booking_steps_contact_after', [$this, 'contactCovid'], 5, 2);
 
         add_filter('latepoint_installed_addons', [$this, 'registerAddon']);
         add_filter('latepoint_side_menu', [$this, 'addMenu']);
@@ -54,7 +57,47 @@ final class LatePointExt {
         include_once(dirname( __FILE__ ) . '/lib/controllers/conditions_controller.php');
     }
 
+    public function contactCovid($customer)
+    {
+        if(!$this->covid) return;
+
+        $custom_fields_for_customer = OsCustomFieldsHelper::get_custom_fields_arr('customer', 'all');
+        if(isset($custom_fields_for_customer) && !empty($custom_fields_for_customer)){
+            foreach($custom_fields_for_customer as $custom_field){
+                $required_class = ($custom_field['required'] == 'on') ? 'required' : '';
+                if($custom_field['label'] == 'Doctor Preference') continue;
+
+                switch ($custom_field['type']) {
+                case 'text':
+                    echo OsFormHelper::text_field('customer[custom_fields]['.$custom_field['id'].']', $custom_field['label'], $customer->get_meta_by_key($custom_field['id'], ''), ['class' => $required_class, 'placeholder' => $custom_field['placeholder']], array('class' => $custom_field['width']));
+                    break;
+                case 'textarea':
+                    echo OsFormHelper::textarea_field('customer[custom_fields]['.$custom_field['id'].']', $custom_field['label'], $customer->get_meta_by_key($custom_field['id'], ''), ['class' => $required_class, 'placeholder' => $custom_field['placeholder']], array('class' => $custom_field['width']));
+                    break;
+                case 'select':
+                    echo OsFormHelper::select_field('customer[custom_fields]['.$custom_field['id'].']', $custom_field['label'], OsFormHelper::generate_select_options_from_custom_field($custom_field['options']), $customer->get_meta_by_key($custom_field['id'], ''), ['class' => $required_class, 'placeholder' => $custom_field['placeholder']], array('class' => $custom_field['width']));
+                    break;
+                case 'checkbox':
+                    echo OsFormHelper::checkbox_field('customer[custom_fields]['.$custom_field['id'].']', $custom_field['label'], 'on', ($customer->get_meta_by_key($custom_field['id'], 'off') == 'on') , ['class' => $required_class], array('class' => $custom_field['width']));
+                    break;
+                }
+            } 
+        }
+    }
+
     public function loadStep($stepName, $bookingObject, $format = 'json') {
+        //Covid-19
+        $sc = new OsServiceCategoryModel(1);
+        $services = [];
+        if($sc->services) {
+            foreach($sc->services as $s) {
+                $services[] = $s->id;
+            }
+        }
+        if(in_array($bookingObject->service_id, $services)) {
+            $this->covid = true;
+        }
+
         if($stepName == 'contact') {
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                 OsAuthHelper::logout_customer();
