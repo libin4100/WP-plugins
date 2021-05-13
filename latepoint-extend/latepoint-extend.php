@@ -239,19 +239,23 @@ final class LatePointExt {
         if($this->covid) {
             $db = 'https://dev88.doctorsready.ca:3000/dashboard/';
             $data = [
-                'email' => $booking->customer ? $booking->customer->email : '',
-                'invoice_type' => 'Covid Test',
-                'message' => $booking->service ? $booking->service->name : '',
-                'amount' => $booking->service ? $booking->service->charge_amount : '',
-                'currency' => 'cad',
-                'referral' => 'covid_' . ($booking->id ?: ''),
+                'method' => 'POST',
+                'body' => [
+                    'invoice' => 1,
+                    'email' => $booking->customer ? $booking->customer->email : '',
+                    'invoice_type' => 'Covid Test',
+                    'message' => $booking->service ? $booking->service->name : '',
+                    'amount' => $booking->service ? $booking->service->charge_amount : '',
+                    'currency' => 'cad',
+                    'referral' => 'covid_' . ($booking->id ?: ''),
+                ]
             ];
             $payment = wp_remote_post($db . 'api/payment/create', $data);
 
             if($payment) {
                 $res = json_decode(wp_remote_retrieve_body($payment));
-                if($res->id ?? false)
-                    echo '<div class="latepoint-footer request-move"><a href="' . $db . 'checkout/' . $res->id . '" target="_blank" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Checkout"><span>Checkout</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
+                if($res->data ?? false)
+                    echo '<div class="latepoint-footer request-move"><a href="' . $db . 'checkout/' . $res->data->id . '" target="_blank" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Checkout"><span>Checkout</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
             }
         }
     }
