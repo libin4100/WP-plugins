@@ -34,6 +34,7 @@ final class LatePointExt {
     }
 
     public function hooks() {
+        add_action('wp_loaded', [$this, 'route']);
         add_action('latepoint_includes', [$this, 'includes']);
         add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
         add_action('latepoint_process_step', [$this, 'processStep'], 10, 2);
@@ -53,6 +54,14 @@ final class LatePointExt {
 
         register_activation_hook(__FILE__, [$this, 'onActivate']);
         register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
+    }
+
+    public function route()
+    {
+        $routeName = OsRouterHelper::get_request_param('route_name', '');
+        if($routeName == 'resend_latepoint') {
+            echo 'abc';exit;
+        }
     }
 
     public function includes() {
