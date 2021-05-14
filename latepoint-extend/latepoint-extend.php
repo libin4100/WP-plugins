@@ -303,6 +303,7 @@ EOT;
                     'amount' => $booking->service ? $booking->service->charge_amount : '',
                     'currency' => 'cad',
                     'referral' => 'covid_' . ($booking->id ?: ''),
+                    'webhook' => rtrim(get_site_url(), '/') . '/wp-admin/admin-ajax.php?route_name=resend_latepoint&id=' . $booking->id,
                 ]
             ];
             $payment = wp_remote_post($db . 'api/payment/create', $data);
