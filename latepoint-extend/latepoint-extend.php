@@ -257,8 +257,6 @@ EOT;
     }
 
     public function confirmationInfoBefore($booking) {
-        $this->_covid($booking);
-
         if($this->covid) 
             echo <<<EOT
 <script>
@@ -286,6 +284,7 @@ EOT;
                 'body' => [
                     'invoice' => 1,
                     'email' => $booking->customer ? $booking->customer->email : '',
+                    'first_name' => $booking->get_meta_by_key('cf_hbCNgimu'),
                     'invoice_type' => 'Covid Test',
                     'message' => $booking->service ? $booking->service->name : '',
                     'amount' => $booking->service ? $booking->service->charge_amount : '',
