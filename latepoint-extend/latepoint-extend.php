@@ -77,6 +77,8 @@ final class LatePointExt {
 <script>
 jQuery(function($) {
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').text("Please proceed with payment by clicking 'Make Payment' button. Our team will contact you shortly to confirm your appointment. If you do not get a response within 24 hours, please call us to confirm your appointment. *If this is an emergency, please go to the nearest hospital or call 911.*");
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Payment');
+    $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="confirmation"]').text('Information');
 });
 </script>
 EOT;
@@ -255,6 +257,16 @@ EOT;
     }
 
     public function confirmationInfoBefore($booking) {
+        $this->_covid($booking);
+
+        if($this->covid) 
+            echo <<<EOT
+<script>
+jQuery(function($) {
+    $('.latepoint-body .confirmation-head-info').hide();
+});
+</script>
+EOT;
     }
 
     public function confirmationInfoAfter($booking) {
@@ -286,7 +298,7 @@ EOT;
             if($payment) {
                 $res = json_decode(wp_remote_retrieve_body($payment));
                 if($res->data ?? false)
-                    echo '<div class="latepoint-footer request-move"><a href="' . $db . 'checkout/' . $res->data->id . '" target="_blank" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Checkout"><span>Make Payment</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
+                    echo '<div class="latepoint-footer request-move"><a href="' . $db . 'checkout/' . $res->data->id . '" target="_blank" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Make Payment" style="width: auto"><span>Make Payment</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
             }
         }
     }
