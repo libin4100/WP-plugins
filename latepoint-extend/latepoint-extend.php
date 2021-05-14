@@ -57,22 +57,12 @@ final class LatePointExt {
 
     public function includes() {
         include_once(dirname( __FILE__ ) . '/lib/controllers/conditions_controller.php');
-
-        //Covid-19
-        $sc = new OsServiceCategoryModel(1);
-        $services = [];
-        if($sc->services) {
-            foreach($sc->services as $s) {
-                $services[] = $s->id;
-            }
-        }
-        if(in_array($bookingObject->service_id, $services)) {
-            $this->covid = true;
-        }
     }
 
     public function bookingCreated($booking)
     {
+        $this->_covid($booking);
+
         if($this->covid) {
             OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
         }
@@ -80,7 +70,9 @@ final class LatePointExt {
 
     public function sidePanel($stepName)
     {
-        //if($this->covid) {
+        $this->_covid(OsStepsHelper::$booking_object);
+
+        if($this->covid) {
             echo <<<EOT
 <script>
 jQuery(function($) {
@@ -88,7 +80,7 @@ jQuery(function($) {
 });
 </script>
 EOT;
-        //}
+        }
     }
 
     public function contactCovid($customer)
@@ -121,6 +113,8 @@ EOT;
     }
 
     public function loadStep($stepName, $bookingObject, $format = 'json') {
+        $this->_covid($bookingObject);
+
         if($stepName == 'contact') {
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                 OsAuthHelper::logout_customer();
@@ -201,6 +195,21 @@ EOT;
                 $bookingObject->agent_id = array_shift($agents);
                 if($agents) $bookingObject->agents = json_encode($agents);
             }
+        }
+    }
+
+    protected function _covid($booking)
+    {
+        //Covid-19
+        $sc = new OsServiceCategoryModel(1);
+        $services = [];
+        if($sc->services) {
+            foreach($sc->services as $s) {
+                $services[] = $s->id;
+            }
+        }
+        if(in_array($booking->service_id, $services)) {
+            $this->covid = true;
         }
     }
 
