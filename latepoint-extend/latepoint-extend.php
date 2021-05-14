@@ -44,6 +44,8 @@ final class LatePointExt {
         add_action('latepoint_step_confirmation_head_info_before',[$this, 'confirmationInfoBefore']);
         add_action('latepoint_step_confirmation_before',[$this, 'confirmationInfoAfter']);
         add_action('latepoint_booking_steps_contact_after', [$this, 'contactCovid'], 5);
+        add_action('latepoint_booking_created_frontend', [$this, 'bookingCreated']);
+        add_action('latepoint_steps_side_panel_after', [$this, 'sidePanel']);
 
         add_filter('latepoint_installed_addons', [$this, 'registerAddon']);
         add_filter('latepoint_side_menu', [$this, 'addMenu']);
@@ -55,6 +57,26 @@ final class LatePointExt {
 
     public function includes() {
         include_once(dirname( __FILE__ ) . '/lib/controllers/conditions_controller.php');
+    }
+
+    public function bookingCreated($booking)
+    {
+        if($this->covid) {
+            OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
+        }
+    }
+
+    public function sidePanel($stepName)
+    {
+        if($this->covid) {
+            echo >>>EOT
+<script>
+jQuery(function($) {
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').text("Please proceed with ppayment by clicking 'Make Payment' button. Our team will contact you shortly to confirm your appointment. If you do not get a response within 24 hours, please call us to confirm your appointment. *If this is an emergency, please go to the nearest hospital or call 911.*");
+});
+</script>
+>>>EOT;
+        }
     }
 
     public function contactCovid($customer)
@@ -255,7 +277,7 @@ final class LatePointExt {
             if($payment) {
                 $res = json_decode(wp_remote_retrieve_body($payment));
                 if($res->data ?? false)
-                    echo '<div class="latepoint-footer request-move"><a href="' . $db . 'checkout/' . $res->data->id . '" target="_blank" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Checkout"><span>Checkout</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
+                    echo '<div class="latepoint-footer request-move"><a href="' . $db . 'checkout/' . $res->data->id . '" target="_blank" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Checkout"><span>Make Payment</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
             }
         }
     }
