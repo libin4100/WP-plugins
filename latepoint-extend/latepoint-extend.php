@@ -64,7 +64,6 @@ final class LatePointExt {
             if($id) {
                 $booking = new OsBookingModel($id);
                 OsNotificationsHelper::send_agent_new_appointment_notification($booking);
-                print_r($booking);
             }
         }
     }
