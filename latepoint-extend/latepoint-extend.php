@@ -69,13 +69,13 @@ final class LatePointExt {
     public function sidePanel($stepName)
     {
         if($this->covid) {
-            echo >>>EOT
+            echo <<<EOT
 <script>
 jQuery(function($) {
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').text("Please proceed with ppayment by clicking 'Make Payment' button. Our team will contact you shortly to confirm your appointment. If you do not get a response within 24 hours, please call us to confirm your appointment. *If this is an emergency, please go to the nearest hospital or call 911.*");
 });
 </script>
->>>EOT;
+EOT;
         }
     }
 
