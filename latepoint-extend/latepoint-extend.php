@@ -57,6 +57,18 @@ final class LatePointExt {
 
     public function includes() {
         include_once(dirname( __FILE__ ) . '/lib/controllers/conditions_controller.php');
+
+        //Covid-19
+        $sc = new OsServiceCategoryModel(1);
+        $services = [];
+        if($sc->services) {
+            foreach($sc->services as $s) {
+                $services[] = $s->id;
+            }
+        }
+        if(in_array($bookingObject->service_id, $services)) {
+            $this->covid = true;
+        }
     }
 
     public function bookingCreated($booking)
@@ -109,18 +121,6 @@ EOT;
     }
 
     public function loadStep($stepName, $bookingObject, $format = 'json') {
-        //Covid-19
-        $sc = new OsServiceCategoryModel(1);
-        $services = [];
-        if($sc->services) {
-            foreach($sc->services as $s) {
-                $services[] = $s->id;
-            }
-        }
-        if(in_array($bookingObject->service_id, $services)) {
-            $this->covid = true;
-        }
-
         if($stepName == 'contact') {
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                 OsAuthHelper::logout_customer();
