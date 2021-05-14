@@ -60,7 +60,11 @@ final class LatePointExt {
     {
         $routeName = OsRouterHelper::get_request_param('route_name', '');
         if($routeName == 'resend_latepoint') {
-            echo 'abc';exit;
+            $id = OsRouterHelper::get_request_param('id', '');
+            if($id) {
+                $booking = new OsBookingModel($id);
+                print_r($booking);exit;
+            }
         }
     }
 
