@@ -63,7 +63,7 @@ final class LatePointExt {
             $id = OsRouterHelper::get_request_param('id', '');
             if($id) {
                 $booking = new OsBookingModel($id);
-                print_r($booking);exit;
+                OsNotificationsHelper::send_agent_new_appointment_notification($booking);
             }
         }
     }
