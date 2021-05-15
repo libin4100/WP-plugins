@@ -297,13 +297,18 @@ EOT;
                 'body' => [
                     'invoice' => 1,
                     'email' => $booking->customer ? $booking->customer->email : '',
-                    'first_name' => $booking->get_meta_by_key('cf_hbCNgimu'),
+                    'first_name' => $booking->get_meta_by_key('cf_hbCNgimu', ''),
+                    'message' => $booking->get_meta_by_key('cf_H7MIk6Kt', null),
                     'invoice_type' => 'Covid Test',
-                    'message' => $booking->service ? $booking->service->name : '',
                     'amount' => $booking->service ? $booking->service->charge_amount : '',
                     'currency' => 'cad',
                     'referral' => 'covid_' . ($booking->id ?: ''),
-                    'webhook' => rtrim(get_site_url(), '/') . '/wp-admin/admin-ajax.php?route_name=resend_latepoint&id=' . $booking->id,
+                    'extra' => [
+                        'pname' => $booking->get_meta_by_key('cf_zDS7LUjv', ''),
+                        'datetime' => "{$booking->nice_start_time} - {$booking->nice_end_time} ({$booking->nice_start_date})",
+                        'phone' => $booking->customer ? $booking->customer->phone : '',
+                        'type' => $booking->service ? $booking->service->name : '',
+                    ],
                 ]
             ];
             $payment = wp_remote_post($db . 'api/payment/create', $data);
