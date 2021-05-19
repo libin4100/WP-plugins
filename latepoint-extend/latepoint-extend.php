@@ -303,6 +303,7 @@ EOT;
                     'amount' => $booking->service ? $booking->service->charge_amount : '',
                     'currency' => 'cad',
                     'referral' => 'covid_' . ($booking->id ?: ''),
+                    'return_url' => site_url('thank-you-booking-a-virtual-healthcare-appointment'),
                     'extra' => [
                         'pname' => $booking->get_meta_by_key('cf_zDS7LUjv', ''),
                         'datetime' => "{$booking->nice_start_time} - {$booking->nice_end_time} ({$booking->nice_start_date})",
