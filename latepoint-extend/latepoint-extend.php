@@ -232,10 +232,10 @@ EOT;
         }
 
         //Others
-        $sc = new OsServiceCategoryModel(2);
+        $sc2 = new OsServiceCategoryModel(2);
         $services = [];
-        if($sc->services) {
-            foreach($sc->services as $s) {
+        if($sc2->services) {
+            foreach($sc2->services as $s) {
                 $services[] = $s->id;
             }
         }
