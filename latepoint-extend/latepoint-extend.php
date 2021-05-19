@@ -24,6 +24,7 @@ final class LatePointExt {
     public $addonName = 'latepoint-extend';
 
     protected $covid;
+    protected $others;
 
     public function __construct() {
         $this->defines();
@@ -76,7 +77,7 @@ final class LatePointExt {
     {
         $this->_covid($booking);
 
-        if($this->covid) {
+        if($this->covid || $this->others) {
             OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
         }
     }
@@ -85,7 +86,7 @@ final class LatePointExt {
     {
         $this->_covid(OsStepsHelper::$booking_object);
 
-        if($this->covid) {
+        if($this->covid || $this->others) {
             $url = site_url('wp-content/uploads/2021/05/icon1x.png');
             echo <<<EOT
 <script>
@@ -228,6 +229,18 @@ EOT;
         if(in_array($booking->service_id, $services)) {
             $this->covid = true;
         }
+
+        //Others
+        $sc = new OsServiceCategoryModel(2);
+        $services = [];
+        if($sc->services) {
+            foreach($sc->services as $s) {
+                $services[] = $s->id;
+            }
+        }
+        if(in_array($booking->service_id, $services)) {
+            $this->others = true;
+        }
     }
 
     public function saveAgent($model) {
@@ -272,7 +285,7 @@ EOT;
     }
 
     public function confirmationInfoBefore($booking) {
-        if($this->covid) 
+        if($this->covid || $this->others) 
             echo <<<EOT
 <script>
 jQuery(function($) {
@@ -292,7 +305,7 @@ EOT;
                 }
             }
         }
-        if($this->covid) {
+        if($this->covid || $this->others) {
             $db = 'https://dev88.doctorsready.ca:3000/dashboard/';
             $data = [
                 'method' => 'POST',
