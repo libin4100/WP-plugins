@@ -85,7 +85,6 @@ final class LatePointExt {
     public function sidePanel($stepName)
     {
         $this->_covid(OsStepsHelper::$booking_object);
-        echo '<!--ttttttttttttttttttttt-->';
 
         if($this->covid || $this->others) {
             $url = site_url('wp-content/uploads/2021/05/icon1x.png');
@@ -239,7 +238,7 @@ EOT;
                 $services[] = $s->id;
             }
         }
-        if(in_array($booking->service_id, $services)) {
+        if(in_array($booking->service_id, $services) || $booking->location_id == 4) {
             $this->others = true;
         }
     }
