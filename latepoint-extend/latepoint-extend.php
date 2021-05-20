@@ -309,7 +309,7 @@ EOT;
             if($this->covid)
                 $returnUrl = site_url('thank-you-covid-19-testing');
             if($this->others)
-                $returnUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment')
+                $returnUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment');
             $db = 'https://dev88.doctorsready.ca:3000/dashboard/';
             $data = [
                 'method' => 'POST',
