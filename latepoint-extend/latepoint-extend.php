@@ -306,6 +306,10 @@ EOT;
             }
         }
         if($this->covid || $this->others) {
+            if($this->covid)
+                $returnUrl = site_url('thank-you-covid-19-testing');
+            if($this->others)
+                $returnUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment')
             $db = 'https://dev88.doctorsready.ca:3000/dashboard/';
             $data = [
                 'method' => 'POST',
@@ -318,7 +322,7 @@ EOT;
                     'amount' => $booking->service ? $booking->service->charge_amount : '',
                     'currency' => 'cad',
                     'referral' => 'covid_' . ($booking->id ?: ''),
-                    'return_url' => site_url('thank-you-booking-a-virtual-healthcare-appointment'),
+                    'return_url' => $returnUrl,
                     'extra' => [
                         'pname' => $booking->get_meta_by_key('cf_zDS7LUjv', ''),
                         'datetime' => "{$booking->nice_start_time} - {$booking->nice_end_time} ({$booking->nice_start_date})",
