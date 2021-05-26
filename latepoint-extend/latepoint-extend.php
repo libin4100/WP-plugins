@@ -306,10 +306,14 @@ EOT;
             }
         }
         if($this->covid || $this->others) {
-            if($this->covid)
+            if($this->covid) {
                 $returnUrl = site_url('thank-you-covid-19-testing');
-            if($this->others)
+                $paidUrl = site_url('thank-you-covid-19-testing-payment-made');
+            }
+            if($this->others) {
                 $returnUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment');
+                $paidUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made');
+            }
             $db = 'https://dev88.doctorsready.ca:3000/dashboard/';
             $data = [
                 'method' => 'POST',
@@ -328,6 +332,7 @@ EOT;
                         'datetime' => "{$booking->nice_start_time} - {$booking->nice_end_time} ({$booking->nice_start_date})",
                         'phone' => $booking->customer ? $booking->customer->phone : '',
                         'type' => $booking->service ? $booking->service->name : '',
+                        'redirect_paid' => $paidUrl,
                     ],
                 ]
             ];
