@@ -312,6 +312,7 @@ EOT;
                 'phone' => $booking->customer ? $booking->customer->phone : '',
                 'type' => $booking->service ? $booking->service->name : '',
             ];
+            $invoiceType = 'Appointment';
             $merge = [];
             if($this->covid) {
                 $returnUrl = site_url('thank-you-covid-19-testing');
@@ -319,6 +320,7 @@ EOT;
                     'location' => 'Thornhill - 7335 Yonge Street, L3T 2B2',
                     'redirect_paid' => site_url('thank-you-covid-19-testing-payment-made'),
                 ];
+                $invoiceType = 'Covid Test';
             }
             if($this->others) {
                 $returnUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment');
@@ -339,10 +341,10 @@ EOT;
                     'email' => $booking->customer ? $booking->customer->email : '',
                     'first_name' => $booking->get_meta_by_key('cf_hbCNgimu', ''),
                     'message' => $booking->get_meta_by_key('cf_H7MIk6Kt', null),
-                    'invoice_type' => 'Covid Test',
+                    'invoice_type' => $invoiceType,
                     'amount' => $booking->service ? $booking->service->charge_amount : '',
                     'currency' => 'cad',
-                    'referral' => 'covid_' . ($booking->id ?: ''),
+                    'referral' => 'latepoint_' . ($booking->id ?: ''),
                     'return_url' => $returnUrl,
                     'extra' => $extra,
                 ]
