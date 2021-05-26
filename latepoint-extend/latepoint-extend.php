@@ -306,13 +306,30 @@ EOT;
             }
         }
         if($this->covid || $this->others) {
+            $extra = [
+                'pname' => $booking->get_meta_by_key('cf_zDS7LUjv', ''),
+                'datetime' => "{$booking->nice_start_time} - {$booking->nice_end_time} ({$booking->nice_start_date})",
+                'phone' => $booking->customer ? $booking->customer->phone : '',
+                'type' => $booking->service ? $booking->service->name : '',
+            ];
+            $merge = [];
             if($this->covid) {
                 $returnUrl = site_url('thank-you-covid-19-testing');
-                $paidUrl = site_url('thank-you-covid-19-testing-payment-made');
+                $merge = [
+                    'location' => 'Thornhill - 7335 Yonge Street, L3T 2B2',
+                    'redirect_paid' => site_url('thank-you-covid-19-testing-payment-made'),
+                ];
             }
             if($this->others) {
                 $returnUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment');
-                $paidUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made');
+                $merge = [
+                    'type' => 'Private Pay - Virtual Healthcare Appointment',
+                    'location' => 'Others',
+                    'redirect_paid' => site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
+                ];
+            }
+            if($merge) {
+                $extra = array_merge($extra, $merge);
             }
             $db = 'https://dev88.doctorsready.ca:3000/dashboard/';
             $data = [
@@ -327,13 +344,7 @@ EOT;
                     'currency' => 'cad',
                     'referral' => 'covid_' . ($booking->id ?: ''),
                     'return_url' => $returnUrl,
-                    'extra' => [
-                        'pname' => $booking->get_meta_by_key('cf_zDS7LUjv', ''),
-                        'datetime' => "{$booking->nice_start_time} - {$booking->nice_end_time} ({$booking->nice_start_date})",
-                        'phone' => $booking->customer ? $booking->customer->phone : '',
-                        'type' => $booking->service ? $booking->service->name : '',
-                        'redirect_paid' => $paidUrl,
-                    ],
+                    'extra' => $extra,
                 ]
             ];
             $payment = wp_remote_post($db . 'api/payment/create', $data);
