@@ -308,9 +308,12 @@ EOT;
         if($this->covid || $this->others) {
             $extra = [
                 'pname' => $booking->get_meta_by_key('cf_zDS7LUjv', ''),
+                'registered' => $booking->get_meta_by_key('cf_x18jr0Vf', ''),
                 'datetime' => "{$booking->nice_start_time} - {$booking->nice_end_time} ({$booking->nice_start_date})",
                 'phone' => $booking->customer ? $booking->customer->phone : '',
                 'type' => $booking->service ? $booking->service->name : '',
+                'reply_by' => $booking->customer ? $booking->customer->get_meta_by_key('cf_nxwjDAcZ', '') : '',
+                'doctor_preference' => $booking->customer ? $booking->customer->get_meta_by_key('cf_7Lkik5fd', '') : '',
             ];
             $invoiceType = 'Appointment';
             $merge = [];
