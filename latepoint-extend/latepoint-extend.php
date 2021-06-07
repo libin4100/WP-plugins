@@ -221,7 +221,7 @@ EOT;
         //Covid-19
         $sc = new OsServiceCategoryModel(1);
         $services = [];
-        if($sc->services) {
+        if($sc->id && $sc->services) {
             foreach($sc->services as $s) {
                 $services[] = $s->id;
             }
@@ -233,13 +233,13 @@ EOT;
         //Others
         $sc2 = new OsServiceCategoryModel(2);
         $services = [];
-        if($sc2->services) {
+        if($sc2->id && $sc2->services) {
             foreach($sc2->services as $s) {
                 $services[] = $s->id;
             }
         }
         if(in_array($booking->service_id, $services) || $booking->location_id == 4) {
-            $this->others = true;
+            //$this->others = true;
         }
     }
 
