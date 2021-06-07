@@ -239,7 +239,7 @@ EOT;
             }
         }
         if(in_array($booking->service_id, $services) || $booking->location_id == 4) {
-            //$this->others = true;
+            $this->others = true;
         }
     }
 
