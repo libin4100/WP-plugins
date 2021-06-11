@@ -99,6 +99,17 @@ jQuery(function($) {
 </script>
 EOT;
         }
+        if(OsStepsHelper::$booking_object->location_id == 1) {
+            echo <<<EOT
+<script>
+jQuery(function($) {
+    $('body').on('DOMNodeInserted', '#customer_custom_fields_cf_7lkik5fd', function() {
+        $('#customer_custom_fields_cf_7lkik5fd').append('<option value="Pediatrician">Pediatrician</option>');
+    });
+});
+</script>
+EOT;
+        }
     }
 
     public function contactCovid($customer)
