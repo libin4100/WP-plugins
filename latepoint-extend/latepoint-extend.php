@@ -103,8 +103,14 @@ EOT;
             echo <<<EOT
 <script>
 jQuery(function($) {
-    $('body').on('DOMNodeInserted', '#customer_custom_fields_cf_7lkik5fd', function() {
-        $('#customer_custom_fields_cf_7lkik5fd').append('<option value="Pediatrician">Pediatrician</option>');
+    $('body').on('DOMSubtreeModified', '.latepoint-step-content', function() {
+        if($('.os-summary-value-location').length 
+            && $('.os-summary-value-location').text().includes('Ontario') 
+            && $('#customer_custom_fields_cf_7lkik5fd').length 
+            && !$('#customer_custom_fields_cf_7lkik5fd option[value="Pediatrician"]').length
+        ) {
+            $('#customer_custom_fields_cf_7lkik5fd').append('<option value="Pediatrician">Pediatrician</option>');
+        }
     });
 });
 </script>
