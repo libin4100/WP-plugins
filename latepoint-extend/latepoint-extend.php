@@ -313,6 +313,7 @@ EOT;
     }
 
     public function confirmationInfoAfter($booking) {
+        global $wpdb;
         $buttons = json_decode(OsSettingsHelper::get_settings_value('latepoint-button_confirmation', '[]'));
         if($buttons && count($buttons)) {
             foreach($buttons as $button) {
@@ -323,6 +324,12 @@ EOT;
             }
         }
         if($this->covid || $this->others) {
+            $ref = '';
+            if($booking->type_id) {
+                $referralType = $wpdb->get_row("SELECT * from wp_referral_type where id = {$booking->type_id}");
+                $ref = $referralType->type_name . '[' . $referralType->type_registration_form_url . ']';
+            }
+
             $extra = [
                 'pname' => $booking->get_meta_by_key('cf_zDS7LUjv', ''),
                 'registered' => $booking->get_meta_by_key('cf_x18jr0Vf', ''),
@@ -331,6 +338,7 @@ EOT;
                 'type' => $booking->service ? $booking->service->name : '',
                 'reply_by' => $booking->customer ? $booking->customer->get_meta_by_key('cf_nxwjDAcZ', '') : '',
                 'doctor_preference' => $booking->customer ? $booking->customer->get_meta_by_key('cf_7Lkik5fd', '') : '',
+                'referral' => $ref,
             ];
             $invoiceType = 'Appointment';
             $merge = [];
