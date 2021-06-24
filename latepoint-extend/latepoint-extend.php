@@ -25,6 +25,7 @@ final class LatePointExt {
 
     protected $covid;
     protected $others;
+    protected $acorn;
 
     public function __construct() {
         $this->defines();
@@ -77,7 +78,7 @@ final class LatePointExt {
     {
         $this->_covid($booking);
 
-        if($this->covid || $this->others) {
+        if($this->covid || $this->others || $this->acorn) {
             OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
         }
     }
@@ -86,7 +87,7 @@ final class LatePointExt {
     {
         $this->_covid(OsStepsHelper::$booking_object);
 
-        if($this->covid || $this->others) {
+        if($this->covid || $this->others || $this->acorn) {
             $url = site_url('wp-content/uploads/2021/05/icon1x.png');
             echo <<<EOT
 <script>
@@ -120,7 +121,7 @@ EOT;
 
     public function contactCovid($customer)
     {
-        if(!$this->covid) return;
+        if(!$this->covid && !$this->acorn) return;
 
         $custom_fields_for_customer = OsCustomFieldsHelper::get_custom_fields_arr('customer', 'all');
         if(isset($custom_fields_for_customer) && !empty($custom_fields_for_customer)){
@@ -258,6 +259,18 @@ EOT;
         if(in_array($booking->service_id, $services) || $booking->location_id == 4) {
             $this->others = true;
         }
+
+        //Acorn
+        $sc3 = new OsServiceCategoryModel(3);
+        $services = [];
+        if($sc3->id && $sc3->services) {
+            foreach($sc3->services as $s) {
+                $services[] = $s->id;
+            }
+        }
+        if(in_array($booking->service_id, $services) || $booking->location_id == 5) {
+            $this->acorn = true;
+        }
     }
 
     public function saveAgent($model) {
@@ -302,7 +315,7 @@ EOT;
     }
 
     public function confirmationInfoBefore($booking) {
-        if($this->covid || $this->others) 
+        if($this->covid || $this->others || $this->acorn) 
             echo <<<EOT
 <script>
 jQuery(function($) {
@@ -323,7 +336,7 @@ EOT;
                 }
             }
         }
-        if($this->covid || $this->others) {
+        if($this->covid || $this->others || $this->acorn) {
             $ref = '';
             if($booking->type_id) {
                 $referralType = $wpdb->get_row("SELECT * from wp_referral_type where id = {$booking->type_id}");
@@ -341,11 +354,11 @@ EOT;
                 'referral' => $ref,
             ];
             $invoiceType = 'Appointment';
-            $merge = [];
+            $bodyExtra = $merge = [];
             if($this->covid) {
                 $returnUrl = site_url('thank-you-covid-19-testing');
                 $merge = [
-                    'location' => 'Thornhill - 7335 Yonge Street, L3T 2B2',
+                    'location' => $booking->customer ? $booking->customer->get_meta_by_key('cf_DWcgeHQB', '') : '',
                     'redirect_paid' => site_url('thank-you-covid-19-testing-payment-made'),
                 ];
                 $invoiceType = 'Covid Test';
@@ -355,6 +368,19 @@ EOT;
                 $merge = [
                     'type' => 'Private Pay - Virtual Healthcare Appointment',
                     'location' => 'Others',
+                    'redirect_paid' => site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
+                ];
+            }
+            if($this->acorn) {
+                $returnUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment');
+                $invoiceType = 'Subscription';
+                $bodyExtra = [
+                    'prices' => ['Acorn Live Cell Banking'],
+                    'mode' => 'subscription',
+                ];
+                $merge = [
+                    'type' => 'Subscription',
+                    'location' => $booking->customer ? $booking->customer->get_meta_by_key('cf_DWcgeHQB', '') : '',
                     'redirect_paid' => site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
                 ];
             }
@@ -375,7 +401,7 @@ EOT;
                     'referral' => 'latepoint_' . ($booking->id ?: ''),
                     'return_url' => $returnUrl,
                     'extra' => $extra,
-                ]
+                ] + $bodyExtra
             ];
             $payment = wp_remote_post($db . 'api/payment/create', $data);
 
