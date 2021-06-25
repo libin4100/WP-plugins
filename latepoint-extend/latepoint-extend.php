@@ -256,7 +256,7 @@ EOT;
                 $services[] = $s->id;
             }
         }
-        if(in_array($booking->service_id, $services) || $booking->location_id == 4) {
+        if(in_array($booking->service_id, $services)) {
             $this->others = true;
         }
 
@@ -268,7 +268,7 @@ EOT;
                 $services[] = $s->id;
             }
         }
-        if(in_array($booking->service_id, $services) || $booking->location_id == 5) {
+        if(in_array($booking->service_id, $services)) {
             $this->acorn = true;
         }
     }
@@ -373,13 +373,9 @@ EOT;
             }
             if($this->acorn) {
                 $returnUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment');
-                $invoiceType = 'Subscription';
-                $bodyExtra = [
-                    'prices' => ['Acorn Live Cell Banking'],
-                    'mode' => 'subscription',
-                ];
+                $invoiceType = 'Acorn';
                 $merge = [
-                    'type' => 'Subscription',
+                    'type' => 'Acorn Live Cell Banking',
                     'location' => $booking->customer ? $booking->customer->get_meta_by_key('cf_DWcgeHQB', '') : '',
                     'redirect_paid' => site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
                 ];
