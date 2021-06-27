@@ -372,7 +372,7 @@ EOT;
                 ];
             }
             if($this->acorn) {
-                $returnUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment');
+                $returnUrl = site_url('thank-you/?t=' . ($booking->service ? $booking->service->name : ''));
                 $invoiceType = 'Acorn';
                 $merge = [
                     'type' => 'Acorn Live Cell Banking',
