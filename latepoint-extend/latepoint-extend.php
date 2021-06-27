@@ -404,7 +404,7 @@ EOT;
             if($payment) {
                 $res = json_decode(wp_remote_retrieve_body($payment));
                 if($res->data ?? false)
-                    echo '<div class="latepoint-footer request-move"><a href="' . $db . 'checkout/' . $res->data->id . '" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Make Payment" style="width: auto"><span>Make Payment</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
+                    echo '<div class="latepoint-footer request-move"><a href="' . $res->data->payment_link . '" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Make Payment" style="width: auto"><span>Make Payment</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
             }
         }
     }
