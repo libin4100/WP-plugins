@@ -378,7 +378,11 @@ EOT;
                     'type' => 'Acorn Live Cell Banking',
                     'location' => $booking->customer ? $booking->customer->get_meta_by_key('cf_DWcgeHQB', '') : '',
                     'redirect_paid' => site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
+                    'tax_name' => 'HST',
+                    'tax_country' => 'CA',
+                    'tax_state' => 'ON',
                 ];
+                $bodyExtra = ['need_tax' => 1];
             }
             if($merge) {
                 $extra = array_merge($extra, $merge);
