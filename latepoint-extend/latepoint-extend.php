@@ -121,13 +121,14 @@ EOT;
 
     public function contactCovid($customer)
     {
-        if(!$this->covid && !$this->acorn) return;
-
         $custom_fields_for_customer = OsCustomFieldsHelper::get_custom_fields_arr('customer', 'all');
-        if(isset($custom_fields_for_customer) && !empty($custom_fields_for_customer)){
-            foreach($custom_fields_for_customer as $custom_field){
+        if(isset($custom_fields_for_customer) && !empty($custom_fields_for_customer)) {
+            foreach($custom_fields_for_customer as $custom_field) {
                 $required_class = ($custom_field['required'] == 'on') ? 'required' : '';
-                if($custom_field['label'] == 'Doctor Preference') continue;
+                if($this->covid || $this->acorn) {
+                    if($custom_field['label'] == 'Doctor Preference') continue;
+                }
+                if($custom_field['label'] == 'Home Phone Number (Optional)') $required_class .= ' os-mask-phone';
 
                 switch ($custom_field['type']) {
                 case 'text':
