@@ -54,9 +54,6 @@ final class LatePointExt {
         add_filter('latepoint_side_menu', [$this, 'addMenu']);
         add_filter('latepoint_step_show_next_btn_rules', [$this, 'addNextBtn'], 10, 2);
 
-        add_action('latepoint_notifications_settings_sms',[$this, 'add_settings_fields']);
-        add_filter('latepoint_has_sms_processors', [$this, 'register_sms_processor']);
-
         register_activation_hook(__FILE__, [$this, 'onActivate']);
         register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
     }
@@ -340,6 +337,10 @@ EOT;
                 }
             }
         }
+        $db = 'https://dev88.doctorsready.ca:3000/dashboard/';
+        if($booking->customer->phone ?? false) {
+            $sms = wp_remote_post($db . 'api/gtd/sms', ['phone' => $booking->customer->phone]);
+        }
         if($this->covid || $this->others || $this->acorn) {
             $ref = '';
             if($booking->type_id) {
@@ -391,7 +392,6 @@ EOT;
             if($merge) {
                 $extra = array_merge($extra, $merge);
             }
-            $db = 'https://dev88.doctorsready.ca:3000/dashboard/';
             $data = [
                 'method' => 'POST',
                 'body' => [
@@ -446,21 +446,6 @@ EOT;
             }
         }
         return $rules;
-    }
-    public function register_sms_processor($has_sms_processors) {
-        $has_sms_processors = true;
-        return $has_sms_processors;
-    }
-
-    public function add_settings_fields() {
-        ?>
-        <div class="lp-twilio-credentials">
-          <h3><?php _e('Twilio API Credentials', 'latepoint-sms-twilio'); ?></h3>
-          <?php echo OsFormHelper::text_field('settings[notifications_sms_twilio_phone]', __('Phone Number', 'latepoint-sms-twilio'), OsSettingsHelper::get_settings_value('notifications_sms_twilio_phone')); ?>
-          <?php echo OsFormHelper::text_field('settings[notifications_sms_twilio_account_sid]', __('Account SID', 'latepoint-sms-twilio'), OsSettingsHelper::get_settings_value('notifications_sms_twilio_account_sid')); ?>
-          <?php echo OsFormHelper::password_field('settings[notifications_sms_twilio_auth_token]', __('Auth Token', 'latepoint-sms-twilio'), OsSettingsHelper::get_settings_value('notifications_sms_twilio_auth_token')); ?>
-        </div>
-        <?php
     }
 
     public function onDeactivate() {
