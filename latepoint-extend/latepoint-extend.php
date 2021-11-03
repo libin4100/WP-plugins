@@ -100,11 +100,9 @@ jQuery(function($) {
 </script>
 EOT;
         }
+        $str = '';
         if(OsStepsHelper::$booking_object->location_id == 1) {
-            echo <<<EOT
-<script>
-jQuery(function($) {
-    $('body').on('DOMSubtreeModified', '.latepoint-step-content', function() {
+            $str = <<<EOT
         if($('.os-summary-value-location').length 
             && $('.os-summary-value-location').text().includes('Ontario') 
             && $('#customer_custom_fields_cf_7lkik5fd').length 
@@ -112,6 +110,13 @@ jQuery(function($) {
         ) {
             $('#customer_custom_fields_cf_7lkik5fd').append('<option value="Pediatrician">Pediatrician</option>');
         }
+EOT;
+        }
+            echo <<<EOT
+<script>
+jQuery(function($) {
+    $('body').on('DOMSubtreeModified', '.latepoint-step-content', function() {
+        $str
         if($('#customer_custom_fields_cf_eh0zhq9s').length) {
             $('#customer_phone').parents('.os-col-sm-12').after($('#customer_custom_fields_cf_eh0zhq9s').parents('.os-col-12'))
         }
@@ -119,7 +124,6 @@ jQuery(function($) {
 });
 </script>
 EOT;
-        }
     }
 
     public function contactCovid($customer)
