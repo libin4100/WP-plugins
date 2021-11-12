@@ -207,7 +207,7 @@ EOT;
                 $html .= <<<EOT
 <script>
 jQuery(function($) {
-    clinic_btn = '<div class="os-row os-row-btn"><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-skip-datetime-btn" data-pre-last-step-label="Submit" data-label="Next Step"><span>I'm at the clinic</span> <i class="latepoint-icon-arrow-2-right"></i></a></div></div>';
+    clinic_btn = '<div class="os-row os-row-btn"><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-skip-datetime-btn" data-pre-last-step-label="Submit" data-label="Next Step"><span>I\'m at the clinic</span> <i class="latepoint-icon-arrow-2-right"></i></a></div></div>';
 
     $('.step-datepicker-w').append(clinic_btn);
     $('.latepoint-skip-datetime-btn').on('click', function() {
