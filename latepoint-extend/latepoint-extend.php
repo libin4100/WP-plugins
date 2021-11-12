@@ -196,6 +196,8 @@ EOT;
             if($format == 'json') {
                 $controller = new OsStepsController();
                 $controller->vars = $controller->vars_for_view;
+                $bookingObject->start_date = date('Y-m-d');
+                $bookingObject->start_time = date('H') * 60;
                 $controller->vars['booking'] = $bookingObject;
                 $controller->vars['current_step'] = $stepName;
                 $controller->set_layout('none');
