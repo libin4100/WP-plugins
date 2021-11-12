@@ -159,11 +159,12 @@ EOT;
     public function loadStep($stepName, $bookingObject, $format = 'json') {
         $this->_covid($bookingObject);
 
-        if($stepName == 'contact') {
+        switch($stepName) {
+        case 'contact':
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                 OsAuthHelper::logout_customer();
-        }
-        if($stepName == 'custom_fields_for_booking') {
+            break;
+        case 'custom_fields_for_booking':
             if(OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
                 $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
                 $fields = [];
@@ -190,8 +191,38 @@ EOT;
                     'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
                     'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)]);
             }
-        }
-        if($stepName == 'confirmation') {
+            break;
+        case 'datepicker':
+            if($format == 'json') {
+                $controller = new OsStepsController();
+                $controller->vars = $controller->vars_for_view;
+                $controller->vars['booking'] = $bookingObject;
+                $controller->vars['current_step'] = $stepName;
+                $controller->set_layout('none');
+                $controller->set_return_format($format);
+                $html = $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
+                $html .= '<div class="os-row"><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-pre-last-step-label="Submit" data-label="I\'m at the clinic"><span>I\'m at the clinic</span> <i class="latepoint-icon-arrow-2-right"></i></a></div></div>';
+                wp_send_json(array_merge(
+                    ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                    [
+                        'step_name'         => $stepName, 
+                        'show_next_btn'     => OsStepsHelper::can_step_show_next_btn($stepName), 
+                        'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName), 
+                        'is_first_step'     => OsStepsHelper::is_first_step($stepName), 
+                        'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
+                        'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                    ]
+                ));
+                $controller->format_render('_step_custom_fields_for_booking', [], [
+                    'step_name'         => $stepName, 
+                    'show_next_btn'     => OsStepsHelper::can_step_show_next_btn($stepName), 
+                    'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName), 
+                    'is_first_step'     => OsStepsHelper::is_first_step($stepName), 
+                    'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
+                    'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)]);
+            }
+            break;
+        case 'confirmation':
             $defaultAgents = OsAgentHelper::get_agents_for_service_and_location($bookingObject->service_id, $bookingObject->location_id); $availableAgents = [];
             if($bookingObject->start_date && $bookingObject->start_time) {
                 foreach($defaultAgents as $agent) {
@@ -239,6 +270,7 @@ EOT;
                 $bookingObject->agent_id = array_shift($agents);
                 if($agents) $bookingObject->agents = json_encode($agents);
             }
+            break;
         }
     }
 
