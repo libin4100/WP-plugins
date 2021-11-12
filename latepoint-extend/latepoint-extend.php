@@ -193,6 +193,7 @@ EOT;
             }
             break;
         case 'datepicker':
+            break;
             if($format == 'json') {
                 $controller = new OsStepsController();
                 $controller->vars = $controller->vars_for_view;
