@@ -16,7 +16,6 @@ jQuery(function($) {
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function() {
         $('.latepoint-body .latepoint_start_date').val('2021-11-13');
         $('.latepoint-body .latepoint_start_time').val('540');
-        $('.os-row-btn').remove();
         return $('.latepoint-body .latepoint-form').submit();
     });
 });
