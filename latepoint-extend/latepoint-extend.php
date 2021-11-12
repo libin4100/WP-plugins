@@ -203,8 +203,7 @@ EOT;
                 $date = date('Y-m-d');
                 $time = date('H') * 60;
 
-                $html = $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
-                $html .= "<script>set_start('$date', '$time')</script>";
+                $html = "<script>set_start('$date', '$time')</script>" . $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
                 wp_send_json(array_merge(
                     ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
                     [
