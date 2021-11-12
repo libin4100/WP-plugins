@@ -203,7 +203,7 @@ EOT;
                 $controller->set_layout('none');
                 $controller->set_return_format($format);
                 $html = $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
-                $html .= '<div class="os-row"><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-pre-last-step-label="Submit" data-label="I\'m at the clinic"><span>I\'m at the clinic</span> <i class="latepoint-icon-arrow-2-right"></i></a></div></div>';
+                $html .= '<div class="os-row"><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-next-btn" data-pre-last-step-label="Submit" data-label="Next Step"><span>I\'m at the clinic</span> <i class="latepoint-icon-arrow-2-right"></i></a></div></div>';
                 wp_send_json(array_merge(
                     ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
                     [
