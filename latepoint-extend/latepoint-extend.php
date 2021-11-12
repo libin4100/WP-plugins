@@ -196,14 +196,26 @@ EOT;
             if($format == 'json') {
                 $controller = new OsStepsController();
                 $controller->vars = $controller->vars_for_view;
-                $bookingObject->start_date = date('Y-m-d');
-                $bookingObject->start_time = date('H') * 60;
                 $controller->vars['booking'] = $bookingObject;
                 $controller->vars['current_step'] = $stepName;
                 $controller->set_layout('none');
                 $controller->set_return_format($format);
+                $date = date('Y-m-d');
+                $time = date('H') * 60;
+
                 $html = $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
-                $html .= '<div class="os-row"><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-next-btn" data-pre-last-step-label="Submit" data-label="Next Step"><span>I\'m at the clinic</span> <i class="latepoint-icon-arrow-2-right"></i></a></div></div>';
+                $html .= <<<EOT
+<div class="os-row"><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-skip-datetime-btn" data-pre-last-step-label="Submit" data-label="Next Step"><span>I\'m at the clinic</span> <i class="latepoint-icon-arrow-2-right"></i></a></div></div>
+<script>
+jQuery(function($) {
+    $('.latepoint-skip-datetime-btn').on('click', function() {
+        $('.latepoint_start_date').val('$date');
+        $('.latepoint_start_time').val('$time');
+        return $(this).closest('.latepoint-form').submit();
+    });
+});
+</script>
+EOT;
                 wp_send_json(array_merge(
                     ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
                     [
