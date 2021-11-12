@@ -205,12 +205,13 @@ EOT;
 
                 $html = $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
                 $html .= <<<EOT
-<div class="os-row"><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-skip-datetime-btn" data-pre-last-step-label="Submit" data-label="Next Step"><span>I\'m at the clinic</span> <i class="latepoint-icon-arrow-2-right"></i></a></div></div>
+<div class="os-row os-row-btn"><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-skip-datetime-btn" data-pre-last-step-label="Submit" data-label="Next Step"><span>I'm at the clinic</span> <i class="latepoint-icon-arrow-2-right"></i></a></div></div>
 <script>
 jQuery(function($) {
     $('.latepoint-skip-datetime-btn').on('click', function() {
         $('.latepoint_start_date').val('$date');
         $('.latepoint_start_time').val('$time');
+        $('.os-row-btn').hide();
         return $(this).closest('.latepoint-form').submit();
     });
 });
