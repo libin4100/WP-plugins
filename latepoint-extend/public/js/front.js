@@ -13,7 +13,7 @@ jQuery(function($) {
         }
     }, 100);
 
-    $('.latepoint-skip-datetime-btn').on('click', function() {
+    $('.latepoint-body').on('click', '.latepoint-skip-datetime-btn', function() {
         $('.latepoint_start_date').val('$date');
         $('.latepoint_start_time').val('$time');
         $('.os-row-btn').hide();
