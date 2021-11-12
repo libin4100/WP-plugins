@@ -8,7 +8,7 @@ jQuery(function($) {
         }
 
 
-        if($('.step-datepicker-w').length && !$('.step-datepicker-w os-row-btn').length) {
+        if($('.step-datepicker-w').length && !$('.step-datepicker-w .os-row-btn').length) {
             $('.step-datepicker-w').append(clinic_btn);
         }
     }, 100);
