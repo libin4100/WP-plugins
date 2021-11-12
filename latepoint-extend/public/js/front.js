@@ -10,12 +10,19 @@ jQuery(function($) {
 
         if($('.step-datepicker-w').length && !$('.step-datepicker-w .os-row-btn').length) {
             $('.step-datepicker-w').append(clinic_btn);
+            $('.os-row-btn').css('margin-top', '30px').find('.os-col-12').css('text-align', 'center');
         }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function() {
-        $('.latepoint-body .latepoint_start_date').val('2021-11-13');
-        $('.latepoint-body .latepoint_start_time').val('540');
+        $('.latepoint-body .latepoint_start_date').val(start_date);
+        $('.latepoint-body .latepoint_start_time').val(start_time);
         return $('.latepoint-form').submit();
     });
 });
+start_date = '';
+start_time = '';
+function set_start(date, time) {
+    start_date = date;
+    start_time = time;
+}

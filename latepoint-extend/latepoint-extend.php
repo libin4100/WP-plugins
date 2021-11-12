@@ -192,6 +192,32 @@ EOT;
                     'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)]);
             }
             break;
+        case 'datepicker':
+            if($format == 'json') {
+                $controller = new OsStepsController();
+                $controller->vars = $controller->vars_for_view;
+                $controller->vars['booking'] = $bookingObject;
+                $controller->vars['current_step'] = $stepName;
+                $controller->set_layout('none');
+                $controller->set_return_format($format);
+                $date = date('Y-m-d');
+                $time = date('H') * 60;
+
+                $html = $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
+                $html .= "<script>set_start($date, $time)</script>";
+                wp_send_json(array_merge(
+                    ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                    [
+                        'step_name'         => $stepName, 
+                        'show_next_btn'     => OsStepsHelper::can_step_show_next_btn($stepName), 
+                        'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName), 
+                        'is_first_step'     => OsStepsHelper::is_first_step($stepName), 
+                        'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
+                        'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                    ]
+                ));
+            }
+            break;
         case 'confirmation':
             $defaultAgents = OsAgentHelper::get_agents_for_service_and_location($bookingObject->service_id, $bookingObject->location_id); $availableAgents = [];
             if($bookingObject->start_date && $bookingObject->start_time) {
