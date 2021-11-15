@@ -39,7 +39,7 @@ final class LatePointExt {
         add_action('wp_loaded', [$this, 'route']);
         add_action('latepoint_includes', [$this, 'includes']);
         add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
-        add_action('latepoint_process_step', [$this, 'processStep'], 10, 2);
+        add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
         add_action('latepoint_admin_enqueue_scripts', [$this, 'adminScripts']);
         add_action('latepoint_wp_enqueue_scripts', [$this, 'frontScripts']);
         add_action('latepoint_model_save', [$this, 'saveAgent']);
@@ -266,6 +266,41 @@ EOT;
                 if($agents) $bookingObject->agents = json_encode($agents);
             }
             break;
+        }
+    }
+
+    public function processStep($stepName, $bookingObject)
+    {
+        if($stepName == 'custom_fields_for_booking') {
+            $booking = OsParamsHelper::get_param('booking');
+            $custom_fields_data = $booking['custom_fields'];
+            $custom_fields_for_booking = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'customer');
+
+            $is_valid = true;
+            $fields = [
+                'Are you experiencing any COVID-19 symptoms?',
+                'Have you been in close physical contact with someone who currently has COVID-19?',
+                'Are you part of a specific outbreak investigation?'
+            ];
+            $errors = [];
+            foreach($custom_fields_for_booking as $k => $f) {
+                if(in_array(trim($f['label']), $fields) && (strtolower($custom_fields_data[$k]) != 'no')) {
+                    $errors[] = ['type' => 'validation', 'message' => 'Sorry, you are not allow to book the appointment'];
+                    break;
+                }
+            }
+            $error_messages = [];
+            if($errors){
+                $is_valid = false;
+                foreach($errors as $error){
+                    $error_messages[] = $error['message'];
+                }
+            }
+            if(!$is_valid){
+                remove_all_actions('latepoint_process_step');
+                wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => $error_messages));
+                return;
+            }
         }
     }
 
