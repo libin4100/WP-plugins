@@ -165,6 +165,17 @@ EOT;
                 OsAuthHelper::logout_customer();
             break;
         case 'custom_fields_for_booking':
+            if($bookingObject->service_id == 10) {
+                $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
+                $values = json_decode($customFields, true);
+                if($values) {
+                    foreach($values as $id => $val) {
+                        if(($val['visibility'] ?? false) == 'hidden')
+                            $values[$id]['visibility'] = 'public';
+                    }
+                    OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
+                }
+            }
             if(OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
                 $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
                 $fields = [];
