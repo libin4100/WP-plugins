@@ -421,7 +421,7 @@ EOT;
         if($booking->customer->phone ?? false) {
             $sms = wp_remote_post($db . 'api/gtd/sms', ['method' => 'POST', 'body' => ['phone' => $booking->customer->phone]]);
         }
-        if($this->covid || $this->others || $this->acorn) {
+        if($this->covid || $this->others || $this->acorn || $booking->service_id == 10) {
             $ref = '';
             if($booking->type_id) {
                 $referralType = $wpdb->get_row("SELECT * from wp_referral_type where id = {$booking->type_id}");
