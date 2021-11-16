@@ -470,6 +470,16 @@ EOT;
                 ];
                 $bodyExtra = ['need_tax' => 1];
             }
+            if($booking->service_id == 10) {
+                $service = ($booking->service ? $booking->service->name : '');
+                $returnUrl = site_url('thank-you/?t=' . $service);
+                $invoiceType = $service;
+                $merge = [
+                    'type' => $service,
+                    'location' => $booking->customer ? $booking->customer->get_meta_by_key('cf_DWcgeHQB', '') : '',
+                    'redirect_paid' => site_url('thank-you-payment-has-already-been-made/?t=' . $service),
+                ];
+            }
             if($merge) {
                 $extra = array_merge($extra, $merge);
             }
