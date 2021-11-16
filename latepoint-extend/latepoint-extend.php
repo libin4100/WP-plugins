@@ -285,7 +285,7 @@ EOT;
         if($stepName == 'custom_fields_for_booking') {
             $booking = OsParamsHelper::get_param('booking');
             $custom_fields_data = $booking['custom_fields'];
-            $custom_fields_for_booking = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'customer');
+            $custom_fields_for_booking = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'all');
 
             $is_valid = true;
             $fields = [
@@ -295,7 +295,7 @@ EOT;
             ];
             $errors = [];
             foreach($custom_fields_for_booking as $k => $f) {
-                if(in_array(trim($f['label']), $fields) && (strtolower($custom_fields_data[$k]) != 'no')) {
+                if(in_array(trim($f['label']), $fields) && ($custom_fields_data[$k] ?? false) && (strtolower($custom_fields_data[$k]) != 'no')) {
                     $errors[] = ['type' => 'validation', 'message' => 'Sorry, you are not allow to book the appointment'];
                     break;
                 }
