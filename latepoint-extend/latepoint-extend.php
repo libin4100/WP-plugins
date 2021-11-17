@@ -203,6 +203,19 @@ EOT;
                     'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)]);
             }
             break;
+        case 'custom_fields_for_customer':
+            if($bookingObject->service_id == 10) {
+                $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
+                $values = json_decode($customFields, true);
+                if($values) {
+                    foreach($values as $id => $val) {
+                        if(($val['visibility'] ?? false) == 'hidden')
+                            $values[$id]['visibility'] = 'public';
+                    }
+                    OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
+                }
+            }
+            break;
         case 'datepicker':
             if($format == 'json') {
                 $controller = new OsStepsController();
@@ -296,7 +309,7 @@ EOT;
             $errors = [];
             foreach($custom_fields_for_booking as $k => $f) {
                 if($bookingObject->service_id == 10 && in_array(trim($f['label']), $fields) && (strtolower($custom_fields_data[$k]) != 'no')) {
-                    $errors[] = ['type' => 'validation', 'message' => 'Sorry, you are not allow to book the appointment'];
+                    $errors[] = ['type' => 'validation', 'message' => 'You must be asymptomatic to proceed with the booking.'];
                     break;
                 }
             }
