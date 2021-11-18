@@ -234,7 +234,7 @@ EOT;
 EOT;
 
                 $html = "<script>set_start('$date', '$time')</script>" 
-
+                    . $css
                     . $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
                 wp_send_json(array_merge(
                     ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
