@@ -324,6 +324,15 @@ EOT;
                 return;
             }
         }
+        if($stepName == 'contact' && $bookingObject->service_id == 10) {
+            $booking = OsParamsHelper::get_param('customer');
+            $data = $booking['custom_fields']['cf_DV0y9heS'] ?? false;
+            if(!$data || $data != 'on') {
+                remove_all_actions('latepoint_process_step');
+                wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['You need to read and accepte the consent acknowledgment to book the appointment.']));
+                return;
+            }
+        }
     }
 
     protected function _covid($booking)
