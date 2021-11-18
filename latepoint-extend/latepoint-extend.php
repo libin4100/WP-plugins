@@ -227,9 +227,10 @@ EOT;
                 $css = <<<EOT
 <style>
 .os-row-btn { margin: 30px -30px 0; padding-top: 30px; position: relative; border-top: 1px solid #DDDDDD; }
-.os-row-btn .or { position: absolute; top: -10px; width: 100%; text-align:center; }
-.os-row-btn .or span { background-color: #000; padding-left: 10px; padding-right: 10px; }
+.os-row-btn .or { position: absolute; top: -15px; width: 100%; text-align:center; }
+.os-row-btn .or span { background-color: #fff; padding-left: 10px; padding-right: 10px; font-size: 22px; }
 .os-row-btn .os-col-12 { text-align: center; }
+.os-row-btn .latepoint-btn.latepoint-skip-datetime-btn, .os-row-btn .latepoint-btn.latepoint-skip-datetime-btn:hover, .os-row-btn .latepoint-btn.latepoint-skip-datetime-btn:focus { background-color: #215681; }
 </style>
 EOT;
 
