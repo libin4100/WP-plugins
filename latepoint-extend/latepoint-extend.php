@@ -215,7 +215,7 @@ EOT;
             }
             break;
         case 'datepicker':
-            if($format == 'json') {
+            if($format == 'json' && $bookingObject->service_id == 10) {
                 $controller = new OsStepsController();
                 $controller->vars = $controller->vars_for_view;
                 $controller->vars['booking'] = $bookingObject;
@@ -224,8 +224,18 @@ EOT;
                 $controller->set_return_format($format);
                 $date = date('Y-m-d');
                 $time = date('H') * 60;
+                $css = <<<EOT
+<style>
+.os-row-btn { margin: 30px -30px 0; padding-top: 30px; position: relative; border-top: 1px solid #DDDDDD; }
+.os-row-btn .or { position: absolute; top: -10px; width: 100%; text-align:center; }
+.os-row-btn .or span { background-color: #000; padding-left: 10px; padding-right: 10px; }
+.os-row-btn .os-col-12 { text-align: center; }
+</style>
+EOT;
 
-                $html = "<script>set_start('$date', '$time')</script>" . $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
+                $html = "<script>set_start('$date', '$time')</script>" 
+
+                    . $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
                 wp_send_json(array_merge(
                     ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
                     [

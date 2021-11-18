@@ -1,5 +1,5 @@
 jQuery(function($) {
-    var clinic_btn = '<div class="os-row os-row-btn"><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-skip-datetime-btn" data-pre-last-step-label="Submit" data-label="Next Step"><span>I\'m at the clinic</span></a></div></div>';
+    var clinic_btn = '<div class="os-row os-row-btn"><div class="or"><span>or</span></div><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-skip-datetime-btn" data-pre-last-step-label="Submit" data-label="Next Step"><span>I\'m at the clinic</span></a></div></div>';
 
     setInterval(function() {
         if($('.latepoint-body .latepoint-footer.request-move').length) {
@@ -10,7 +10,6 @@ jQuery(function($) {
 
         if($('.step-datepicker-w').length && !$('.step-datepicker-w .os-row-btn').length) {
             $('.step-datepicker-w').append(clinic_btn);
-            $('.os-row-btn').css('margin-top', '30px').find('.os-col-12').css('text-align', 'center');
         }
     }, 100);
 
