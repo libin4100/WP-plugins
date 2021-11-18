@@ -128,7 +128,7 @@ EOT;
 
     public function contactCovid($customer)
     {
-        $custom_fields_for_customer = OsCustomFieldsHelper::get_custom_fields_arr('customer', 'all');
+        $custom_fields_for_customer = OsCustomFieldsHelper::get_custom_fields_arr('customer', 'customer');
         if(isset($custom_fields_for_customer) && !empty($custom_fields_for_customer)) {
             foreach($custom_fields_for_customer as $custom_field) {
                 $required_class = ($custom_field['required'] == 'on') ? 'required' : '';
