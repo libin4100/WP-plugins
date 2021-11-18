@@ -234,7 +234,7 @@ EOT;
 </style>
 EOT;
 
-                $html = "<script>set_start('$date', '$time')</script>" 
+                $html = "<script>set_start('$date', '$time'); show_btn=true;</script>" 
                     . $css
                     . $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
                 wp_send_json(array_merge(
