@@ -115,12 +115,14 @@ EOT;
             echo <<<EOT
 <script>
 jQuery(function($) {
-    $('body').on('DOMSubtreeModified', '.latepoint-step-content', function() {
+    first = true;
+    setInterval(function() {
         $str
-        if($('#customer_custom_fields_cf_eh0zhq9s').length) {
+        if($('#customer_custom_fields_cf_eh0zhq9s').length && first) {
             $('#customer_phone').parents('.os-col-sm-12').after($('#customer_custom_fields_cf_eh0zhq9s').parents('.os-col-12'))
+            first = false;
         }
-    });
+    }, 500);
 });
 </script>
 EOT;
