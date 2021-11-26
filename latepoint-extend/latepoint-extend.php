@@ -170,7 +170,7 @@ EOT;
                 $values = json_decode($customFields, true);
                 if($values) {
                     foreach($values as $id => $val) {
-                        if(($val['visibility'] ?? false) == 'hidden')
+                        if(($val['visibility'] ?? false) == 'admin_agent')
                             $values[$id]['visibility'] = 'public';
                     }
                     OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
