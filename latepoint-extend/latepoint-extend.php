@@ -49,7 +49,6 @@ final class LatePointExt {
         add_action('latepoint_booking_steps_contact_after', [$this, 'contactCovid'], 5);
         add_action('latepoint_booking_created_frontend', [$this, 'bookingCreated']);
         add_action('latepoint_steps_side_panel_after', [$this, 'sidePanel']);
-        add_action('latepoint_model_save', [$this, 'save_custom_fields'], 5);
 
         add_filter('latepoint_installed_addons', [$this, 'registerAddon']);
         add_filter('latepoint_side_menu', [$this, 'addMenu']);
@@ -171,7 +170,7 @@ EOT;
                 $values = json_decode($customFields, true);
                 if($values) {
                     foreach($values as $id => $val) {
-                        if(($val['visibility'] ?? false) == 'admin_agent')
+                        if(($val['visibility'] ?? false) != 'public')
                             $values[$id]['visibility'] = 'public';
                     }
                     OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
@@ -540,23 +539,6 @@ EOT;
                     echo '<div class="latepoint-footer request-move"><a href="' . $res->data->payment_link . '" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Make Payment" style="width: auto"><span>Make Payment</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
             }
         }
-    }
-
-    public function save_custom_fields($model) {
-        if($model->is_new_record()) return;
-        if(($model instanceof OsBookingModel) || ($model instanceof OsCustomerModel)){
-            $fields_for = ($model instanceof OsBookingModel) ? 'booking' : 'customer';
-            $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr($fields_for);
-            if(!isset($model->custom_fields)) $model->custom_fields = [];
-            if($custom_fields_structure){
-                foreach($custom_fields_structure as $custom_field){
-                    if(isset($model->custom_fields[$custom_field['id']])){
-                        $model->save_meta_by_key($custom_field['id'], $model->custom_fields[$custom_field['id']]);
-                    }
-                }
-            }
-        }
-        remove_all_actions('latepoint_model_save');
     }
 
     public function adminScripts() {
