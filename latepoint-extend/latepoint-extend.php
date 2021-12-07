@@ -78,7 +78,7 @@ final class LatePointExt {
     {
         $this->_covid($booking);
 
-        if($this->covid || $this->others || $this->acorn) {
+        if($this->covid || $this->others || $this->acorn || $booking->service_id == 10) {
             OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
         }
     }
