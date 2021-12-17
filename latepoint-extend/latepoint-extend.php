@@ -172,6 +172,8 @@ EOT;
                     foreach($values as $id => $val) {
                         if(($val['visibility'] ?? false) != 'public')
                             $values[$id]['visibility'] = 'public';
+                        if($val['label'] == 'Doctor Preference')
+                            unset($values[$id]);
                     }
                     OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                 }
