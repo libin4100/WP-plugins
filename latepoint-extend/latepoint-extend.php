@@ -49,6 +49,7 @@ final class LatePointExt {
         add_action('latepoint_booking_steps_contact_after', [$this, 'contactCovid'], 5);
         add_action('latepoint_booking_created_frontend', [$this, 'bookingCreated']);
         add_action('latepoint_steps_side_panel_after', [$this, 'sidePanel']);
+        add_action('latepoint_model_set_data', [$this, 'setModelData'], 10, 2);
 
         add_filter('latepoint_installed_addons', [$this, 'registerAddon']);
         add_filter('latepoint_side_menu', [$this, 'addMenu']);
@@ -386,6 +387,13 @@ EOT;
         }
         if(in_array($booking->service_id, $services)) {
             $this->acorn = true;
+        }
+    }
+
+    public function setModelData($model, $data = []) 
+    {
+        if($data && ($data['at_clinic'] ?? false)) {
+            $model->at_clinic = 1;
         }
     }
 
