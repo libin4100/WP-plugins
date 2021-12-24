@@ -27,7 +27,7 @@ jQuery(function($) {
         $('.latepoint-body .latepoint_start_date').val(start_date);
         $('.latepoint-body .latepoint_start_time').val(start_time);
         if(!$('#at_clinic').length)
-            $('.latepoint-form').append('<input type="hidden" name="at_clinic" value="1" id="at_clinic">');
+            $('.latepoint-form').append('<input type="hidden" name="booking[at_clinic]" value="1" id="at_clinic">');
         return $('.latepoint-form').submit();
     });
 });
