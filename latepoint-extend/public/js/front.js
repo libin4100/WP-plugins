@@ -12,14 +12,21 @@ jQuery(function($) {
 
         if((typeof(show_btn) != 'undefined') && $('.step-datepicker-w').length && !$('.step-datepicker-w .os-row-btn').length) {
             $('.step-datepicker-w').append(clinic_btn);
-            $('.latepoint-step-desc .latepoint-desc-media').after(clinic_notice);
-            $('.latepoint-step-desc').append(clinic_notice2);
+        }
+        if($('.latepoint-body .latepoint-skip-datetime-btn').length && $('.latepoint-body .latepoint-skip-datetime-btn').is(':visible')) {
+            if(!$('.latepoint-step-desc .latepoint-desc-media .latepoint-desc-content').length) {
+                $('.latepoint-step-desc .latepoint-desc-media').after(clinic_notice);
+                $('.latepoint-step-desc').append(clinic_notice2);
+            }
+            if($('#at_clinic').length) $('#at_clinic').remove();
         }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function() {
         $('.latepoint-body .latepoint_start_date').val(start_date);
         $('.latepoint-body .latepoint_start_time').val(start_time);
+        if(!$('#at_clinic').length)
+            $('.latepoint-form').append('<input type="hidden" name="booking[at_clinic]" value="1" id="at_clinic">');
         return $('.latepoint-form').submit();
     });
 });

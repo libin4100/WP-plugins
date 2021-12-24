@@ -393,6 +393,9 @@ EOT;
         if($model->is_new_record()) return;
 
         if($model instanceof OsBookingModel) {
+            if($model->at_clinic) {
+                $model->save_meta_by_key('at_clinic', 1);
+            }
             if($model->agents) {
                 $model->save_meta_by_key('extra_agents', $model->agents);
 
