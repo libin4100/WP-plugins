@@ -1,6 +1,6 @@
 jQuery(function($) {
     var clinic_btn = '<div class="os-row os-row-btn"><div class="or"><span>or</span></div><div class="os-col-12"><a href="#" class="latepoint-btn latepoint-skip-datetime-btn" data-pre-last-step-label="Submit" data-label="Next Step"><span>I\'m at the clinic</span></a></div></div>';
-    var clinic_notice = '<div class="latepoint-desc-content">If you are booing for a future time: </div>';
+    var clinic_notice = '<div class="latepoint-desc-content" id="latepoint-notice>If you are booing for a future time: </div>';
     var clinic_notice2 = '<p>&nbsp;</p><div class="latepoint-desc-content">If you are in clinic already:</div><div class="latepoint-desc-content">Click the button "I\'m at the clinic".</div>';
 
     setInterval(function() {
@@ -14,7 +14,7 @@ jQuery(function($) {
             $('.step-datepicker-w').append(clinic_btn);
         }
         if($('.latepoint-body .latepoint-skip-datetime-btn').length && $('.latepoint-body .latepoint-skip-datetime-btn').is(':visible')) {
-            if(!$('.latepoint-desc-content').length) {
+            if(!$('#latepoint-notice').length) {
                 $('.latepoint-step-desc .latepoint-desc-media').after(clinic_notice);
                 $('.latepoint-step-desc').append(clinic_notice2);
             }
