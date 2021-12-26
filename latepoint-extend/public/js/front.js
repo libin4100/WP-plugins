@@ -10,8 +10,13 @@ jQuery(function($) {
             $('.latepoint-body').css('padding-bottom', '15px');
         }
 
-
-        if((typeof(show_btn) != 'undefined') && $('.step-datepicker-w').length && !$('.step-datepicker-w .os-row-btn').length) {
+        if($('.os-today').data('total-work-minutes')
+            && ($('.os-today').data('work-start-time') <= start_time)
+            && ($('.os-today').data('work-end-time') > start_time)
+            && (typeof(show_btn) != 'undefined')
+            && $('.step-datepicker-w').length
+            && !$('.step-datepicker-w .os-row-btn').length
+        ) {
             $('.step-datepicker-w').append(clinic_btn);
         }
         if($('.latepoint-body .latepoint-skip-datetime-btn').length && $('.latepoint-body .latepoint-skip-datetime-btn').is(':visible')) {
