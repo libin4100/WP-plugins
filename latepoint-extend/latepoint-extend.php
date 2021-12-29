@@ -325,13 +325,15 @@ EOT;
                 'Are you part of a specific outbreak investigation?'
             ];
             $errors = [];
+            $first = true;
             foreach($custom_fields_for_booking as $k => $f) {
                 if($bookingObject->service_id == 10 && in_array(trim($f['label']), $fields) && (strtolower($custom_fields_data[$k]) != 'no')) {
-                    $errors[] = ['type' => 'validation', 'message' => 'You must be asymptomatic to proceed with the booking.'];
-                    break;
+                    if($first) {
+                        $errors[] = ['type' => 'validation', 'message' => 'You must be asymptomatic to proceed with the booking. '];
+                        $first = false;
+                    }
                 } elseif($bookingObject->service_id == 10 && $f['required'] == 'on' && !(trim($custom_fields_data[$k]))) {
-                    $errors[] = ['type' => 'validation', 'message' => $f['label'] . ' can not be blank'];
-                    break;
+                    $errors[] = ['type' => 'validation', 'message' => $f['label'] . ' can not be blank. '];
                 }
             }
             $error_messages = [];
@@ -404,8 +406,8 @@ EOT;
                 $model->at_clinic = 1;
             }
 
-            if($data[$cFields['reason']] ?? false) {
-                $model->cf_reason = $data[$cFields['reason']];
+            if($data['custom_fields'][$this->cFields['reason']] ?? false) {
+                $model->cf_reason = $data['custom_fields'][$this->cFields['reason']];
             }
         }
     }
@@ -418,7 +420,7 @@ EOT;
                 $model->save_meta_by_key('at_clinic', 1);
             }
             if($model->cf_reason) {
-                $model->save_meta_by_key($cFields['reason'], $model->cf_reason);
+                $model->save_meta_by_key($this->cFields['reason'], $model->cf_reason);
             }
             if($model->agents) {
                 $model->save_meta_by_key('extra_agents', $model->agents);
@@ -536,14 +538,14 @@ EOT;
             if($booking->service_id == 10) {
                 $service = ($booking->service ? $booking->service->name : '');
                 $new = ($booking->get_meta_by_key('cf_x18jr0Vf', '') == 'No') ? true : false;
-                $returnUrl = site_url('thank-you/?t=' . $service);
+                $returnUrl = site_url('thank-you/?t=' . $service . ($new ? '&n=1' : ''));
                 $invoiceType = $service;
                 $merge = [
                     'type' => $service,
                     'location' => $booking->location ? $booking->location->name : '',
                     'new' => $new,
-                    'reason' => $booking->get_meta_by_key($cFields['reason'], null),
-                    'redirect_paid' => site_url('thank-you-payment-has-already-been-made/?t=' . $service . ($new ? '&n=1' : '')),
+                    'reason' => $booking->get_meta_by_key($this->cFields['reason'], null),
+                    'redirect_paid' => site_url('thank-you-payment-has-already-been-made/?t=' . $service),
                 ];
             }
             if($merge) {
