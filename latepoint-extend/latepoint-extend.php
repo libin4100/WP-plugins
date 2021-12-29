@@ -483,7 +483,7 @@ EOT;
         }
         if(file_exists(__DIR__ . '/config.php')) require_once(__DIR__ . '/config.php');
         !isset($db) && $db = 'https://teledact.ca/';
-        if($booking->customer->phone ?? false) {
+        if(($booking->service_id != 10) && ($booking->customer->phone ?? false)) {
             $sms = wp_remote_post($db . 'api/gtd/sms', ['method' => 'POST', 'body' => ['phone' => $booking->customer->phone]]);
         }
         if($this->covid || $this->others || $this->acorn || $booking->service_id == 10) {
