@@ -27,6 +27,10 @@ final class LatePointExt {
     protected $others;
     protected $acorn;
 
+    protected $cFields = [
+        'reason' => 'cf_E6XolZDI'
+    ];
+
     public function __construct() {
         $this->defines();
         $this->hooks();
@@ -325,12 +329,15 @@ EOT;
                 if($bookingObject->service_id == 10 && in_array(trim($f['label']), $fields) && (strtolower($custom_fields_data[$k]) != 'no')) {
                     $errors[] = ['type' => 'validation', 'message' => 'You must be asymptomatic to proceed with the booking.'];
                     break;
+                } elseif($bookingObject->service_id == 10 && $f['required'] == 'on' && !(trim($custom_fields_data[$k]))) {
+                    $errors[] = ['type' => 'validation', 'message' => $f['label'] . ' can not be blank'];
+                    break;
                 }
             }
             $error_messages = [];
             if($errors){
                 $is_valid = false;
-                foreach($errors as $error){
+                foreach($errors as $error) {
                     $error_messages[] = $error['message'];
                 }
             }
@@ -392,8 +399,14 @@ EOT;
 
     public function setModelData($model, $data = []) 
     {
-        if($data && ($data['at_clinic'] ?? false)) {
-            $model->at_clinic = 1;
+        if($data) {
+            if($data['at_clinic'] ?? false) {
+                $model->at_clinic = 1;
+            }
+
+            if($data[$cFields['reason']] ?? false) {
+                $model->cf_reason = $data[$cFields['reason']];
+            }
         }
     }
 
@@ -403,6 +416,9 @@ EOT;
         if($model instanceof OsBookingModel) {
             if($model->at_clinic) {
                 $model->save_meta_by_key('at_clinic', 1);
+            }
+            if($model->cf_reason) {
+                $model->save_meta_by_key($cFields['reason'], $model->cf_reason);
             }
             if($model->agents) {
                 $model->save_meta_by_key('extra_agents', $model->agents);
@@ -519,12 +535,15 @@ EOT;
             }
             if($booking->service_id == 10) {
                 $service = ($booking->service ? $booking->service->name : '');
+                $new = ($booking->get_meta_by_key('cf_x18jr0Vf', '') == 'No') ? true : false;
                 $returnUrl = site_url('thank-you/?t=' . $service);
                 $invoiceType = $service;
                 $merge = [
                     'type' => $service,
                     'location' => $booking->location ? $booking->location->name : '',
-                    'redirect_paid' => site_url('thank-you-payment-has-already-been-made/?t=' . $service),
+                    'new' => $new,
+                    'reason' => $booking->get_meta_by_key($cFields['reason'], null),
+                    'redirect_paid' => site_url('thank-you-payment-has-already-been-made/?t=' . $service . ($new ? '&n=1' : '')),
                 ];
             }
             if($merge) {
