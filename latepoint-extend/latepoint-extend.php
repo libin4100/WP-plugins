@@ -247,7 +247,7 @@ jQuery(function($) {
     var ava = $('.os-today').data('available-minutes').split(',');
     for(let k in ava) {
         if(ava[k] <= current)
-            ava.split(k, 1);
+            ava.splice(k, 1);
     }
     $('.os-today').data('available-minutes', ava.join(','))
 });
