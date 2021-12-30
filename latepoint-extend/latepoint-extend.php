@@ -241,6 +241,17 @@ EOT;
 .os-row-btn .os-col-12 { text-align: center; }
 .os-row-btn .latepoint-btn.latepoint-skip-datetime-btn, .os-row-btn .latepoint-btn.latepoint-skip-datetime-btn:hover, .os-row-btn .latepoint-btn.latepoint-skip-datetime-btn:focus { background-color: #215681; }
 </style>
+<script>
+jQuery(function($) {
+    var current = $time;
+    var ava = $('.os-today').data('available-minutes').split(',');
+    for(let k in ava) {
+        if(ava[k] <= current)
+            ava.split(k, 1);
+    }
+    $('.os-today').data('available-minutes', ava.join(','))
+});
+</script>
 EOT;
 
                 $html = "<script>set_start('$date', '$time'); show_btn=true;</script>" 
