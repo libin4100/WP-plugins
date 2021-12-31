@@ -5,6 +5,7 @@ jQuery(function($) {
     var button_click = false;
 
     var show_notice = '<div class="os-row os-row-div"><div class="os-col-12"><h3>Please note that your request for the time interval will be processed. DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</h3></div></div>';
+    var show_summary = '<div class="os-show-summary os-summary-line os-has-value" style="display: block;flex: 0 0 100%;"><div class="os-summary-value os-summary-value-notice">Please note that your request for the time interval will be processed. DO NOT COME IN, until you receive YOUR SPECIFIC appointment time. </div> </div>';
 
     setInterval(function() {
         if($('.latepoint-body .latepoint-footer.request-move').length) {
@@ -31,10 +32,12 @@ jQuery(function($) {
         if(typeof(is_rapid) != 'undefined') {
             if($('.dp-timeslot.with-tick.selected').length && !showed) {
                 $('.step-datepicker-w').append(show_notice);
+                $('.os-summary-lines').append(show_summary);
                 showed = true;
             }
             if(!$('.dp-timeslot.with-tick.selected').length && showed) {
                 $('.os-row-div').remove();
+                $('.os-show-summary').remove();
                 showed = false;
             }
         }

@@ -59,6 +59,7 @@ final class LatePointExt {
         add_filter('latepoint_side_menu', [$this, 'addMenu']);
         add_filter('latepoint_step_show_next_btn_rules', [$this, 'addNextBtn'], 10, 2);
         add_filter('latepoint_summary_values', [$this, 'summaryValues']);
+        add_filter('latepoint_steps_defaults', [$this, 'steps']);
 
         register_activation_hook(__FILE__, [$this, 'onActivate']);
         register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
@@ -237,7 +238,7 @@ EOT;
                 $css = <<<EOT
 <style>
 .os-row-btn { margin: 30px -30px 0; padding-top: 30px; position: relative; border-top: 1px solid #DDDDDD; }
-.os-row-div { margin: 30px -30px 0; padding-top: 30px; position: relative; }
+.os-row-div { margin: 30px 0; position: relative; }
 .os-row-btn .or { position: absolute; top: -15px; width: 100%; text-align:center; }
 .os-row-btn .or span { background-color: #fff; padding-left: 10px; padding-right: 10px; font-size: 22px; }
 .os-row-btn .os-col-12 { text-align: center; }
@@ -628,6 +629,19 @@ EOT;
             $values['time'] = ['label' => __('Requested Time', 'latepoint'), 'value' => '' ];
 
         return $values;
+    }
+
+    public function steps($steps)
+    {
+        if(OsStepsHelper::$booking_object->service_id == 10) {
+            $steps['confirmation'] = [
+                'title' => __('Your appointment request was received', 'latepoint'),
+                'order_number' => 8,
+                'sub_title' => __('Appointment Request', 'latepoint'),
+                'description' => __('Thank you for choosing Gotodoctor as your Virtual Healthcare provider. Please proceed to make payment and check your email for further instructions. *If this is an emergency, go to the nearest hospital or call 911.*<br /><strong>DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</strong>', 'latepoint'),
+            ];
+        }
+        return $steps;
     }
 
     public function onDeactivate() {
