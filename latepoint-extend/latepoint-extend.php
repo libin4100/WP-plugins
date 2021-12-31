@@ -264,7 +264,7 @@ jQuery(function($) {
     is_rapid = true;
     showed = false;
     var current = $time;
-    var ava = $('.os-today').data('available-minutes').split(',');
+    var ava = String($('.os-today').data('available-minutes')).split(',');
     for(let k in ava) {
         if(ava[k] <= (current + 120))
             ava.splice(k, 1);
