@@ -43,6 +43,7 @@ jQuery(function($) {
         }
         if($('.latepoint-payment').length) {
             $('.latepoint-lightbox-close').hide();
+            $('.confirmation-app-info ul li').eq(1).html($('.confirmation-app-info ul li').eq(1).html().replace('Time', 'Request Time'))
         }
     }, 100);
 

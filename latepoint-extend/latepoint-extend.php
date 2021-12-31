@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.1.0';
+    public $version = '1.1.2';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -108,14 +108,13 @@ jQuery(function($) {
 EOT;
         }
         if(OsStepsHelper::$booking_object->service_id == 10) {
-            $desc = __('Thank you for choosing Gotodoctor as your Virtual Healthcare provider. Please proceed to make payment and check your email for further instructions. *If this is an emergency, go to the nearest hospital or call 911.*<br /><strong>DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</strong>', 'latepoint');
+            $desc = __('Thank you for choosing Gotodoctor as your Virtual Healthcare provider. Please proceed to make payment and check your email for further instructions. *If this is an emergency, go to the nearest hospital or call 911.*<br /><br /><font color="red">DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</font>', 'latepoint');
             $title = __('Your appointment request was received', 'latepoint');
             $head = __('Appointment Request', 'latepoint');
             echo <<<EOT
 <script>
 jQuery(function($) {
-    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').text("{$desc}");
-    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-media').css("background-image", 'url({$url})');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html("{$desc}");
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('{$title}');
     $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="confirmation"]').text('{$head}');
 });
@@ -272,11 +271,12 @@ jQuery(function($) {
     }
     $('.os-today').data('available-minutes', ava.join(','))
 });
+//set_start('$date', '$time');
+//show_btn=true;
 </script>
 EOT;
 
-                $html = "<script>set_start('$date', '$time'); show_btn=true;</script>" 
-                    . $css
+                $html = $css
                     . $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
                 wp_send_json(array_merge(
                     ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
