@@ -107,6 +107,21 @@ jQuery(function($) {
 </script>
 EOT;
         }
+        if(OsStepsHelper::$booking_object->service_id == 10) {
+            $desc = __('Thank you for choosing Gotodoctor as your Virtual Healthcare provider. Please proceed to make payment and check your email for further instructions. *If this is an emergency, go to the nearest hospital or call 911.*<br /><strong>DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</strong>', 'latepoint');
+            $title = __('Your appointment request was received', 'latepoint');
+            $head = __('Appointment Request', 'latepoint');
+            echo <<<EOT
+<script>
+jQuery(function($) {
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').text("{$desc}");
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-media').css("background-image", 'url({$url})');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('{$title}');
+    $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="confirmation"]').text('{$head}');
+});
+</script>
+EOT;
+        }
         $str = '';
         if(OsStepsHelper::$booking_object->location_id == 1) {
             $str = <<<EOT
@@ -243,6 +258,7 @@ EOT;
 .os-row-btn .or span { background-color: #fff; padding-left: 10px; padding-right: 10px; font-size: 22px; }
 .os-row-btn .os-col-12 { text-align: center; }
 .os-row-btn .latepoint-btn.latepoint-skip-datetime-btn, .os-row-btn .latepoint-btn.latepoint-skip-datetime-btn:hover, .os-row-btn .latepoint-btn.latepoint-skip-datetime-btn:focus { background-color: #215681; }
+.latepoint-payment { font-size: 17px !important }
 </style>
 <script>
 jQuery(function($) {
@@ -504,6 +520,7 @@ EOT;
         }
         if($this->covid || $this->others || $this->acorn || $booking->service_id == 10) {
             $ref = '';
+            $extraClass = '';
             if($booking->type_id) {
                 $referralType = $wpdb->get_row("SELECT * from wp_referral_type where id = {$booking->type_id}");
                 $ref = $referralType->type_name . '[' . $referralType->type_registration_form_url . ']';
@@ -563,6 +580,7 @@ EOT;
                     'reason' => $booking->get_meta_by_key($this->cFields['reason'], null),
                     'redirect_paid' => site_url('thank-you-payment-has-already-been-made/?t=' . $service),
                 ];
+                $extraClass = ' latepoint-payment';
             }
             if($merge) {
                 $extra = array_merge($extra, $merge);
@@ -587,7 +605,7 @@ EOT;
             if($payment) {
                 $res = json_decode(wp_remote_retrieve_body($payment));
                 if($res->data ?? false)
-                    echo '<div class="latepoint-footer request-move"><a href="' . $res->data->payment_link . '" class="latepoint-btn latepoint-btn-primary latepoint-next-btn" data-label="Make Payment" style="width: auto"><span>Make Payment</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
+                    echo '<div class="latepoint-footer request-move"><a href="' . $res->data->payment_link . '" class="latepoint-btn latepoint-btn-primary latepoint-next-btn' . $extraClass . '" data-label="Make Payment" style="width: auto"><span>Make Payment</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
             }
         }
     }

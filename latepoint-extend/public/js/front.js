@@ -41,6 +41,9 @@ jQuery(function($) {
                 showed = false;
             }
         }
+        if($('.latepoint-payment').length) {
+            $('.latepoint-lightbox-close').hide();
+        }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function() {
