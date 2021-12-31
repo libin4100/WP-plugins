@@ -58,6 +58,7 @@ final class LatePointExt {
         add_filter('latepoint_installed_addons', [$this, 'registerAddon']);
         add_filter('latepoint_side_menu', [$this, 'addMenu']);
         add_filter('latepoint_step_show_next_btn_rules', [$this, 'addNextBtn'], 10, 2);
+        add_filter('latepoint_summary_values', [$this, 'summaryValues']);
 
         register_activation_hook(__FILE__, [$this, 'onActivate']);
         register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
@@ -236,6 +237,7 @@ EOT;
                 $css = <<<EOT
 <style>
 .os-row-btn { margin: 30px -30px 0; padding-top: 30px; position: relative; border-top: 1px solid #DDDDDD; }
+.os-row-div { margin: 30px -30px 0; padding-top: 30px; position: relative; }
 .os-row-btn .or { position: absolute; top: -15px; width: 100%; text-align:center; }
 .os-row-btn .or span { background-color: #fff; padding-left: 10px; padding-right: 10px; font-size: 22px; }
 .os-row-btn .os-col-12 { text-align: center; }
@@ -243,10 +245,12 @@ EOT;
 </style>
 <script>
 jQuery(function($) {
+    is_rapid = true;
+    showed = false;
     var current = $time;
     var ava = $('.os-today').data('available-minutes').split(',');
     for(let k in ava) {
-        if(ava[k] <= current)
+        if(ava[k] <= (current + 120))
             ava.splice(k, 1);
     }
     $('.os-today').data('available-minutes', ava.join(','))
@@ -616,6 +620,14 @@ EOT;
             }
         }
         return $rules;
+    }
+
+    public function summaryValues($values)
+    {
+        if($values['time'] ?? false)
+            $values['time'] = ['label' => __('Requested Time', 'latepoint'), 'value' => '' ];
+
+        return $values;
     }
 
     public function onDeactivate() {

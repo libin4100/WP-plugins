@@ -4,6 +4,8 @@ jQuery(function($) {
     var clinic_notice2 = '<p>&nbsp;</p><div class="latepoint-desc-content">If you are in clinic already:</div><div class="latepoint-desc-content">Click the button "I\'m at the clinic".</div>';
     var button_click = false;
 
+    var show_notice = '<div class="os-row os-row-div"><div class="os-col-12"><h3>Please note that your request for the time interval will be processed. DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</h3></div></div>';
+
     setInterval(function() {
         if($('.latepoint-body .latepoint-footer.request-move').length) {
             $('.latepoint-body .latepoint-footer.request-move').css('display', 'flex').appendTo('.latepoint-form');
@@ -25,6 +27,16 @@ jQuery(function($) {
                 $('.latepoint-step-desc').append(clinic_notice2);
             }
             //if($('#at_clinic').length) $('#at_clinic').remove();
+        }
+        if(typeof(is_rapid) != 'undefined') {
+            if($('.dp-timeslot.with-tick.selected').length && !showed) {
+                $('.step-datepicker-w').append(show_notice);
+                showed = true;
+            }
+            if(!$('.dp-timeslot.with-tick.selected').length && showed) {
+                $('.os-row-dev').remove();
+                showed = false;
+            }
         }
     }, 100);
 
