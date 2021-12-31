@@ -34,7 +34,7 @@ jQuery(function($) {
                 showed = true;
             }
             if(!$('.dp-timeslot.with-tick.selected').length && showed) {
-                $('.os-row-dev').remove();
+                $('.os-row-div').remove();
                 showed = false;
             }
         }
