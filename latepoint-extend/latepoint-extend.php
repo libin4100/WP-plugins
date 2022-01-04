@@ -580,7 +580,6 @@ EOT;
                     'reason' => $booking->get_meta_by_key($this->cFields['reason'], null),
                     'redirect_paid' => site_url('thank-you-payment-has-already-been-made/?t=' . $service),
                 ];
-                $extraClass = ' latepoint-payment';
             }
             if($merge) {
                 $extra = array_merge($extra, $merge);
@@ -603,6 +602,7 @@ EOT;
             $payment = wp_remote_post($db . 'api/payment/create', $data);
 
             if($payment) {
+                $extraClass = ' latepoint-payment';
                 $res = json_decode(wp_remote_retrieve_body($payment));
                 if($res->data ?? false)
                     echo '<div class="latepoint-footer request-move"><a href="' . $res->data->payment_link . '" class="latepoint-btn latepoint-btn-primary latepoint-next-btn' . $extraClass . '" data-label="Make Payment" style="width: auto"><span>Make Payment</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';

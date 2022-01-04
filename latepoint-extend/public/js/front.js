@@ -44,6 +44,7 @@ jQuery(function($) {
         }
         if($('.latepoint-payment').length && first_payment) {
             $('.latepoint-lightbox-close').hide();
+            $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="confirmation"]').text('Appointment Request');
             $('.confirmation-app-info ul li').eq(1).html($('.confirmation-app-info ul li').eq(1).html().replace('Time', 'Requested Time'))
             first_payment = false;
         }
