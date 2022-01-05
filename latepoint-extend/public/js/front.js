@@ -30,7 +30,7 @@ jQuery(function($) {
             }
             //if($('#at_clinic').length) $('#at_clinic').remove();
         }
-        if(typeof(is_rapid) != 'undefined') {
+        if(typeof(is_rapid) != 'undefined' && is_rapid) {
             if($('.dp-timeslot.with-tick.selected').length && !showed) {
                 $('.step-datepicker-w').append(show_notice);
                 $('.os-summary-lines').append(show_summary);

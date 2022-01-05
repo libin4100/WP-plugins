@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.1.4';
+    public $version = '1.1.5';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -104,6 +104,7 @@ jQuery(function($) {
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Payment');
     $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="confirmation"]').text('Appointment Information');
 });
+    delete is_rapid;
 </script>
 EOT;
         }
