@@ -186,7 +186,7 @@ EOT;
         case 'contact':
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                 OsAuthHelper::logout_customer();
-            if($bookingObject->service_id == 10) {
+            if($this->covid || $bookingObject->service_id == 10) {
                 $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
                 $values = json_decode($customFields, true);
                 if($values) {
@@ -201,7 +201,7 @@ EOT;
             }
             break;
         case 'custom_fields_for_booking':
-            if($bookingObject->service_id == 10) {
+            if($this->covid || $bookingObject->service_id == 10) {
                 $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
                 $values = json_decode($customFields, true);
                 if($values) {
@@ -240,7 +240,7 @@ EOT;
             }
             break;
         case 'datepicker':
-            if($format == 'json' && $bookingObject->service_id == 10) {
+            if($format == 'json' && ($this->covid || $bookingObject->service_id == 10)) {
                 $controller = new OsStepsController();
                 $controller->vars = $controller->vars_for_view;
                 $controller->vars['booking'] = $bookingObject;
@@ -359,15 +359,18 @@ EOT;
             $errors = [];
             $first = true;
             foreach($custom_fields_for_booking as $k => $f) {
-                if($bookingObject->service_id == 10 && in_array(trim($f['label']), $fields) && (strtolower($custom_fields_data[$k]) != 'no')) {
-                    if($first) {
-                        $errors[] = ['type' => 'validation', 'message' => 'You must be asymptomatic to proceed with the booking. '];
-                        $first = false;
+                if($this->covid || $bookingObject->service_id == 10) {
+                    if(in_array(trim($f['label']), $fields) && (strtolower($custom_fields_data[$k]) != 'no')) {
+                        if($first) {
+                            $errors[] = ['type' => 'validation', 'message' => 'You do not pass the screening and cannot proceed with the booking.'];
+                            $first = false;
+                        }
+                    } elseif($bookingObject->service_id == 10 && $f['required'] == 'on' && !(trim($custom_fields_data[$k]))) {
+                        $errors[] = ['type' => 'validation', 'message' => 'You do not pass the screening and cannot proceed with the booking.'];
                     }
-                } elseif($bookingObject->service_id == 10 && $f['required'] == 'on' && !(trim($custom_fields_data[$k]))) {
-                    $errors[] = ['type' => 'validation', 'message' => $f['label'] . ' can not be blank. '];
                 }
             }
+            $errors = array_unique($errors);
             $error_messages = [];
             if($errors){
                 $is_valid = false;
