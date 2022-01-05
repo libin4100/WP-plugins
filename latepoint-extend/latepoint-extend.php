@@ -240,7 +240,7 @@ EOT;
             }
             break;
         case 'datepicker':
-            if($format == 'json' && ($this->covid || $bookingObject->service_id == 10)) {
+            if($format == 'json' && $bookingObject->service_id == 10) {
                 $controller = new OsStepsController();
                 $controller->vars = $controller->vars_for_view;
                 $controller->vars['booking'] = $bookingObject;
