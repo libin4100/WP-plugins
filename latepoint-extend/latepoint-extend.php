@@ -365,14 +365,14 @@ EOT;
                             $errors[] = ['type' => 'validation', 'message' => 'You do not pass the screening and cannot proceed with the booking.'];
                             $first = false;
                         }
-                    } elseif($bookingObject->service_id == 10 && $f['required'] == 'on' && !(trim($custom_fields_data[$k]))) {
+                    } elseif($f['required'] == 'on' && !(trim($custom_fields_data[$k]))) {
                         $errors[] = ['type' => 'validation', 'message' => 'You do not pass the screening and cannot proceed with the booking.'];
                     }
                 }
             }
-            $errors = array_unique($errors);
             $error_messages = [];
             if($errors){
+                $errors = array_unique($errors);
                 $is_valid = false;
                 foreach($errors as $error) {
                     $error_messages[] = $error['message'];
