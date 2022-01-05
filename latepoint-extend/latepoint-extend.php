@@ -438,7 +438,7 @@ EOT;
 
     public function setModelData($model, $data = []) 
     {
-        if($data) {
+        if($data && is_array($data)) {
             if($data['at_clinic'] ?? false) {
                 $model->at_clinic = 1;
             }
