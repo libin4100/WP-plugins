@@ -345,6 +345,7 @@ EOT;
 
     public function processStep($stepName, $bookingObject)
     {
+        $this->_covid($bookingObject);
         if($stepName == 'custom_fields_for_booking') {
             $booking = OsParamsHelper::get_param('booking');
             $custom_fields_data = $booking['custom_fields'];
