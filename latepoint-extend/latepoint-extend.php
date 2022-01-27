@@ -109,9 +109,9 @@ jQuery(function($) {
 EOT;
         }
         if(OsStepsHelper::$booking_object->service_id == 10) {
-            $desc = __('Thank you for choosing Gotodoctor as your Virtual Healthcare provider. Please proceed to make payment and check your email for further instructions. *If this is an emergency, go to the nearest hospital or call 911.*<br /><br /><font color="red">DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</font>', 'latepoint');
-            $title = __('Your appointment request was received', 'latepoint');
-            $head = __('Appointment Request', 'latepoint');
+            $desc = __('Thank you for choosing Gotodoctor as your Virtual Healthcare provider. Please proceed to make payment and check your email for further instructions. *If this is an emergency, go to the nearest hospital or call 911.*<br /><br /><font color="red">DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</font>', 'latepoint-extand-master');
+            $title = __('Your appointment request was received', 'latepoint-extand-master');
+            $head = __('Appointment Request', 'latepoint-extand-master');
             echo <<<EOT
 <script>
 jQuery(function($) {
@@ -172,7 +172,7 @@ EOT;
                     echo OsFormHelper::select_field('customer[custom_fields]['.$custom_field['id'].']', $custom_field['label'], OsFormHelper::generate_select_options_from_custom_field($custom_field['options']), $customer->get_meta_by_key($custom_field['id'], ''), ['class' => $required_class, 'placeholder' => $custom_field['placeholder']], array('class' => $custom_field['width']));
                     break;
                 case 'checkbox':
-                    echo OsFormHelper::checkbox_field('customer[custom_fields]['.$custom_field['id'].']', $custom_field['label'], 'on', ($customer->get_meta_by_key($custom_field['id'], 'off') == 'on') , ['class' => $required_class], array('class' => $custom_field['width']));
+                    echo OsFormHelper::checkbox_field('customer[custom_fields]['.$custom_field['id'].']', $custom_field['label'], __('on', 'latepoint-extand-master'), ($customer->get_meta_by_key($custom_field['id'], __('off', 'latepoint-extand-master')) == __('on', 'latepoint-extand-master')) , ['class' => $required_class], array('class' => $custom_field['width']), __('off', 'latepoint-extand-master'));
                     break;
                 }
             }
@@ -486,7 +486,7 @@ EOT;
         echo '<div class="os-row">';
         $agents = $booking->get_meta_by_key('extra_agents');
         if($agents) {
-            echo '<div class="os-col-12"><h3>' . __('Extra Agents', 'latepoint-conditions') . '</h3></div>';
+            echo '<div class="os-col-12"><h3>' . __('Extra Agents', 'latepoint-extand-master') . '</h3></div>';
             $agents = json_decode($agents);
             foreach($agents as $id) {
                 $agent = new OsAgentModel($id);
@@ -541,6 +541,7 @@ EOT;
                 'reply_by' => $booking->customer ? $booking->customer->get_meta_by_key('cf_nxwjDAcZ', '') : '',
                 'doctor_preference' => $booking->customer ? $booking->customer->get_meta_by_key('cf_7Lkik5fd', '') : '',
                 'referral' => $ref,
+                'lang' => (defined('WPLANG') ? WPLANG : ''),
             ];
             $invoiceType = 'Appointment';
             $bodyExtra = $merge = [];
@@ -610,7 +611,7 @@ EOT;
                 $extraClass = ' latepoint-payment';
                 $res = json_decode(wp_remote_retrieve_body($payment));
                 if($res->data ?? false)
-                    echo '<div class="latepoint-footer request-move"><a href="' . $res->data->payment_link . '" class="latepoint-btn latepoint-btn-primary latepoint-next-btn' . $extraClass . '" data-label="Make Payment" style="width: auto"><span>Make Payment</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
+                    echo '<div class="latepoint-footer request-move"><a href="' . $res->data->payment_link . '" class="latepoint-btn latepoint-btn-primary latepoint-next-btn' . $extraClass . '" data-label="' . __('Make Payment', 'latepoint-extand-master') . '" style="width: auto"><span>' . __('Make Payment', 'latepoint-extand-master') . '</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
             }
         }
     }
@@ -632,7 +633,7 @@ EOT;
 
     public function addMenu($menus) {
         if(!OsAuthHelper::is_admin_logged_in()) return $menus;
-        $menus[] = ['id' => 'condition_filter', 'label' => __('Conditions', 'latepoint-extend'), 'icon' => 'latepoint-icon latepoint-icon-layers', 'link' => OsRouterHelper::build_link(['conditions', 'index'])];
+        $menus[] = ['id' => 'condition_filter', 'label' => __('Conditions', 'latepoint-extand-master'), 'icon' => 'latepoint-icon latepoint-icon-layers', 'link' => OsRouterHelper::build_link(['conditions', 'index'])];
         return $menus;
     }
 
@@ -649,7 +650,7 @@ EOT;
     public function summaryValues($values)
     {
         if($values['time'] ?? false)
-            $values['time'] = ['label' => __('Requested Time', 'latepoint'), 'value' => '' ];
+            $values['time'] = ['label' => __('Requested Time', 'latepoint-extand-master'), 'value' => '' ];
 
         return $values;
     }
@@ -658,10 +659,10 @@ EOT;
     {
         if(OsStepsHelper::$booking_object->service_id == 10) {
             $steps['confirmation'] = [
-                'title' => __('Your appointment request was received', 'latepoint'),
+                'title' => __('Your appointment request was received', 'latepoint-extand-master'),
                 'order_number' => 8,
-                'sub_title' => __('Appointment Request', 'latepoint'),
-                'description' => __('Thank you for choosing Gotodoctor as your Virtual Healthcare provider. Please proceed to make payment and check your email for further instructions. *If this is an emergency, go to the nearest hospital or call 911.*<br /><strong>DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</strong>', 'latepoint'),
+                'sub_title' => __('Appointment Request', 'latepoint-extand-master'),
+                'description' => __('Thank you for choosing Gotodoctor as your Virtual Healthcare provider. Please proceed to make payment and check your email for further instructions. *If this is an emergency, go to the nearest hospital or call 911.*<br /><strong>DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</strong>', 'latepoint-extand-master'),
             ];
         }
         return $steps;
