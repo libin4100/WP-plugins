@@ -550,7 +550,7 @@ EOT;
                 $returnUrl = function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-covid-19-testing')->ID)) : site_url('thank-you-covid-19-testing');
                 $merge = [
                     'location' => $booking->customer ? $booking->customer->get_meta_by_key('cf_DWcgeHQB', '') : '',
-                    'redirect_paid' => site_url('thank-you-covid-19-testing-payment-made'),
+                    'redirect_paid' => function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-covid-19-testing-payment-made')->ID)) : site_url('thank-you-covid-19-testing-payment-made'),
                 ];
                 $invoiceType = 'Covid Test';
             }
@@ -559,7 +559,7 @@ EOT;
                 $merge = [
                     'type' => 'Private Pay - Virtual Healthcare Appointment',
                     'location' => 'Others',
-                    'redirect_paid' => site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
+                    'redirect_paid' => function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made')->ID)) : site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
                 ];
             }
             if($this->acorn) {
@@ -568,7 +568,7 @@ EOT;
                 $merge = [
                     'type' => 'Acorn Live Cell Banking',
                     'location' => $booking->location ? $booking->location->name : '',
-                    'redirect_paid' => site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
+                    'redirect_paid' => function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made')->ID)) : site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
                     'tax_name' => 'HST',
                     'tax_country' => 'CA',
                     'tax_state' => 'ON',
