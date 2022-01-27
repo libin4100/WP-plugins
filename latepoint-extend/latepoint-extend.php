@@ -137,12 +137,11 @@ EOT;
             echo <<<EOT
 <script>
 jQuery(function($) {
-    first = true;
     setInterval(function() {
         $str
-        if($('#customer_custom_fields_cf_eh0zhq9s').length && first) {
+        if($('#customer_custom_fields_cf_eh0zhq9s.init').length) {
+            $('#customer_custom_fields_cf_eh0zhq9s').removeClass('init')
             $('#customer_phone').parents('.os-col-sm-12').after($('#customer_custom_fields_cf_eh0zhq9s').parents('.os-col-12'))
-            first = false;
         }
     }, 500);
 });
@@ -157,9 +156,9 @@ EOT;
             foreach($custom_fields_for_customer as $custom_field) {
                 $required_class = ($custom_field['required'] == 'on') ? 'required' : '';
                 if($this->covid || $this->acorn) {
-                    if($custom_field['label'] == 'Doctor Preference') continue;
+                    if($custom_field['id'] == 'cf_7Lkik5fd') continue;
                 }
-                if($custom_field['label'] == 'Home Phone Number (Optional)') $required_class .= ' os-mask-phone';
+                if($custom_field['id'] == 'cf_eh0ZhQ9s') $required_class .= ' os-mask-phone init';
 
                 switch ($custom_field['type']) {
                 case 'text':
@@ -521,7 +520,9 @@ EOT;
         if(file_exists(__DIR__ . '/config.php')) require_once(__DIR__ . '/config.php');
         !isset($db) && $db = 'https://teledact.ca/';
         if(($booking->service_id != 10) && ($booking->customer->phone ?? false)) {
-            $sms = wp_remote_post($db . 'api/gtd/sms', ['method' => 'POST', 'body' => ['phone' => $booking->customer->phone]]);
+            $body = ['phone' => $booking->customer->phone];
+            if(defined('WPLANG')) $body['lang'] = WPLANG;
+            $sms = wp_remote_post($db . 'api/gtd/sms', ['method' => 'POST', 'body' => $body]);
         }
         if($this->covid || $this->others || $this->acorn || $booking->service_id == 10) {
             $ref = '';
@@ -546,7 +547,7 @@ EOT;
             $invoiceType = 'Appointment';
             $bodyExtra = $merge = [];
             if($this->covid) {
-                $returnUrl = site_url('thank-you-covid-19-testing');
+                $returnUrl = function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-covid-19-testing')->ID)) : site_url('thank-you-covid-19-testing');
                 $merge = [
                     'location' => $booking->customer ? $booking->customer->get_meta_by_key('cf_DWcgeHQB', '') : '',
                     'redirect_paid' => site_url('thank-you-covid-19-testing-payment-made'),
@@ -554,7 +555,7 @@ EOT;
                 $invoiceType = 'Covid Test';
             }
             if($this->others) {
-                $returnUrl = site_url('thank-you-booking-a-virtual-healthcare-appointment');
+                $returnUrl = function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-booking-a-virtual-healthcare-appointment')->ID)) : site_url('thank-you-booking-a-virtual-healthcare-appointment');
                 $merge = [
                     'type' => 'Private Pay - Virtual Healthcare Appointment',
                     'location' => 'Others',
@@ -562,7 +563,7 @@ EOT;
                 ];
             }
             if($this->acorn) {
-                $returnUrl = site_url('thank-you/?t=' . ($booking->service ? $booking->service->name : ''));
+                $returnUrl = function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you')->ID)) . '?t=' . ($booking->service ? $booking->service->name : '') : site_url('thank-you/?t=' . ($booking->service ? $booking->service->name : ''));
                 $invoiceType = 'Acorn';
                 $merge = [
                     'type' => 'Acorn Live Cell Banking',
@@ -577,7 +578,7 @@ EOT;
             if($booking->service_id == 10) {
                 $service = ($booking->service ? $booking->service->name : '');
                 $new = ($booking->get_meta_by_key('cf_x18jr0Vf', '') == 'No') ? true : false;
-                $returnUrl = site_url('thank-you/?t=' . $service . ($new ? '&n=1' : ''));
+                $returnUrl = function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you')->ID)) . '?t=' . $service . ($new ? '&n=1' : '') : site_url('thank-you/?t=' . $service . ($new ? '&n=1' : ''));
                 $invoiceType = $service;
                 $merge = [
                     'type' => $service,
