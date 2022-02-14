@@ -458,6 +458,9 @@ EOT;
             if($model->cf_reason) {
                 $model->save_meta_by_key($this->cFields['reason'], $model->cf_reason);
             }
+            if(defined('WPLANG')) {
+                $model->save_meta_by_key('language', WPLANG);
+            }
             if($model->agents) {
                 $model->save_meta_by_key('extra_agents', $model->agents);
 
@@ -557,8 +560,8 @@ EOT;
             if($this->others) {
                 $returnUrl = function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-booking-a-virtual-healthcare-appointment')->ID)) : site_url('thank-you-booking-a-virtual-healthcare-appointment');
                 $merge = [
-                    'type' => 'Private Pay - Virtual Healthcare Appointment',
-                    'location' => 'Others',
+                    'type' => __('Private Pay - Virtual Healthcare Appointment', 'latepoint-extand-master'),
+                    'location' => __('Private Pay', 'latepoint-extand-master'),
                     'redirect_paid' => function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made')->ID)) : site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
                 ];
             }
@@ -566,7 +569,7 @@ EOT;
                 $returnUrl = function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you')->ID)) . '?t=' . ($booking->service ? $booking->service->name : '') : site_url('thank-you/?t=' . ($booking->service ? $booking->service->name : ''));
                 $invoiceType = 'Acorn';
                 $merge = [
-                    'type' => 'Acorn Live Cell Banking',
+                    'type' => __('Acorn Live Cell Banking', 'latepoint-extand-master'),
                     'location' => $booking->location ? $booking->location->name : '',
                     'redirect_paid' => function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made')->ID)) : site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
                     'tax_name' => 'HST',
