@@ -217,7 +217,7 @@ EOT;
                 $values = json_decode($customFields, true);
                 if($values) {
                     foreach($values as $id => $val) {
-                        if(($id ?? false) == 'cf_6a3sfget')
+                        if(($id ?? false) == 'cf_6A3SfgET')
                             $values[$id]['visibility'] = 'hidden';
                     }
                     OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
