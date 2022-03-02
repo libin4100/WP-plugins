@@ -573,6 +573,7 @@ EOT;
                 $merge = [
                     'type' => __('Private Pay - Virtual Healthcare Appointment', 'latepoint-extand-master'),
                     'location' => __('Private Pay', 'latepoint-extand-master'),
+                    'current_location' => $booking->get_meta_by_key('cf_6A3SfgET', ''),
                     'redirect_paid' => function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made')->ID)) : site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
                 ];
             }
