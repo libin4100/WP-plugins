@@ -212,6 +212,17 @@ EOT;
                     OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
                 }
             }
+            if(!in_array($bookingObject->service_id, [2,3,7,8])) {
+                $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
+                $values = json_decode($customFields, true);
+                if($values) {
+                    foreach($values as $id => $val) {
+                        if(($id ?? false) == 'cf_6a3sfget')
+                            $values[$id]['visibility'] = 'hidden';
+                    }
+                    OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
+                }
+            }
             if(OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
                 $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
                 $fields = [];
