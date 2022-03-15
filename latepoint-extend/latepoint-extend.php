@@ -60,9 +60,19 @@ final class LatePointExt {
         add_filter('latepoint_step_show_next_btn_rules', [$this, 'addNextBtn'], 10, 2);
         add_filter('latepoint_summary_values', [$this, 'summaryValues']);
         add_filter('latepoint_steps_defaults', [$this, 'steps']);
+        add_filter('gettext', [$this, 'gettext'], 10, 3);
 
         register_activation_hook(__FILE__, [$this, 'onActivate']);
         register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
+    }
+
+    public function gettext($translation, $text, $domain)
+    {
+        if($domain == 'latepoint') {
+            if(strpos($translation, 'Location') === 0)
+                $translation = str_replace('Location', 'Health Card', $translation);
+        }
+        return $translation;
     }
 
     public function route()
