@@ -726,7 +726,7 @@ EOT;
                     'width' => 'os-col-12',
                     'visibility' => 'public',
                     'options' => '',
-                    'requirede' => 'on',
+                    'required' => 'on',
                     'id' => 'first_name'
                 ],
                 'last_name' => [
@@ -736,7 +736,7 @@ EOT;
                     'width' => 'os-col-12',
                     'visibility' => 'public',
                     'options' => '',
-                    'requirede' => 'on',
+                    'required' => 'on',
                     'id' => 'last_name'
                 ],
             ]
