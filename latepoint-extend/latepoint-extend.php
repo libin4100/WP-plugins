@@ -481,7 +481,7 @@ EOT;
                 $model->cf_reason = $data['custom_fields'][$this->cFields['reason']];
             }
         }
-        if($model instanceof OsBookingModel && $model->agent_id == 6) {
+        if(($model instanceof OsBookingModel) && (OsSettingsHelper::$booking_object->agent_id == 6)) {
             if($data && isset($data['custom_fields'])) {
                 $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'agent');
                 if(!isset($model->custom_fields)) $model->custom_fields = [];
