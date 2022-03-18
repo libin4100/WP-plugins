@@ -240,7 +240,7 @@ EOT;
                     OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
                 }
             }
-            if($booking->agent_id == 6) {
+            if($bookingObject->agent_id == 6) {
                 //MB Blue Cross
                 $hide = [
                     'cf_hbCNgimu',
