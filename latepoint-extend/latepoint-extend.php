@@ -481,13 +481,11 @@ EOT;
                 $model->cf_reason = $data['custom_fields'][$this->cFields['reason']];
             }
         }
-        if(($model instanceof OsBookingModel) && (OsStepsHelper::$booking_object->agent_id == 6)) {
-            if($data && isset($data['custom_fields'])) {
-                $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'agent');
-                if(!isset($model->custom_fields)) $model->custom_fields = [];
-                foreach($data['custom_fields'] as $key => $custom_field) {
-                    $model->custom_fields[$key] = $custom_field;
-                }
+        if(($model instanceof OsBookingModel) && ($data['custom_fields']['first_name'] ?? false)) {
+            $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'agent');
+            if(!isset($model->custom_fields)) $model->custom_fields = [];
+            foreach($data['custom_fields'] as $key => $custom_field) {
+                $model->custom_fields[$key] = $custom_field;
             }
         }
     }
