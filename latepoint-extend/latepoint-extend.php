@@ -379,7 +379,7 @@ EOT;
     public function processStep($stepName, $bookingObject)
     {
         $this->_covid($bookingObject);
-        if(in_array($stepName, ['custom_fields_for_booking', 'contact']) && $bookingObject->agent_id == 6)
+        if($bookingObject->agent_id == 6)
             $this->_mbc();
         if($stepName == 'custom_fields_for_booking') {
             $booking = OsParamsHelper::get_param('booking');
@@ -479,6 +479,15 @@ EOT;
 
             if($data['custom_fields'][$this->cFields['reason']] ?? false) {
                 $model->cf_reason = $data['custom_fields'][$this->cFields['reason']];
+            }
+        }
+        if($model instanceof OsBookingModel && $model->agent_id == 6) {
+            if($data && isset($data['custom_fields'])) {
+                $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'agent');
+                if(!isset($model->custom_fields)) $model->custom_fields = [];
+                foreach($data['custom_fields'] as $key => $custom_field) {
+                    $model->custom_fields[$key] = $custom_field;
+                }
             }
         }
     }
