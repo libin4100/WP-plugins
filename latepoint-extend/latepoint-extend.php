@@ -242,46 +242,7 @@ EOT;
             }
             if($bookingObject->agent_id == 6) {
                 //MB Blue Cross
-                $hide = [
-                    'cf_hbCNgimu',
-                    'cf_zDS7LUjv',
-                    'cf_H7MIk6Kt',
-                ];
-                $show = ['cf_qOqKhbly'];
-                $add = [
-                    'first_name' => [
-                        'label' => __('Your First Name', 'latepoint'),
-                        'placeholder' => __('Your First Name', 'latepoint'),
-                        'type' => 'text',
-                        'width' => 'os-col-12',
-                        'visibility' => 'public',
-                        'options' => '',
-                        'requirede' => 'on',
-                        'id' => 'first_name'
-                    ],
-                    'last_name' => [
-                        'label' => __('Your Last Name', 'latepoint'),
-                        'placeholder' => __('Your Last Name', 'latepoint'),
-                        'type' => 'text',
-                        'width' => 'os-col-12',
-                        'visibility' => 'public',
-                        'options' => '',
-                        'requirede' => 'on',
-                        'id' => 'last_name'
-                    ],
-                ];
-                $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
-                $values = json_decode($customFields, true);
-                if($values) {
-                    foreach($values as $id => $val) {
-                        if(in_array($id ?? false, $hide))
-                            $values[$id]['visibility'] = 'hidden';
-                        if(in_array($id ?? false, $show))
-                            $values[$id]['visibility'] = 'public';
-                    }
-                    $values = $add + $values;
-                    OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
-                }
+                $fields = $this->_mbc();
             }
 
             if(OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
@@ -422,6 +383,9 @@ EOT;
             $booking = OsParamsHelper::get_param('booking');
             $custom_fields_data = $booking['custom_fields'];
             $custom_fields_for_booking = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'all');
+
+            if($bookingObject->agent_id == 6)
+                $this->_mbc();
 
             $is_valid = true;
             $fields = [
@@ -743,6 +707,52 @@ EOT;
             ];
         }
         return $steps;
+    }
+
+    private function _mbc()
+    {
+        $fields = [
+            'show' => ['cf_qOqKhbly'],
+            'hide' => [
+                'cf_hbCNgimu',
+                'cf_zDS7LUjv',
+                'cf_H7MIk6Kt',
+            ],
+            'add' => [
+                'first_name' => [
+                    'label' => __('Your First Name', 'latepoint'),
+                    'placeholder' => __('Your First Name', 'latepoint'),
+                    'type' => 'text',
+                    'width' => 'os-col-12',
+                    'visibility' => 'public',
+                    'options' => '',
+                    'requirede' => 'on',
+                    'id' => 'first_name'
+                ],
+                'last_name' => [
+                    'label' => __('Your Last Name', 'latepoint'),
+                    'placeholder' => __('Your Last Name', 'latepoint'),
+                    'type' => 'text',
+                    'width' => 'os-col-12',
+                    'visibility' => 'public',
+                    'options' => '',
+                    'requirede' => 'on',
+                    'id' => 'last_name'
+                ],
+            ]
+        ];
+        $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
+        $values = json_decode($customFields, true);
+        if($values) {
+            foreach($values as $id => $val) {
+                if(in_array($id ?? false, $fields['hide']))
+                    $values[$id]['visibility'] = 'hidden';
+                if(in_array($id ?? false, $fields['show']))
+                    $values[$id]['visibility'] = 'public';
+            }
+            $values = $fields['add'] + $values;
+            OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
+        }
     }
 
     public function onDeactivate() {
