@@ -50,7 +50,7 @@ final class LatePointExt {
         add_action('latepoint_booking_quick_edit_form_after',[$this, 'outputQuickForm']);
         add_action('latepoint_step_confirmation_head_info_before',[$this, 'confirmationInfoBefore']);
         add_action('latepoint_step_confirmation_before',[$this, 'confirmationInfoAfter']);
-        add_action('latepoint_booking_steps_contact_after', [$this, 'contactCovid'], 5);
+        add_action('latepoint_booking_steps_contact_after', [$this, 'contactAfter'], 5);
         add_action('latepoint_booking_created_frontend', [$this, 'bookingCreated']);
         add_action('latepoint_steps_side_panel_after', [$this, 'sidePanel']);
         add_action('latepoint_model_set_data', [$this, 'setModelData'], 10, 2);
@@ -159,7 +159,7 @@ jQuery(function($) {
 EOT;
     }
 
-    public function contactCovid($customer)
+    public function contactAfter($customer)
     {
         $custom_fields_for_customer = OsCustomFieldsHelper::get_custom_fields_arr('customer', 'customer');
         if(isset($custom_fields_for_customer) && !empty($custom_fields_for_customer)) {
@@ -186,6 +186,13 @@ EOT;
                 }
             }
         }
+
+        $booking = OsParamsHelper::get_param('booking');
+        if($booking['custom_fields']['first_name'] ?? false)
+            echo OsFormHelper::hidden_field('customer[first_name]', $booking['custom_fields']['first_name']);
+        if($booking['custom_fields']['last_name'] ?? false)
+            echo OsFormHelper::hidden_field('customer[last_name]', $booking['custom_fields']['last_name']);
+
         remove_all_actions('latepoint_booking_steps_contact_after');
     }
 
@@ -233,6 +240,49 @@ EOT;
                     OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
                 }
             }
+            if($booking->agent_id == 6) {
+                //MB Blue Cross
+                $hide = [
+                    'cf_hbCNgimu',
+                    'cf_zDS7LUjv',
+                    'cf_H7MIk6Kt',
+                ];
+                $show = ['cf_qOqKhbly'];
+                $add = [
+                    'first_name' => [
+                        'label' => __('Your First Name', 'latepoint'),
+                        'placeholder' => __('Your First Name', 'latepoint'),
+                        'type' => 'text',
+                        'width' => 'os-col-12',
+                        'visibility' => 'public',
+                        'options' => '',
+                        'requirede' => 'on',
+                        'id' => 'first_name'
+                    ],
+                    'last_name' => [
+                        'label' => __('Your Last Name', 'latepoint'),
+                        'placeholder' => __('Your Last Name', 'latepoint'),
+                        'type' => 'text',
+                        'width' => 'os-col-12',
+                        'visibility' => 'public',
+                        'options' => '',
+                        'requirede' => 'on',
+                        'id' => 'last_name'
+                    ],
+                ];
+                $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
+                $values = json_decode($customFields, true);
+                if($values) {
+                    foreach($values as $id => $val) {
+                        if(in_array($id ?? false, $hide))
+                            $values[$id]['visibility'] = 'hidden';
+                        if(in_array($id ?? false, $show))
+                            $values[$id]['visibility'] = 'public';
+                    }
+                    OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
+                }
+            }
+
             if(OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
                 $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
                 $fields = [];
