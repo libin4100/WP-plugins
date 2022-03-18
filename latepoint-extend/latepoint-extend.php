@@ -379,9 +379,8 @@ EOT;
     public function processStep($stepName, $bookingObject)
     {
         $this->_covid($bookingObject);
-        if($bookingObject->agent_id == 6)
+        if(in_array($stepName, ['custom_fields_for_booking', 'contact']) && $bookingObject->agent_id == 6)
             $this->_mbc();
-
         if($stepName == 'custom_fields_for_booking') {
             $booking = OsParamsHelper::get_param('booking');
             $custom_fields_data = $booking['custom_fields'];
@@ -745,10 +744,8 @@ EOT;
         $values = json_decode($customFields, true);
         if($values) {
             foreach($values as $id => $val) {
-                if(in_array($id ?? false, $fields['hide'])) {
+                if(in_array($id ?? false, $fields['hide']))
                     $values[$id]['visibility'] = 'hidden';
-                    $values[$id]['required'] = '';
-                }
                 if(in_array($id ?? false, $fields['show']))
                     $values[$id]['visibility'] = 'public';
             }
