@@ -65,7 +65,7 @@ jQuery(function($) {
         $('.latepoint-summary-w .mbc-image').remove();
     });
 
-    $('body').on('blue', '#booking_custom_fields_cf_qoqkhbly', function() {
+    $('body').on('blur', '#booking_custom_fields_cf_qoqkhbly', function() {
         $('.latepoint-footer .latepoint-next-btn').addClass('disabled');
         $.ajax({
             method: "POST",
