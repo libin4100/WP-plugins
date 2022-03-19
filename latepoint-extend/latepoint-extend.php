@@ -94,8 +94,7 @@ final class LatePointExt {
     {
         $id = trim($_POST['id']);
         if($id && !$this->checkCert($id)) {
-            status_header(400);
-            echo 'certificate not found';
+            wp_send_json_error('certificate not found', 400);
         }
         wp_die();
     }
@@ -779,7 +778,7 @@ EOT;
     protected function checkCert($cert)
     {
         global $wpdb;
-        return $wpdb->get_var($wpdb->prepare("select id from $wpdb->mbc_members where certificate = %s", $cert));
+        return $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}mbc_members where certificate = %s", $cert));
     }
 
     public function onDeactivate() {
