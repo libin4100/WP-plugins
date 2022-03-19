@@ -93,7 +93,7 @@ final class LatePointExt {
     public function checkCertificate()
     {
         $id = trim($_POST['id']);
-        if($id && !$this->checkCertificate($id)) {
+        if($id && !$this->checkCert($id)) {
             status_header(400);
             echo 'certificate not found';
         }
