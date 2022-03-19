@@ -87,6 +87,7 @@ final class LatePointExt {
                 OsNotificationsHelper::send_agent_new_appointment_notification($booking);
             }
             break;
+        }
     }
 
     public function checkCertificate()
