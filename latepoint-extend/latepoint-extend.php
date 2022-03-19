@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.2.1';
+    public $version = '1.2.2';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -46,7 +46,7 @@ final class LatePointExt {
         add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
         add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
         add_action('latepoint_admin_enqueue_scripts', [$this, 'adminScripts']);
-        add_action('latepoint_wp_enqueue_scripts', [$this, 'frontScripts']);
+        add_action('wp_enqueue_scripts', [$this, 'frontScripts']);
         add_action('latepoint_model_save', [$this, 'saveAgent']);
         add_action('latepoint_booking_quick_edit_form_after',[$this, 'outputQuickForm']);
         add_action('latepoint_step_confirmation_head_info_before',[$this, 'confirmationInfoBefore']);
@@ -683,7 +683,7 @@ EOT;
 
     public function frontScripts() {
         $jsFolder = plugin_dir_url( __FILE__ ) . 'public/js/';
-        wp_enqueue_script('latepoint-conditions',  $jsFolder . 'front.js', array('jquery'), $this->version);
+        wp_enqueue_script('ajax-script',  $jsFolder . 'front.js', array('jquery'), $this->version);
         wp_localize_script('ajax-script', 'ajax_object', array( 'ajax_url' => admin_url('admin-ajax.php')));
         wp_enqueue_style( 'latepoint-conditions',  plugin_dir_url( __FILE__ ) . 'public/css/' . 'front.css', false, $this->version);
     }
