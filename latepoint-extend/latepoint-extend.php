@@ -198,11 +198,11 @@ EOT;
 
     public function loadStep($stepName, $bookingObject, $format = 'json') {
         $this->_covid($bookingObject);
-        if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
-            OsAuthHelper::logout_customer();
 
         switch($stepName) {
         case 'contact':
+            if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
+                OsAuthHelper::logout_customer();
             if($this->covid || $bookingObject->service_id == 10) {
                 $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
                 $values = json_decode($customFields, true);
