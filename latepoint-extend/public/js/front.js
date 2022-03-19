@@ -64,6 +64,27 @@ jQuery(function($) {
     $('body').on('mouseout', '.latepoint-body .mbc-help', function() {
         $('.latepoint-summary-w .mbc-image').remove();
     });
+
+    $('body').on('blue', '#booking_custom_fields_cf_qoqkhbly', function() {
+        $('.latepoint-footer .latepoint-next-btn').addClass('disabled');
+        $.ajax({
+            method: "POST",
+            url: ajaxurl,
+            data: {
+                action: 'check_certificate',
+                id: $('#booking_custom_fields_cf_qoqkhbly').val()
+            },
+            statusCode: {
+                400: function() {
+                    if(!$('.latepoint-body #certificate-error').length)
+                        $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error">We\'re sorry. The certificate number provided does not match our record. Please contact Manitoba Blue Cross Customer Service at 1-888-xxx-xxxx. For any other technical issues please contact Gotodoctor at 1-833-820-8800 for help</div>');
+                }
+            }
+        }).done(function() {
+            $('.latepoint-footer .latepoint-next-btn').removeClass('disabled');
+            $('.latepoint-body #certificate-error').remove();
+        });
+    });
 });
 start_date = '';
 start_time = '';

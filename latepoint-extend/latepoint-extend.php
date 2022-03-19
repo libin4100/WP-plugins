@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.1.5';
+    public $version = '1.2.0';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -41,6 +41,7 @@ final class LatePointExt {
 
     public function hooks() {
         add_action('wp_loaded', [$this, 'route']);
+        add_action('wp_ajax_check_certificate', [$this, 'checkCertificate']);
         add_action('latepoint_includes', [$this, 'includes']);
         add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
         add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
@@ -78,13 +79,24 @@ final class LatePointExt {
     public function route()
     {
         $routeName = OsRouterHelper::get_request_param('route_name', '');
-        if($routeName == 'resend_latepoint') {
+        switch($routeName) {
+        case 'resend_latepoint':
             $id = OsRouterHelper::get_request_param('id', '');
             if($id) {
                 $booking = new OsBookingModel($id);
                 OsNotificationsHelper::send_agent_new_appointment_notification($booking);
             }
+            break;
+    }
+
+    public function checkCertificate()
+    {
+        $id = trim($_POST['id']);
+        if($id && !$this->checkCertificate($id)) {
+            status_header(400);
+            echo 'certificate not found';
         }
+        wp_die();
     }
 
     public function includes() {
@@ -760,6 +772,12 @@ EOT;
             $values = $fields['add'] + $values;
             OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
         }
+    }
+
+    protected function checkCert($cert)
+    {
+        global $wpdb;
+        return $wpdb->get_var($wpdb->prepare("select id from $wpdb->mbc_members where certificate = %s", $cert));
     }
 
     public function onDeactivate() {
