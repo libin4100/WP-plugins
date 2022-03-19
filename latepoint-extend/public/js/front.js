@@ -69,7 +69,7 @@ jQuery(function($) {
         $('.latepoint-footer .latepoint-next-btn').addClass('disabled');
         $.ajax({
             method: "POST",
-            url: ajaxurl,
+            url: ajax_object.ajax_url,
             data: {
                 action: 'check_certificate',
                 id: $('#booking_custom_fields_cf_qoqkhbly').val()

@@ -684,6 +684,7 @@ EOT;
     public function frontScripts() {
         $jsFolder = plugin_dir_url( __FILE__ ) . 'public/js/';
         wp_enqueue_script('latepoint-conditions',  $jsFolder . 'front.js', array('jquery'), $this->version);
+        wp_localize_script('ajax-script', 'ajax_object', array( 'ajax_url' => admin_url('admin-ajax.php')));
         wp_enqueue_style( 'latepoint-conditions',  plugin_dir_url( __FILE__ ) . 'public/css/' . 'front.css', false, $this->version);
     }
 
