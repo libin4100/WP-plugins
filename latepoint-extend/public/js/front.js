@@ -57,6 +57,14 @@ jQuery(function($) {
             $('.latepoint-form').append('<input type="hidden" name="booking[at_clinic]" value="1" id="at_clinic">');
         return $('.latepoint-form').submit();
     });
+
+    $('body').on('click', '.latepoint-body .mbc-help', function() {
+        if($('.latepoint-summary-w .mbc-image').length) {
+            $('.latepoint-summary-w .mbc-image').remove();
+        } else {
+            $('.latepoint-summary-w').append('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc.png" />');
+        }
+    });
 });
 start_date = '';
 start_time = '';

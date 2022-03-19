@@ -671,6 +671,7 @@ EOT;
     public function frontScripts() {
         $jsFolder = plugin_dir_url( __FILE__ ) . 'public/js/';
         wp_enqueue_script('latepoint-conditions',  $jsFolder . 'front.js', array('jquery'), $this->version);
+        wp_enqueue_style( 'latepoint-conditions',  plugin_dir_url( __FILE__ ) . 'public/css/' . 'front.css', false, $this->version);
     }
 
     public function registerAddon($installedAddons) {
