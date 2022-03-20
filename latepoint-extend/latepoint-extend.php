@@ -499,6 +499,7 @@ EOT;
             foreach($data['custom_fields'] as $key => $custom_field) {
                 $model->custom_fields[$key] = $custom_field;
             }
+            $model->custom_fields['cf_hbCNgimu'] = $data['custom_fields']['first_name'] . ' ' . ($data['custom_fields']['last_name'] ?? '');
         }
     }
 
