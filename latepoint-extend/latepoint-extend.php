@@ -63,6 +63,7 @@ final class LatePointExt {
         add_filter('latepoint_summary_values', [$this, 'summaryValues']);
         add_filter('latepoint_steps_defaults', [$this, 'steps']);
         add_filter('gettext', [$this, 'gettext'], 10, 3);
+        add_filter('latepoint_replace_booking_vars', [$this, 'replace'], 20, 2);
 
         register_activation_hook(__FILE__, [$this, 'onActivate']);
         register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
@@ -495,7 +496,6 @@ EOT;
             }
         }
         if(($model instanceof OsBookingModel) && ($data['custom_fields']['first_name'] ?? false)) {
-            $this->_mbc(true);
             $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'agent');
             if(!isset($model->custom_fields)) $model->custom_fields = [];
             foreach($data['custom_fields'] as $key => $custom_field) {
@@ -784,6 +784,22 @@ EOT;
             $values = $fields['add'] + $values;
             OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
         }
+    }
+
+    public function replace($text, $booking) {
+        if($booking) {
+            $custom_fields_for_booking = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'all');
+            if(!empty($custom_fields_for_booking)){
+                $needles = [];
+                $replacements = [];
+                foreach($custom_fields_for_booking as $custom_field){
+                    $needles[] = '{'.$custom_field['id'].'}';
+                    $replacements[] = $booking->get_meta_by_key($custom_field['id'], '');
+                }
+                $text = str_replace($needles, $replacements, $text);
+            }
+        }
+        return $text;
     }
 
     protected function checkCert($cert)
