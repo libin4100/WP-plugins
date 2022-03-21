@@ -494,6 +494,7 @@ EOT;
             }
         }
         if(($model instanceof OsBookingModel) && ($data['custom_fields']['first_name'] ?? false)) {
+            $this->_mbc(true);
             $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'agent');
             if(!isset($model->custom_fields)) $model->custom_fields = [];
             foreach($data['custom_fields'] as $key => $custom_field) {
