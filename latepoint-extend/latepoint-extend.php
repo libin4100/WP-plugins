@@ -764,12 +764,13 @@ EOT;
                 ],
             ]
         ];
+        $hideField = $onSave ? 'public' : 'hidden';
         $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
         $values = json_decode($customFields, true);
         if($values) {
             foreach($values as $id => $val) {
-                if(!$onSave && in_array($id ?? false, $fields['hide']))
-                    $values[$id]['visibility'] = 'hidden';
+                if(in_array($id ?? false, $fields['hide']))
+                    $values[$id]['visibility'] = $hideField;
                 if(in_array($id ?? false, $fields['show']))
                     $values[$id]['visibility'] = 'public';
             }
