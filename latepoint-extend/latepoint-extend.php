@@ -501,7 +501,7 @@ EOT;
                 $model->custom_fields[$key] = $custom_field;
             }
             $model->cname = $data['custom_fields']['first_name'] . ' ' . ($data['custom_fields']['last_name'] ?? '');
-            $model->pname = ' ';
+            $model->pname = '';
         }
     }
 
@@ -518,7 +518,7 @@ EOT;
             if($model->cname) {
                 $model->save_meta_by_key('cf_hbCNgimu', $model->cname);
             }
-            if($model->pname) {
+            if($model->pname !== null) {
                 $model->save_meta_by_key('cf_zDS7LUjv', $model->pname);
             }
             if(defined('WPLANG')) {
