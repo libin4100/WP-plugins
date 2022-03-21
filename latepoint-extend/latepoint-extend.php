@@ -494,6 +494,7 @@ EOT;
             }
         }
         if(($model instanceof OsBookingModel) && ($data['custom_fields']['first_name'] ?? false)) {
+            $this->_mbc(true);
             $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'agent');
             if(!isset($model->custom_fields)) $model->custom_fields = [];
             foreach($data['custom_fields'] as $key => $custom_field) {
@@ -731,7 +732,7 @@ EOT;
         return $steps;
     }
 
-    private function _mbc()
+    private function _mbc($onSave = false)
     {
         $fields = [
             'show' => ['cf_qOqKhbly'],
@@ -767,7 +768,7 @@ EOT;
         $values = json_decode($customFields, true);
         if($values) {
             foreach($values as $id => $val) {
-                if(in_array($id ?? false, $fields['hide']))
+                if(!$onSave && in_array($id ?? false, $fields['hide']))
                     $values[$id]['visibility'] = 'hidden';
                 if(in_array($id ?? false, $fields['show']))
                     $values[$id]['visibility'] = 'public';
