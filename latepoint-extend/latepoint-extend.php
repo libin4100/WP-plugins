@@ -42,6 +42,7 @@ final class LatePointExt {
     public function hooks() {
         add_action('wp_loaded', [$this, 'route']);
         add_action('wp_ajax_nopriv_check_certificate', [$this, 'checkCertificate']);
+        add_action('wp_ajax_check_certificate', [$this, 'checkCertificate']);
         add_action('latepoint_includes', [$this, 'includes']);
         add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
         add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
