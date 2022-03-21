@@ -54,7 +54,7 @@ final class LatePointExt {
         add_action('latepoint_booking_steps_contact_after', [$this, 'contactAfter'], 5);
         add_action('latepoint_booking_created_frontend', [$this, 'bookingCreated']);
         add_action('latepoint_steps_side_panel_after', [$this, 'sidePanel']);
-        add_action('latepoint_model_set_data', [$this, 'setModelData'], 10, 2);
+        add_action('latepoint_model_set_data', [$this, 'setModelData'], 5, 2);
 
         add_filter('latepoint_installed_addons', [$this, 'registerAddon']);
         add_filter('latepoint_side_menu', [$this, 'addMenu']);
@@ -494,14 +494,13 @@ EOT;
             }
         }
         if(($model instanceof OsBookingModel) && ($data['custom_fields']['first_name'] ?? false)) {
-            $this->_mbc(true);
             $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'agent');
             if(!isset($model->custom_fields)) $model->custom_fields = [];
             foreach($data['custom_fields'] as $key => $custom_field) {
                 $model->custom_fields[$key] = $custom_field;
             }
-            $model->custom_fields['cf_hbCNgimu'] = $data['custom_fields']['first_name'] . ' ' . ($data['custom_fields']['last_name'] ?? '');
-            $model->custom_fields['cf_zDS7LUjv'] = '';
+            $model->cname = $data['custom_fields']['first_name'] . ' ' . ($data['custom_fields']['last_name'] ?? '');
+            $model->pname = ' ';
         }
     }
 
@@ -514,6 +513,12 @@ EOT;
             }
             if($model->cf_reason) {
                 $model->save_meta_by_key($this->cFields['reason'], $model->cf_reason);
+            }
+            if($model->cname) {
+                $model->save_meta_by_key('cf_hbCNgimu', $model->cname);
+            }
+            if($model->pname) {
+                $model->save_meta_by_key('cf_zDS7LUjv', $model->pname);
             }
             if(defined('WPLANG')) {
                 $model->save_meta_by_key('language', WPLANG);
