@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.2.2';
+    public $version = '1.2.3';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -94,9 +94,16 @@ final class LatePointExt {
 
     public function checkCertificate()
     {
+        if(!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
         $id = trim($_POST['id']);
         if($id && !$this->checkCert($id)) {
-            wp_send_json_error('certificate not found', 400);
+            $_SESSION['certCount'] += 1;
+            if($_SESSION['certCount'] >= 3)
+                $msg = "We're sorry. The certificate number provided does not match our record. Please contact Manitoba Blue Cross Customer Service at 1-888-xxx-xxxx. For any other technical issues please contact Gotodoctor at 1-833-820-8800 for help";
+            else
+                $msg = 'Certificate number does not match our record. Please try again';
+
+            wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
         }
         wp_die();
     }
@@ -243,13 +250,13 @@ EOT;
                     OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
                 }
             }
-            if(!in_array($bookingObject->service_id, [2,3,7,8])) {
+            if(in_array($bookingObject->service_id, [2,3,7,8])) {
                 $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
                 $values = json_decode($customFields, true);
                 if($values) {
                     foreach($values as $id => $val) {
                         if(($id ?? false) == 'cf_6A3SfgET')
-                            $values[$id]['visibility'] = 'hidden';
+                            $values[$id]['visibility'] = 'public';
                     }
                     OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
                 }
@@ -257,6 +264,8 @@ EOT;
             if($bookingObject->agent_id == 6) {
                 //MB Blue Cross
                 $fields = $this->_mbc();
+            } else {
+                $fields = $this->_mbc(false, true);
             }
 
             if(OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
@@ -395,6 +404,8 @@ EOT;
         $this->_covid($bookingObject);
         if($bookingObject->agent_id == 6)
             $this->_mbc();
+        else
+            $this->_mbc(false, true);
         if($stepName == 'custom_fields_for_booking') {
             $booking = OsParamsHelper::get_param('booking');
             $custom_fields_data = $booking['custom_fields'];
@@ -739,50 +750,57 @@ EOT;
         return $steps;
     }
 
-    private function _mbc($onSave = false)
+    private function _mbc($onSave = false, $reset = false)
     {
-        $fields = [
-            'show' => ['cf_qOqKhbly'],
-            'hide' => [
-                'cf_hbCNgimu',
-                'cf_zDS7LUjv',
-                'cf_H7MIk6Kt',
-            ],
-            'add' => [
-                'first_name' => [
-                    'label' => __('Your First Name', 'latepoint'),
-                    'placeholder' => __('Your First Name', 'latepoint'),
-                    'type' => 'text',
-                    'width' => 'os-col-12',
-                    'visibility' => 'public',
-                    'options' => '',
-                    'required' => 'on',
-                    'id' => 'first_name'
+        if($reset) {
+            $setting = new OsSettingsModel();
+            $setting = $setting->where(['name' => 'custom_fields_for_booking'])->set_limit(1)->get_results_as_models();
+            if($settings)
+                OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = $setting->value;
+        } else {
+            $fields = [
+                'show' => ['cf_qOqKhbly'],
+                'hide' => [
+                    'cf_hbCNgimu',
+                    'cf_zDS7LUjv',
+                    'cf_H7MIk6Kt',
                 ],
-                'last_name' => [
-                    'label' => __('Your Last Name', 'latepoint'),
-                    'placeholder' => __('Your Last Name', 'latepoint'),
-                    'type' => 'text',
-                    'width' => 'os-col-12',
-                    'visibility' => 'public',
-                    'options' => '',
-                    'required' => 'on',
-                    'id' => 'last_name'
-                ],
-            ]
-        ];
-        $hideField = $onSave ? 'public' : 'hidden';
-        $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
-        $values = json_decode($customFields, true);
-        if($values) {
-            foreach($values as $id => $val) {
-                if(in_array($id ?? false, $fields['hide']))
-                    $values[$id]['visibility'] = $hideField;
-                if(in_array($id ?? false, $fields['show']))
-                    $values[$id]['visibility'] = 'public';
+                'add' => [
+                    'first_name' => [
+                        'label' => __('Your First Name', 'latepoint'),
+                        'placeholder' => __('Your First Name', 'latepoint'),
+                        'type' => 'text',
+                        'width' => 'os-col-12',
+                        'visibility' => 'public',
+                        'options' => '',
+                        'required' => 'on',
+                        'id' => 'first_name'
+                    ],
+                    'last_name' => [
+                        'label' => __('Your Last Name', 'latepoint'),
+                        'placeholder' => __('Your Last Name', 'latepoint'),
+                        'type' => 'text',
+                        'width' => 'os-col-12',
+                        'visibility' => 'public',
+                        'options' => '',
+                        'required' => 'on',
+                        'id' => 'last_name'
+                    ],
+                ]
+            ];
+            $hideField = $onSave ? 'public' : 'hidden';
+            $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
+            $values = json_decode($customFields, true);
+            if($values) {
+                foreach($values as $id => $val) {
+                    if(in_array($id ?? false, $fields['hide']))
+                        $values[$id]['visibility'] = $hideField;
+                    if(in_array($id ?? false, $fields['show']))
+                        $values[$id]['visibility'] = 'public';
+                }
+                $values = $fields['add'] + $values;
+                OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
             }
-            $values = $fields['add'] + $values;
-            OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
         }
     }
 
