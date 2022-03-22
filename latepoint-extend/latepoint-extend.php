@@ -785,7 +785,7 @@ EOT;
                     if(in_array($id ?? false, ($fields[$type]['show'] ?? [])))
                         $values[$id]['visibility'] = 'public';
                 }
-                $values = ($fields['add'] ?? []) + $values;
+                $values = ($fields[$type]['add'] ?? []) + $values;
                 OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
             }
         }
