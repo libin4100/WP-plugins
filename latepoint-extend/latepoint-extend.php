@@ -744,7 +744,7 @@ EOT;
         } else {
             $fields = [
                 'mbc' => [
-                    'show' => ['cf_qOqKhbly'],
+                    'show' => ['cf_qOqKhbly', 'cf_6A3SfgET'],
                     'hide' => [
                         'cf_hbCNgimu',
                         'cf_zDS7LUjv',
