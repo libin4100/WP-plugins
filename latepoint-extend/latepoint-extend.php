@@ -395,7 +395,7 @@ EOT;
                             $errors[] = ['type' => 'validation', 'message' => 'You do not pass the screening and cannot proceed with the booking.'];
                             $first = false;
                         }
-                    } elseif($f['required'] == 'on' && !(trim($custom_fields_data[$k]))) {
+                    } elseif($f['visibility'] == 'public' && $f['required'] == 'on' && !(trim($custom_fields_data[$k]))) {
                         $errors[] = ['type' => 'validation', 'message' => 'You do not pass the screening and cannot proceed with the booking.'];
                     }
                 }
