@@ -385,16 +385,12 @@ EOT;
             $custom_fields_for_booking = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'all');
 
             $is_valid = true;
-            $fields = [
-                'Are you experiencing any COVID-19 symptoms?',
-                'Have you been in close physical contact with someone who currently has COVID-19?',
-                'Are you part of a specific outbreak investigation?'
-            ];
+            $fields = ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V'];
             $errors = [];
             $first = true;
             foreach($custom_fields_for_booking as $k => $f) {
                 if($this->covid || $bookingObject->service_id == 10) {
-                    if(in_array(trim($f['label']), $fields) && (strtolower($custom_fields_data[$k]) != 'no')) {
+                    if(in_array(trim($f['id']), $fields) && (strtolower($custom_fields_data[$k]) != 'no')) {
                         if($first) {
                             $errors[] = ['type' => 'validation', 'message' => 'You do not pass the screening and cannot proceed with the booking.'];
                             $first = false;
