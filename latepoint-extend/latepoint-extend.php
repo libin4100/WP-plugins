@@ -233,6 +233,17 @@ EOT;
         case 'contact':
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                 OsAuthHelper::logout_customer();
+            $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
+            $values = json_decode($customFields, true);
+            if($values) {
+                foreach($values as $id => $val) {
+                    if(($val['visibility'] ?? false) != 'public')
+                        $values[$id]['visibility'] = 'public';
+                    if($val['label'] == 'Doctor Preference')
+                        unset($values[$id]);
+                }
+                OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
+            }
             break;
         case 'custom_fields_for_booking':
             if(OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
