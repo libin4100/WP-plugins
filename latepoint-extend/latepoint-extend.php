@@ -219,27 +219,22 @@ EOT;
 
     public function loadStep($stepName, $bookingObject, $format = 'json') {
         $this->_covid($bookingObject);
+        if($this->covid || $bookingObject->service_id == 10) 
+            $this->_fields('covid');
+        elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
+            $this->_fields('located');
+        elseif($bookingObject->agent_id == 6)
+            //MB Blue Cross
+            $fields = $this->_fields('mbc');
+        else
+            $fields = $this->_fields('', true);
 
         switch($stepName) {
         case 'contact':
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                 OsAuthHelper::logout_customer();
-            if($this->covid || $bookingObject->service_id == 10)
-                $this->_fields('covid');
-            else
-                $fields = $this->_fields('', true);
             break;
         case 'custom_fields_for_booking':
-            if($this->covid || $bookingObject->service_id == 10) 
-                $this->_fields('covid');
-            elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
-                $this->_fields('located');
-            elseif($bookingObject->agent_id == 6)
-                //MB Blue Cross
-                $fields = $this->_fields('mbc');
-            else
-                $fields = $this->_fields('', true);
-
             if(OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
                 $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
                 $fields = [];
@@ -780,7 +775,7 @@ EOT;
                     if(in_array($id ?? false, ($fields[$type]['show'] ?? [])))
                         $values[$id]['visibility'] = 'public';
                 }
-                $values = $fields['add'] + $values;
+                $values = ($fields['add'] ?? []) + $values;
                 OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
             }
         }
