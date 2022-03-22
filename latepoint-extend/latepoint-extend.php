@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.2.3';
+    public $version = '1.2.5';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -224,49 +224,21 @@ EOT;
         case 'contact':
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                 OsAuthHelper::logout_customer();
-            if($this->covid || $bookingObject->service_id == 10) {
-                $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
-                $values = json_decode($customFields, true);
-                if($values) {
-                    foreach($values as $id => $val) {
-                        if(($val['visibility'] ?? false) != 'public')
-                            $values[$id]['visibility'] = 'public';
-                        if($val['label'] == 'Doctor Preference')
-                            unset($values[$id]);
-                    }
-                    OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
-                }
-            }
+            if($this->covid || $bookingObject->service_id == 10)
+                $this->_fields('covid');
+            else
+                $fields = $this->_fields('', true);
             break;
         case 'custom_fields_for_booking':
-            if($this->covid || $bookingObject->service_id == 10) {
-                $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
-                $values = json_decode($customFields, true);
-                if($values) {
-                    foreach($values as $id => $val) {
-                        if(($val['visibility'] ?? false) == 'hidden')
-                            $values[$id]['visibility'] = 'public';
-                    }
-                    OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
-                }
-            }
-            if(in_array($bookingObject->service_id, [2,3,7,8])) {
-                $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
-                $values = json_decode($customFields, true);
-                if($values) {
-                    foreach($values as $id => $val) {
-                        if(($id ?? false) == 'cf_6A3SfgET')
-                            $values[$id]['visibility'] = 'public';
-                    }
-                    OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
-                }
-            }
-            if($bookingObject->agent_id == 6) {
+            if($this->covid || $bookingObject->service_id == 10) 
+                $this->_fields('covid');
+            elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
+                $this->_fields('located');
+            elseif($bookingObject->agent_id == 6) {
                 //MB Blue Cross
-                $fields = $this->_mbc();
-            } else {
-                $fields = $this->_mbc(false, true);
-            }
+                $fields = $this->_fields('mbc');
+            else
+                $fields = $this->_fields('', true);
 
             if(OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
                 $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
@@ -402,10 +374,16 @@ EOT;
     public function processStep($stepName, $bookingObject)
     {
         $this->_covid($bookingObject);
-        if($bookingObject->agent_id == 6)
-            $this->_mbc();
+        if($this->covid || $bookingObject->service_id == 10) 
+            $this->_fields('covid');
+        elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
+            $this->_fields('located');
+        elseif($bookingObject->agent_id == 6) {
+            //MB Blue Cross
+            $fields = $this->_fields('mbc');
         else
-            $this->_mbc(false, true);
+            $fields = $this->_fields('', true);
+
         if($stepName == 'custom_fields_for_booking') {
             $booking = OsParamsHelper::get_param('booking');
             $custom_fields_data = $booking['custom_fields'];
@@ -750,52 +728,56 @@ EOT;
         return $steps;
     }
 
-    private function _mbc($onSave = false, $reset = false)
+    private function _fields($type = false, $reset = false)
     {
+        $setting = new OsSettingsModel();
+        $setting = $setting->where(['name' => 'custom_fields_for_booking'])->set_limit(1)->get_results_as_models();
+        if($settings) 
+            $customFields = $setting->value;
         if($reset) {
-            $setting = new OsSettingsModel();
-            $setting = $setting->where(['name' => 'custom_fields_for_booking'])->set_limit(1)->get_results_as_models();
-            if($settings)
-                OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = $setting->value;
+            OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = $setting->value;
         } else {
             $fields = [
-                'show' => ['cf_qOqKhbly'],
-                'hide' => [
-                    'cf_hbCNgimu',
-                    'cf_zDS7LUjv',
-                    'cf_H7MIk6Kt',
+                'mbc' => [
+                    'show' => ['cf_qOqKhbly'],
+                    'hide' => [
+                        'cf_hbCNgimu',
+                        'cf_zDS7LUjv',
+                        'cf_H7MIk6Kt',
+                    ],
+                    'add' => [
+                        'first_name' => [
+                            'label' => __('Your First Name', 'latepoint'),
+                            'placeholder' => __('Your First Name', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'first_name'
+                        ],
+                        'last_name' => [
+                            'label' => __('Your Last Name', 'latepoint'),
+                            'placeholder' => __('Your Last Name', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'last_name'
+                        ],
+                    ]
                 ],
-                'add' => [
-                    'first_name' => [
-                        'label' => __('Your First Name', 'latepoint'),
-                        'placeholder' => __('Your First Name', 'latepoint'),
-                        'type' => 'text',
-                        'width' => 'os-col-12',
-                        'visibility' => 'public',
-                        'options' => '',
-                        'required' => 'on',
-                        'id' => 'first_name'
-                    ],
-                    'last_name' => [
-                        'label' => __('Your Last Name', 'latepoint'),
-                        'placeholder' => __('Your Last Name', 'latepoint'),
-                        'type' => 'text',
-                        'width' => 'os-col-12',
-                        'visibility' => 'public',
-                        'options' => '',
-                        'required' => 'on',
-                        'id' => 'last_name'
-                    ],
-                ]
+                'located' => ['show' => ['cf_6A3SfgET']],
+                'covid' => ['show' => ['cf_x18jr0Vf', 'cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
             ];
             $hideField = $onSave ? 'public' : 'hidden';
-            $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
             $values = json_decode($customFields, true);
-            if($values) {
+            if($values && $fields[$type]) {
                 foreach($values as $id => $val) {
-                    if(in_array($id ?? false, $fields['hide']))
+                    if(in_array($id ?? false, ($fields[$type]['hide'] ?? [])))
                         $values[$id]['visibility'] = $hideField;
-                    if(in_array($id ?? false, $fields['show']))
+                    if(in_array($id ?? false, ($fields[$type]['show'] ?? [])))
                         $values[$id]['visibility'] = 'public';
                 }
                 $values = $fields['add'] + $values;
