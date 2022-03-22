@@ -77,11 +77,11 @@ jQuery(function($) {
         }).done(function() {
             $('.latepoint-footer .latepoint-next-btn').removeClass('disabled');
             $('.latepoint-body #certificate-error').remove();
-        }).fail(function(xhr, statusCode, errorThrown) {
-            if(statusCode == 404) {
+        }).fail(function(xhr) {
+            if(xhr.status == 404) {
                 if(!$('.latepoint-body #certificate-error').length)
                     $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').text(errorThrown.message)
+                $('.latepoint-body #certificate-error').text(xhr.repsonseJSON.data.message)
             }
         });
     });
