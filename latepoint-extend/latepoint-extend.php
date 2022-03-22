@@ -767,7 +767,7 @@ EOT;
                     ]
                 ],
                 'located' => ['show' => ['cf_6A3SfgET']],
-                'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
+                'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
             ];
             $hideField = $onSave ? 'public' : 'hidden';
             $values = is_array($customFields) ? $customFields : json_decode($customFields, true);
