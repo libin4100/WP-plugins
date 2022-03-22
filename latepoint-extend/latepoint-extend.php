@@ -727,7 +727,7 @@ EOT;
     {
         $setting = new OsSettingsModel();
         $setting = $setting->where(['name' => 'custom_fields_for_booking'])->set_limit(1)->get_results_as_models();
-        if($settings) 
+        if($setting) 
             $customFields = $setting->value;
         if($reset) {
             OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = $setting->value;
@@ -767,7 +767,7 @@ EOT;
                 'covid' => ['show' => ['cf_x18jr0Vf', 'cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
             ];
             $hideField = $onSave ? 'public' : 'hidden';
-            $values = json_decode($customFields, true);
+            $values = is_array($customFields) ? $customFields : json_decode($customFields, true);
             if($values && $fields[$type]) {
                 foreach($values as $id => $val) {
                     if(in_array($id ?? false, ($fields[$type]['hide'] ?? [])))
