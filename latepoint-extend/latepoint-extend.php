@@ -221,11 +221,11 @@ EOT;
         $this->_covid($bookingObject);
         if($this->covid || $bookingObject->service_id == 10) 
             $this->_fields('covid');
-        elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
-            $this->_fields('located');
         elseif($bookingObject->agent_id == 6)
             //MB Blue Cross
             $fields = $this->_fields('mbc');
+        elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
+            $this->_fields('located');
         else
             $fields = $this->_fields('', true);
 
@@ -382,11 +382,11 @@ EOT;
         $this->_covid($bookingObject);
         if($this->covid || $bookingObject->service_id == 10) 
             $this->_fields('covid');
-        elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
-            $this->_fields('located');
         elseif($bookingObject->agent_id == 6)
             //MB Blue Cross
             $fields = $this->_fields('mbc');
+        elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
+            $this->_fields('located');
         else
             $fields = $this->_fields('', true);
 
