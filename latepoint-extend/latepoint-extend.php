@@ -479,14 +479,17 @@ EOT;
                 $model->cf_reason = $data['custom_fields'][$this->cFields['reason']];
             }
         }
-        if(($model instanceof OsBookingModel) && ($data['custom_fields']['first_name'] ?? false)) {
-            $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'agent');
+        if(($model instanceof OsBookingModel)) {
+            $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'all');
             if(!isset($model->custom_fields)) $model->custom_fields = [];
             foreach($data['custom_fields'] as $key => $custom_field) {
-                $model->custom_fields[$key] = $custom_field;
+                if($custom_fields_structure[$key] ?? false)
+                    $model->custom_fields[$key] = $custom_field;
             }
-            $model->cname = $data['custom_fields']['first_name'] . ' ' . ($data['custom_fields']['last_name'] ?? '');
-            $model->pname = '';
+            if($data['custom_fields']['first_name'] ?? false) {
+                $model->cname = $data['custom_fields']['first_name'] . ' ' . ($data['custom_fields']['last_name'] ?? '');
+                $model->pname = '';
+            }
         }
     }
 
