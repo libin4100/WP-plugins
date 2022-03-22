@@ -494,6 +494,8 @@ EOT;
                     $model->custom_fields[$key] = $custom_field;
             }
             if($data['custom_fields']['first_name'] ?? false) {
+                $model->custom_fields['first_name'] = $data['custom_fields']['first_name'];
+                $model->custom_fields['last_name'] = $data['custom_fields']['last_name'];
                 $model->cname = $data['custom_fields']['first_name'] . ' ' . ($data['custom_fields']['last_name'] ?? '');
                 $model->pname = '';
             }
