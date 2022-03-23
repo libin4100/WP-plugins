@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.2.7';
+    public $version = '1.2.8';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -209,10 +209,6 @@ EOT;
         }
 
         $booking = OsParamsHelper::get_param('booking');
-        if($booking['custom_fields']['first_name'] ?? false)
-            echo OsFormHelper::hidden_field('customer[first_name]', $booking['custom_fields']['first_name']);
-        if($booking['custom_fields']['last_name'] ?? false)
-            echo OsFormHelper::hidden_field('customer[last_name]', $booking['custom_fields']['last_name']);
 
         remove_all_actions('latepoint_booking_steps_contact_after');
     }
@@ -233,19 +229,23 @@ EOT;
         case 'contact':
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                 OsAuthHelper::logout_customer();
-            $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
-            $values = json_decode($customFields, true);
-            if($values) {
-                foreach($values as $id => $val) {
-                    if(($val['visibility'] ?? false) != 'public')
-                        $values[$id]['visibility'] = 'public';
-                    if($val['label'] == 'Doctor Preference')
-                        unset($values[$id]);
+            if($this->covid || $bookingObject->service_id == 10) {
+                $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
+                $values = json_decode($customFields, true);
+                if($values) {
+                    foreach($values as $id => $val) {
+                        if(($val['visibility'] ?? false) != 'public')
+                            $values[$id]['visibility'] = 'public';
+                        if($val['label'] == 'Doctor Preference')
+                            unset($values[$id]);
+                    }
+                    OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                 }
-                OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
             }
             break;
         case 'custom_fields_for_booking':
+            if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
+                OsAuthHelper::logout_customer();
             if(OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
                 $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
                 $fields = [];
@@ -274,6 +274,8 @@ EOT;
             }
             break;
         case 'datepicker':
+            if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
+                OsAuthHelper::logout_customer();
             if($format == 'json' && $bookingObject->service_id == 10) {
                 $controller = new OsStepsController();
                 $controller->vars = $controller->vars_for_view;

@@ -61,6 +61,12 @@ jQuery(function($) {
     $('body').on('mouseover', '.latepoint-body .mbc-help', function() {
         $('.latepoint-summary-w').append('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc.png" />');
     });
+    $('body').on('click', '.latepoint-body .mbc-help', function() {
+        if($('.latepoint-body .mbc-image').length)
+            $('.latepoint-body .mbc-image').remove();
+        else
+            $('.latepoint-body').append('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc.png" />');
+    });
     $('body').on('mouseout', '.latepoint-body .mbc-help', function() {
         $('.latepoint-summary-w .mbc-image').remove();
     });
@@ -79,6 +85,9 @@ jQuery(function($) {
             $('.latepoint-body #certificate-error').remove();
         }).fail(function(xhr) {
             if(xhr.status == 404) {
+                if(xhr.responseJSON.data.count >= 3) 
+                    $('.latepoint-body').empty();
+
                 if(!$('.latepoint-body #certificate-error').length)
                     $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
                 $('.latepoint-body #certificate-error').text(xhr.responseJSON.data.message)
