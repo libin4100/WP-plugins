@@ -85,8 +85,10 @@ jQuery(function($) {
             $('.latepoint-body #certificate-error').remove();
         }).fail(function(xhr) {
             if(xhr.status == 404) {
-                if(xhr.responseJSON.data.count >= 3) 
+                if(xhr.responseJSON.data.count >= 3) {
+                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
                     $('.latepoint-body').empty();
+                }
 
                 if(!$('.latepoint-body #certificate-error').length)
                     $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
