@@ -491,7 +491,7 @@ EOT;
         if(($model instanceof OsBookingModel)) {
             $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'all');
             if(!isset($model->custom_fields)) $model->custom_fields = [];
-            foreach($data['custom_fields'] as $key => $custom_field) {
+            foreach(($data['custom_fields'] ?? []) as $key => $custom_field) {
                 if($custom_fields_structure[$key] ?? false)
                     $model->custom_fields[$key] = $custom_field;
             }
