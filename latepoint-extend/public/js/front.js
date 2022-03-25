@@ -48,6 +48,12 @@ jQuery(function($) {
             $('.confirmation-app-info ul li').eq(1).html($('.confirmation-app-info ul li').eq(1).html().replace('Time', 'Requested Time'))
             first_payment = false;
         }
+
+        if($('.latepoint-prev-btn').length) {
+            $('.latepoint-prev-btn').bind('click', function() {
+                $('.latepoint-footer .latepoint-next-btn span').text($('.latepoint-footer .latepoint-next-btn').data('label'));
+            });
+        }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function() {
@@ -56,10 +62,6 @@ jQuery(function($) {
         if(!$('#at_clinic').length)
             $('.latepoint-form').append('<input type="hidden" name="booking[at_clinic]" value="1" id="at_clinic">');
         return $('.latepoint-form').submit();
-    });
-
-    $('.latepoint-booking-form-element .latepoint-prev-btn').on('click', function() {
-        $('.latepoint-footer .latepoint-next-btn span').text($('.latepoint-footer .latepoint-next-btn').data('label'));
     });
 
     $('body').on('mouseover', '.latepoint-body .mbc-help', function() {
