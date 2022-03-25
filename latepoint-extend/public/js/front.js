@@ -7,6 +7,7 @@ jQuery(function($) {
     var show_notice = '<div class="os-row os-row-div"><div class="os-col-12"><h3>Please note that your request for the time interval will be processed. DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</h3></div></div>';
     var show_summary = '<div class="os-show-summary os-summary-line os-has-value" style="display: block;flex: 0 0 100%;"><div class="os-summary-value os-summary-value-notice" style="color:red">Please note that your request for the time interval will be processed. DO NOT COME IN, until you receive YOUR SPECIFIC appointment time. </div> </div>';
     first_payment = true;
+    first_bind = true;
 
     setInterval(function() {
         if($('.latepoint-body .latepoint-footer.request-move').length) {
@@ -49,10 +50,11 @@ jQuery(function($) {
             first_payment = false;
         }
 
-        if($('.latepoint-prev-btn').length) {
+        if($('.latepoint-prev-btn').length && first_bind) {
             $('.latepoint-prev-btn').bind('click', function() {
                 $('.latepoint-footer .latepoint-next-btn span').text($('.latepoint-footer .latepoint-next-btn').data('label'));
             });
+            first_bind = false;
         }
     }, 100);
 
