@@ -58,7 +58,7 @@ jQuery(function($) {
         return $('.latepoint-form').submit();
     });
 
-    $('body').on('click', '.latepoint-footer .latepoint-prev-btn', function() {
+    $('body').on('click', '.latepoint-form .latepoint-footer a.latepoint-prev-btn', function() {
         $('.latepoint-footer .latepoint-next-btn span').text($('.latepoint-footer .latepoint-next-btn').data('label'));
     });
 
