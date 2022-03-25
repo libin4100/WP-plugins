@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.2.14';
+    public $version = '1.3.0';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -627,6 +627,10 @@ EOT;
                     'current_location' => $booking->get_meta_by_key('cf_6A3SfgET', ''),
                     'redirect_paid' => function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made')->ID)) : site_url('thank-you-booking-a-virtual-healthcare-appointment-and-payment-has-already-been-made'),
                 ];
+                if($booking->agent_id == 6) {
+                    $noteOnly = true;
+                    $bodyExtra['note_only'] = $noteOnly;
+                }
             }
             if($this->acorn) {
                 $returnUrl = function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you')->ID)) . '?t=' . ($booking->service ? $booking->service->name : '') : site_url('thank-you/?t=' . ($booking->service ? $booking->service->name : ''));
@@ -674,7 +678,7 @@ EOT;
             ];
             $payment = wp_remote_post($db . 'api/payment/create', $data);
 
-            if($payment) {
+            if($payment && !($noteOnly ?? false)) {
                 $extraClass = ' latepoint-payment';
                 $res = json_decode(wp_remote_retrieve_body($payment));
                 if($res->data ?? false)
