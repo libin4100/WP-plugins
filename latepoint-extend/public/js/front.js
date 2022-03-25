@@ -58,6 +58,10 @@ jQuery(function($) {
         return $('.latepoint-form').submit();
     });
 
+    $('body').on('click', '.latepoint-footer .latepoint-prev-btn', function() {
+        $('.latepoint-footer .latepoint-next-btn span').text($('.latepoint-footer .latepoint-next-btn').data('label'));
+    });
+
     $('body').on('mouseover', '.latepoint-body .mbc-help', function() {
         $('.latepoint-summary-w').append('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc.png" />');
     });

@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.2.9';
+    public $version = '1.2.10';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -97,7 +97,7 @@ final class LatePointExt {
         if(!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
         $id = trim($_POST['id']);
         if($id && !$this->checkCert($id)) {
-            $_SESSION['certCount'] += 1;
+            $_SESSION['certCount'] = $_SESSION['certCount'] % 3 + 1;
             if($_SESSION['certCount'] >= 3)
                 $msg = "We're sorry. The certificate number provided does not match our record. Please contact Manitoba Blue Cross Customer Service at 1-888-xxx-xxxx. For any other technical issues please contact Gotodoctor at 1-833-820-8800 for help";
             else
