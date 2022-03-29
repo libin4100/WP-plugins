@@ -818,7 +818,7 @@ EOT;
     protected function checkCert($cert)
     {
         global $wpdb;
-        return $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}mbc_members where certificate = %s", $cert));
+        return $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}mbc_members where certificate = %d", (int)$cert));
     }
 
     public function onDeactivate() {
