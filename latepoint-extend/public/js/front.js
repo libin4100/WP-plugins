@@ -74,7 +74,7 @@ jQuery(function($) {
         if($('.latepoint-body .mbc-image').length)
             $('.latepoint-body .mbc-image').remove();
         else
-            $('.latepoint-body').append('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc.png" />');
+            $('.latepoint-body').append('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
     });
     $('body').on('mouseout', '.latepoint-body .mbc-help', function() {
         $('.latepoint-summary-w .mbc-image').remove();
