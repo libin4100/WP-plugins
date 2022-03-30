@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.3.0';
+    public $version = '1.3.1';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -118,6 +118,11 @@ final class LatePointExt {
 
         if($this->covid || $this->others || $this->acorn || $booking->service_id == 10) {
             OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
+        }
+        if($booking->agent_id == 6) {
+            OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace('2021/05/new-gotodoctor-logo.png', '2022/03/logo-blue-1.png', OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content'));
+        } else {
+            OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace('2022/03/logo-blue-1.png', '2021/05/new-gotodoctor-logo.png', OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content'));
         }
     }
 

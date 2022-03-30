@@ -65,7 +65,7 @@ jQuery(function($) {
     });
 
     $('body').on('mouseover', '.latepoint-body .mbc-help', function() {
-        $('.latepoint-summary-w').append('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc.png" />');
+        $('.latepoint-summary-w').append('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
     });
     $('body').on('click', '.latepoint-body .mbc-help', function() {
         if($('.latepoint-body .mbc-image').length)
