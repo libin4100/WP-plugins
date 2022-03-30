@@ -53,6 +53,9 @@ jQuery(function($) {
             $('.latepoint-prev-btn').bind('click', function() {
                 $('.latepoint-footer .latepoint-next-btn span').text($('.latepoint-footer .latepoint-next-btn').data('label'));
             });
+            $('.latepoint-prev-btn').bind('click', function() {
+                $('.latepoint-body .mbc-image').remove();
+            });
         }
     }, 100);
 
