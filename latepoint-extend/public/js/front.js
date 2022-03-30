@@ -76,7 +76,7 @@ jQuery(function($) {
     $('body').on('mouseout', '.latepoint-body .mbc-help', function() {
         $('.latepoint-summary-w .mbc-image').remove();
     });
-    $('body').on('click', 'latepoint-btn', function() {
+    $('body').on('click', '.latepoint-btn', function() {
         if($('.latepoint-body .mbc-image').length) $('.latepoint-body .mbc-image').remove();
     })
 
