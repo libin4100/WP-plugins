@@ -53,9 +53,6 @@ jQuery(function($) {
             $('.latepoint-prev-btn').bind('click', function() {
                 $('.latepoint-footer .latepoint-next-btn span').text($('.latepoint-footer .latepoint-next-btn').data('label'));
             });
-            $('.latepoint-prev-btn').bind('click', function() {
-                $('.latepoint-body .mbc-image').remove();
-            });
         }
     }, 100);
 
@@ -79,6 +76,9 @@ jQuery(function($) {
     $('body').on('mouseout', '.latepoint-body .mbc-help', function() {
         $('.latepoint-summary-w .mbc-image').remove();
     });
+    $('body').on('click', 'latepoint-btn', function() {
+        if($('.latepoint-body .mbc-image').length) $('.latepoint-body .mbc-image').remove();
+    })
 
     $('body').on('blur', '#booking_custom_fields_cf_qoqkhbly', function() {
         $('.latepoint-footer .latepoint-next-btn').addClass('disabled');
