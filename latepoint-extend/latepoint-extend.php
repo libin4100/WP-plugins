@@ -120,9 +120,9 @@ final class LatePointExt {
             OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
         }
         if($booking->agent_id == 6) {
-            OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace('</tbody>', '<tr><td style="width: 567px;"><img class="" src="https://gotodoctor.ca/wp-content/uploads/2022/03/logo-blue-1b.png" alt="" width="243" height="50" /></td></tr></tbody>', OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content'));
+            OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace('</tbody>', '<tr><td style="width: 567px;"><img class="" src="https://gotodoctor.ca/wp-content/uploads/2022/03/logo-blue-1.png" alt="" width="243" height="50" /></td></tr></tbody>', OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content'));
         } else {
-            OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace('<tr><td style="width: 567px;"><img class="" src="https://gotodoctor.ca/wp-content/uploads/2022/03/logo-blue-1b.png" alt="" width="243" height="50" /></td></tr>', '', OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content'));
+            OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace('<tr><td style="width: 567px;"><img class="" src="https://gotodoctor.ca/wp-content/uploads/2022/03/logo-blue-1.png" alt="" width="243" height="50" /></td></tr>', '', OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content'));
         }
     }
 
