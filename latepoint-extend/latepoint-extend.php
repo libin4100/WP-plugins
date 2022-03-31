@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.3.5';
+    public $version = '1.3.6';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -99,7 +99,7 @@ final class LatePointExt {
         if($id && !$this->checkCert($id)) {
             $_SESSION['certCount'] = $_SESSION['certCount'] % 3 + 1;
             if($_SESSION['certCount'] >= 3)
-                $msg = "We're sorry. The certificate number provided does not match our record. Please contact Manitoba Blue Cross Customer Service at 1-888-xxx-xxxx. For any other technical issues please contact Gotodoctor at 1-833-820-8800 for help";
+                $msg = "We're sorry. The certificate number provided does not match our record. Please contact Manitoba Blue Cross Customer Service at 1-888-xxx-xxxx.For any other technical issues please contact Gotodoctor at 1-833-820-8800 for help";
             else
                 $msg = 'Certificate number does not match our record. Please try again';
 
@@ -120,9 +120,9 @@ final class LatePointExt {
             OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
         }
         if($booking->agent_id == 6) {
-            OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace('2021/05/new-gotodoctor-logo.png', '2022/03/logo-blue-1.png', OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content'));
+            OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace('</tbody>', '<tr><td style="width: 567px;"><img class="" src="https://gotodoctor.ca/wp-content/uploads/2022/03/logo-blue-1b.png" alt="" width="243" height="50" /></td></tr></tbody>', OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content'));
         } else {
-            OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace('2022/03/logo-blue-1.png', '2021/05/new-gotodoctor-logo.png', OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content'));
+            OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace('<tr><td style="width: 567px;"><img class="" src="https://gotodoctor.ca/wp-content/uploads/2022/03/logo-blue-1b.png" alt="" width="243" height="50" /></td></tr>', '', OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content'));
         }
     }
 
@@ -727,6 +727,10 @@ EOT;
 
     public function summaryValues($values)
     {
+        $bookingObject = OsStepsHelper::get_booking_object();
+        if($bookingObject && (($bookingObject->agent_id ?? null) == 6) && (($bookingObject->location_id ?? null) == 4))
+            unset($values['location']);
+
         if($values['time'] ?? false)
             $values['time'] = ['label' => __('Requested Time', 'latepoint-extand-master'), 'value' => '' ];
 
