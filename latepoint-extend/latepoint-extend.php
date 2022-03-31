@@ -99,7 +99,7 @@ final class LatePointExt {
         if($id && !$this->checkCert($id)) {
             $_SESSION['certCount'] = $_SESSION['certCount'] % 3 + 1;
             if($_SESSION['certCount'] >= 3)
-                $msg = "We're sorry. The certificate number provided does not match our record. Please contact Manitoba Blue Cross Customer Service at 1-888-xxx-xxxx.For any other technical issues please contact Gotodoctor at 1-833-820-8800 for help";
+                $msg = "We're sorry. The certificate number provided does not match our records. Please contact Manitoba Blue Cross Customer Service at 1-888-596-1032 to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at 1-833-820-8800 for assistance.";
             else
                 $msg = 'Certificate number does not match our record. Please try again';
 
