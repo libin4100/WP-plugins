@@ -429,7 +429,7 @@ EOT;
             if($errors) {
                 $is_valid = false;
                 foreach($errors as $error) {
-                    $error_messages[] = $error['message'];
+                    $error_messages[] = $error['message'] . '<br>';
                 }
             }
             if(!$is_valid) {
