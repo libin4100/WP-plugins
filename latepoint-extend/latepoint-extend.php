@@ -438,9 +438,11 @@ EOT;
             $error_messages = [];
             if($errors) {
                 $is_valid = false;
+                $err = '';
                 foreach($errors as $error) {
-                    $error_messages[] = $error['message'] . '<br>';
+                    $err .= $error['message'] . '<br>';
                 }
+                $error_messages[] = substr($err, 0, -4);
             }
             if(!$is_valid) {
                 remove_all_actions('latepoint_process_step');
