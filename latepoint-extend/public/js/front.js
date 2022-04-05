@@ -54,7 +54,7 @@ jQuery(function($) {
             });
         }
         if($('.latepoint-step-desc-library[data-step-name!="services"] .latepoint-desc-title').length) {
-            $('.latepoint-step-desc-library[data-step-name!="services"] .latepoint-desc-title').text('');
+            $('.latepoint-step-desc-library[data-step-name!="services"][data-step-name!="confirmation"] .latepoint-desc-title').text('');
         }
     }, 100);
 
