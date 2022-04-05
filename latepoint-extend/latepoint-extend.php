@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.3.11';
+    public $version = '1.3.12';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -415,6 +415,12 @@ EOT;
                         }
                     } elseif($f['visibility'] == 'public' && $f['required'] == 'on' && !(trim($custom_fields_data[$k]))) {
                         $errors[] = ['type' => 'validation', 'message' => 'You do not pass the screening and cannot proceed with the booking.'];
+                    }
+                }
+                if($bookingObject->agent_id == 6) {
+                    if(!$this->checkCert($custom_fields_data['cf_qOqKhbly'] ?? '')) {
+                        $msg = 'Certificate number does not match our record. Please try again';
+                        $errors[] = ['type' => 'validation', 'message' => $msg];
                     }
                 }
             }

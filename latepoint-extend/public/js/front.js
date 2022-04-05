@@ -81,32 +81,6 @@ jQuery(function($) {
     $('body').on('click', '.latepoint-btn', function() {
         if($('.latepoint-body .mbc-image').length) $('.latepoint-body .mbc-image').remove();
     })
-
-    $('body').on('blur', '#booking_custom_fields_cf_qoqkhbly', function() {
-        $('.latepoint-footer .latepoint-next-btn').addClass('disabled');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate',
-                id: $('#booking_custom_fields_cf_qoqkhbly').val()
-            },
-        }).done(function() {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('disabled');
-            $('.latepoint-body #certificate-error').remove();
-        }).fail(function(xhr) {
-            if(xhr.status == 404) {
-                if(xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if(!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').text(xhr.responseJSON.data.message)
-            }
-        });
-    });
 });
 start_date = '';
 start_time = '';
