@@ -816,7 +816,7 @@ EOT;
                         if(in_array($id ?? false, ($fields[$type]['show'] ?? [])))
                             $values[$id]['visibility'] = 'public';
                     }
-                    $values = ($fields[$type]['add'] ?? []) + $values;
+                    //$values = ($fields[$type]['add'] ?? []) + $values;
                     OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                 }
             }
