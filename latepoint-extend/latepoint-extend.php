@@ -406,6 +406,7 @@ EOT;
             $fields = ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V'];
             $errors = [];
             $first = true;
+            $errors = OsCustomFieldsHelper::validate_fields($custom_fields_data, $custom_fields_for_booking);
             foreach($custom_fields_for_booking as $k => $f) {
                 if($this->covid || $bookingObject->service_id == 10) {
                     if(in_array(trim($f['id']), $fields) && (strtolower($custom_fields_data[$k]) != 'no')) {
