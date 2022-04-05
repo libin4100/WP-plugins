@@ -400,7 +400,7 @@ EOT;
         if($stepName == 'custom_fields_for_booking') {
             $booking = OsParamsHelper::get_param('booking');
             $custom_fields_data = $booking['custom_fields'];
-            $custom_fields_for_booking = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'all');
+            $custom_fields_for_booking = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'customer');
 
             $is_valid = true;
             $fields = ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V'];
