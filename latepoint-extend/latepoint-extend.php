@@ -418,22 +418,21 @@ EOT;
                         $errors[] = ['type' => 'validation', 'message' => 'You do not pass the screening and cannot proceed with the booking.'];
                     }
                 }
-                if($bookingObject->agent_id == 6) {
-                    if(!$this->checkCert($custom_fields_data['cf_qOqKhbly'] ?? '')) {
+                if($bookingObject->agent_id == 6 && $k == 'cf_qOqKhbly') {
+                    if(!$this->checkCert($custom_fields_data[$k] ?? '')) {
                         $msg = 'Certificate number does not match our record. Please try again';
                         $errors[] = ['type' => 'validation', 'message' => $msg];
                     }
                 }
             }
             $error_messages = [];
-            if($errors){
-                $errors = array_unique($errors);
+            if($errors) {
                 $is_valid = false;
                 foreach($errors as $error) {
                     $error_messages[] = $error['message'];
                 }
             }
-            if(!$is_valid){
+            if(!$is_valid) {
                 remove_all_actions('latepoint_process_step');
                 wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => $error_messages));
                 return;
