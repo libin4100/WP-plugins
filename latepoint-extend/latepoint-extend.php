@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.3.8';
+    public $version = '1.3.9';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -769,8 +769,8 @@ EOT;
                     ],
                     'add' => [
                         'first_name' => [
-                            'label' => __('Your First Name', 'latepoint'),
-                            'placeholder' => __('Your First Name', 'latepoint'),
+                            'label' => __('First Name', 'latepoint'),
+                            'placeholder' => __('First Name', 'latepoint'),
                             'type' => 'text',
                             'width' => 'os-col-12',
                             'visibility' => 'public',
@@ -779,8 +779,8 @@ EOT;
                             'id' => 'first_name'
                         ],
                         'last_name' => [
-                            'label' => __('Your Last Name', 'latepoint'),
-                            'placeholder' => __('Your Last Name', 'latepoint'),
+                            'label' => __('Last Name', 'latepoint'),
+                            'placeholder' => __('Last Name', 'latepoint'),
                             'type' => 'text',
                             'width' => 'os-col-12',
                             'visibility' => 'public',

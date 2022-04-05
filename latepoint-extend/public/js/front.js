@@ -28,7 +28,6 @@ jQuery(function($) {
                 $('.latepoint-step-desc .latepoint-desc-media').after(clinic_notice);
                 $('.latepoint-step-desc').append(clinic_notice2);
             }
-            //if($('#at_clinic').length) $('#at_clinic').remove();
         }
         if(typeof(is_rapid) != 'undefined' && is_rapid) {
             if($('.dp-timeslot.with-tick.selected').length && !showed) {
@@ -53,6 +52,9 @@ jQuery(function($) {
             $('.latepoint-prev-btn').bind('click', function() {
                 $('.latepoint-footer .latepoint-next-btn span').text($('.latepoint-footer .latepoint-next-btn').data('label'));
             });
+        }
+        if($('.latepoint-step-desc-library[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').length) {
+            $('.latepoint-step-desc-library[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').text('');
         }
     }, 100);
 
