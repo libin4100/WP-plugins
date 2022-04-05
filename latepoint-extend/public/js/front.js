@@ -53,8 +53,8 @@ jQuery(function($) {
                 $('.latepoint-footer .latepoint-next-btn span').text($('.latepoint-footer .latepoint-next-btn').data('label'));
             });
         }
-        if($('.latepoint-step-desc-library[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').length) {
-            $('.latepoint-step-desc-library[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').text('');
+        if($('.latepoint-step-desc-library[data-step-name!="services"] .latepoint-desc-title').length) {
+            $('.latepoint-step-desc-library[data-step-name!="services"] .latepoint-desc-title').text('');
         }
     }, 100);
 

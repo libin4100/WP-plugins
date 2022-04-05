@@ -19,7 +19,7 @@ if(!class_exists('LatePointExt')):
  *
  */
 final class LatePointExt {
-    public $version = '1.3.9';
+    public $version = '1.3.10';
     public $dbVersion = '1.0.0';
     public $addonName = 'latepoint-extend';
 
@@ -753,15 +753,17 @@ EOT;
     private function _fields($type = false, $reset = false)
     {
         $setting = new OsSettingsModel();
-        $setting = $setting->where(['name' => 'custom_fields_for_booking'])->set_limit(1)->get_results_as_models();
-        if($setting) 
-            $customFields = $setting->value;
+        $cfBooking = $setting->where(['name' => 'custom_fields_for_booking'])->set_limit(1)->get_results_as_models();
+        $cfCustomer = $setting->where(['name' => 'custom_fields_for_customer'])->set_limit(1)->get_results_as_models();
+        if($cfBooking) 
+            $customFields = $cfBooking->value;
         if($reset) {
-            OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = $setting->value;
+            OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = $cfBooking->value;
+            OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = $cfCustomer->value;
         } else {
             $fields = [
                 'mbc' => [
-                    'show' => ['cf_qOqKhbly', 'cf_6A3SfgET'],
+                    'show' => ['cf_qOqKhbly', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
                     'hide' => [
                         'cf_hbCNgimu',
                         'cf_zDS7LUjv',
@@ -804,6 +806,19 @@ EOT;
                 }
                 $values = ($fields[$type]['add'] ?? []) + $values;
                 OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
+            }
+            if($cfCustomer) {
+                $values = is_array($cfCustomer->value) ? $cfCustomer->value : json_decode($cfCustomer->value, true);
+                if($values && $fields[$type]) {
+                    foreach($values as $id => $val) {
+                        if(in_array($id ?? false, ($fields[$type]['hide'] ?? [])))
+                            $values[$id]['visibility'] = $hideField;
+                        if(in_array($id ?? false, ($fields[$type]['show'] ?? [])))
+                            $values[$id]['visibility'] = 'public';
+                    }
+                    $values = ($fields[$type]['add'] ?? []) + $values;
+                    OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
+                }
             }
         }
     }
