@@ -84,7 +84,7 @@ jQuery(function($) {
     })
 
     $('body').on('blur', '#booking_custom_fields_cf_qoqkhbly', function() {
-        $('.latepoint-footer .latepoint-next-btn').addClass('disabled').after('<button class="check-cert latepoint-btn latepoint-btn-primary latepoint-next-btn os-loading">Checking certificate</button>');
+        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
         $.ajax({
             method: "POST",
             url: ajax_object.ajax_url,
@@ -93,10 +93,9 @@ jQuery(function($) {
                 id: $('#booking_custom_fields_cf_qoqkhbly').val()
             },
         }).done(function() {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('disabled');
             $('.latepoint-body #certificate-error').remove();
-        }).always(donefunction() {
-            $('.latepoint-footer .check-cert').remove();
+        }).always(function() {
+            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
         }).fail(function(xhr) {
             if(xhr.status == 404) {
                 if(xhr.responseJSON.data.count >= 3) {
