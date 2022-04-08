@@ -57,6 +57,9 @@ jQuery(function($) {
         if($('.latepoint-step-desc-library[data-step-name!="services"] .latepoint-desc-title').length) {
             $('.latepoint-step-desc-library[data-step-name!="services"][data-step-name!="confirmation"] .latepoint-desc-title').text('');
         }
+        if($('#booking_custom_fields_cf_qoqkhbly').length && !$('#booking_custom_fields_cf_qoqkhbly').parents('.os-col-12').is(':first-child')) {
+            $('#booking_custom_fields_cf_qoqkhbly').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
+        }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function() {
