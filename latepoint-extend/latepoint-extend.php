@@ -120,12 +120,17 @@ final class LatePointExt {
             OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
         }
         if($booking->agent_id == 6) {
-            OsSettingsHelper::$loaded_values['notification_agent_new_booking_notification_content'] = str_replace('Appointment - Gotodoctor | Virtual Care', 'MBC Appointment', OsSettingsHelper::get_settings_value('notification_agent_new_booking_notification_content'));
-            OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace(
-                '<img class="" src="https://gotodoctor.ca/wp-content/uploads/2021/05/new-gotodoctor-logo.png" alt="" width="243" height="50" />',
-                '<img class="" src="https://gotodoctor.ca/wp-content/uploads/2021/05/new-gotodoctor-logo.png" alt="" width="243" height="50" /> <img class="" src="https://gotodoctor.ca/wp-content/uploads/2022/03/logo-blue-1.png" alt="" width="243" height="50" />',
-                OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content')
-            );
+            $meta = $booking->get_meta_by_key('cf_x18jr0Vf', null);
+            if($meta == 'No') {
+                OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
+            } else {
+                OsSettingsHelper::$loaded_values['notification_agent_new_booking_notification_content'] = str_replace('Appointment - Gotodoctor | Virtual Care', 'MBC Appointment', OsSettingsHelper::get_settings_value('notification_agent_new_booking_notification_content'));
+                OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace(
+                    '<img class="" src="https://gotodoctor.ca/wp-content/uploads/2021/05/new-gotodoctor-logo.png" alt="" width="243" height="50" />',
+                    '<img class="" src="https://gotodoctor.ca/wp-content/uploads/2021/05/new-gotodoctor-logo.png" alt="" width="243" height="50" /> <img class="" src="https://gotodoctor.ca/wp-content/uploads/2022/03/logo-blue-1.png" alt="" width="243" height="50" />',
+                    OsSettingsHelper::get_settings_value('notification_customer_booking_confirmation_content')
+                );
+            }
         } else {
             OsSettingsHelper::$loaded_values['notification_agent_new_booking_notification_content'] = str_replace('MBC Appointment', 'Appointment - Gotodoctor | Virtual Care', OsSettingsHelper::get_settings_value('notification_agent_new_booking_notification_content'));
             OsSettingsHelper::$loaded_values['notification_customer_booking_confirmation_content'] = str_replace(
