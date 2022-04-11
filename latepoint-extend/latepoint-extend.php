@@ -734,6 +734,7 @@ EOT;
     public function summaryValues($values)
     {
         $bookingObject = OsStepsHelper::get_booking_object();
+        unset($values['customer']);
         if($bookingObject && (($bookingObject->agent_id ?? null) == 6) && (($bookingObject->location_id ?? null) == 4))
             unset($values['location']);
 
