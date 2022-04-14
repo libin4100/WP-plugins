@@ -120,7 +120,7 @@ final class LatePointExt {
             OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
         }
         if($booking->agent_id == 6) {
-            OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
+            OsSettingsHelper::$loaded_values['notification_customer_confirmation'] = 'off';
         }
     }
 
