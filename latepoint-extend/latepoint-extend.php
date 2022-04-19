@@ -97,11 +97,13 @@ final class LatePointExt {
         if(!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
         $id = trim($_POST['id']);
         if($id && !$this->checkCert($id)) {
-            $_SESSION['certCount'] = $_SESSION['certCount'] % 3 + 1;
+            $_SESSION['certCount'] += 1;
             if($_SESSION['certCount'] >= 3)
                 $msg = "We're sorry. The certificate number provided does not match our records. Please contact Manitoba Blue Cross at 1-888-596-1032 to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at 1-833-820-8800 for assistance.";
             else
                 $msg = 'Certificate number does not match our record. Please try again';
+
+            if($_SESSION['certCount'] == 3) $_SESSION['certCount'] = 0;
 
             wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
         }
