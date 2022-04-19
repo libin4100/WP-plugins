@@ -105,7 +105,7 @@ final class LatePointExt {
 
             wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
 
-            if($_SESSION['certCount'] == 3) $_SESSION['certCount'] = 0;
+            if($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
         }
         wp_die();
     }
