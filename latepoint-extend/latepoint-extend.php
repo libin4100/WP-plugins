@@ -72,7 +72,7 @@ final class LatePointExt {
     public function gettext($translation, $text, $domain)
     {
         if($domain == 'latepoint') {
-            if(strpos($translation, 'Location') === 0)
+            if($translation == 'Location')
                 $translation = str_replace('Location', 'Health Card', $translation);
         }
         return $translation;
