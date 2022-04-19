@@ -103,6 +103,8 @@ final class LatePointExt {
     public function checkCertificate()
     {
         if(!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
+        if($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
+
         $id = trim($_POST['id']);
         if($id && !$this->checkCert($id)) {
             $_SESSION['certCount'] += 1;
@@ -112,8 +114,6 @@ final class LatePointExt {
                 $msg = 'Certificate number does not match our record. Please try again';
 
             wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
-
-            if($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
         }
         wp_die();
     }
