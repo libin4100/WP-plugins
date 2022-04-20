@@ -108,7 +108,7 @@ jQuery(function($) {
 
                 if(!$('.latepoint-body #certificate-error').length)
                     $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').text(xhr.responseJSON.data.message)
+                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
             }
         });
     });
