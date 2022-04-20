@@ -111,7 +111,7 @@ final class LatePointExt {
             if($_SESSION['certCount'] >= 3)
                 $msg = "We're sorry. The certificate number provided does not match our records. Please contact Manitoba Blue Cross at 1-888-596-1032 to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at 1-833-820-8800 for assistance.";
             else
-                $msg = 'Certificate number does not match our record. Please try again';
+                $msg = 'Certificate number does not match our records. Please try again.';
 
             wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
         }
@@ -431,7 +431,7 @@ EOT;
                 }
                 if($bookingObject->agent_id == 6 && $k == 'cf_qOqKhbly') {
                     if(!$this->checkCert($custom_fields_data[$k] ?? '')) {
-                        $msg = 'Certificate number does not match our record. Please try again';
+                        $msg = 'Certificate number does not match our records. Please try again.';
                         $errors[] = ['type' => 'validation', 'message' => $msg];
                     }
                 }
