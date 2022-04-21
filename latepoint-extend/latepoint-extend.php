@@ -260,6 +260,8 @@ EOT;
             }
             break;
         case 'custom_fields_for_booking':
+            $_SESSION['certCount'] = 0;
+
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                 OsAuthHelper::logout_customer();
             if(OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
