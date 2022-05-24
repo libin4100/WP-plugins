@@ -64,6 +64,7 @@ final class LatePointExt {
         add_filter('latepoint_steps_defaults', [$this, 'steps']);
         add_filter('gettext', [$this, 'gettext'], 10, 3);
         add_filter('latepoint_replace_booking_vars', [$this, 'replace'], 20, 2);
+        add_filter('latepoint_customer_model_validations', [$this, 'customerFilter']);
 
         register_activation_hook(__FILE__, [$this, 'onActivate']);
         register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
@@ -859,6 +860,12 @@ EOT;
             }
         }
         return $text;
+    }
+
+    public function customerFilter($validations)
+    {
+        $validations['email'] = array('presence', 'email');
+        return $validations;
     }
 
     protected function checkCert($cert)
