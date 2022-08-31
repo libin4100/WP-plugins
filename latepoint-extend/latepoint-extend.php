@@ -211,7 +211,7 @@ EOT;
                 if($this->covid || $this->acorn) {
                     if($custom_field['id'] == 'cf_7Lkik5fd') continue;
                 }
-                if(in_array($custom_field['id'], ['cf_eh0ZhQ9s', 'cf_rgLGzjat')) $required_class .= ' os-mask-phone init';
+                if(in_array($custom_field['id'], ['cf_eh0ZhQ9s', 'cf_rgLGzjat'])) $required_class .= ' os-mask-phone init';
 
                 switch ($custom_field['type']) {
                 case 'text':
