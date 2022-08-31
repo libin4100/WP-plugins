@@ -193,10 +193,11 @@ jQuery(function($) {
             $('#customer_phone').parents('.os-col-sm-12').after($('#customer_custom_fields_cf_rglgzjat').parents('.os-col-12'))
             $('#customer_phone').parents('.os-col-sm-12').after($('#customer_custom_fields_cf_eh0zhq9s').parents('.os-col-12'))
         }
+
+        $('#customer_phone').change(function() {
+            $('#customer_custom_fields_cf_rglgzjat').val($('#customer_phone').val());
+        });
     }, 500);
-    $('body').on('#customer_phone', 'change', function() {
-        $('#customer_custom_fields_cf_rglgzjat').val($('#customer_phone').val());
-    });
 });
 </script>
 EOT;
