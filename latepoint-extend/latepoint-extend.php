@@ -195,7 +195,7 @@ jQuery(function($) {
         }
     }, 500);
     $('body').on('#customer_phone', 'change', function() {
-        $('#customer_custom_fields_cf_rgLGzjat').val($('#customer_phone').val());
+        $('#customer_custom_fields_cf_rglgzjat').val($('#customer_phone').val());
     });
 });
 </script>
