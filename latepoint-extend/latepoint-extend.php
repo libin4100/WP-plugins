@@ -189,8 +189,8 @@ jQuery(function($) {
         $str
         if($('#customer_custom_fields_cf_eh0zhq9s.init').length) {
             $('#customer_custom_fields_cf_eh0zhq9s').removeClass('init')
-            $('#customer_custom_fields_cf_rgLGzjat').removeClass('init')
-            $('#customer_phone').parents('.os-col-sm-12').after($('#customer_custom_fields_cf_rgLGzjat').parents('.os-col-12'))
+            $('#customer_custom_fields_cf_rglgzjat').removeClass('init')
+            $('#customer_phone').parents('.os-col-sm-12').after($('#customer_custom_fields_cf_rglgzjat').parents('.os-col-12'))
             $('#customer_phone').parents('.os-col-sm-12').after($('#customer_custom_fields_cf_eh0zhq9s').parents('.os-col-12'))
         }
     }, 500);
