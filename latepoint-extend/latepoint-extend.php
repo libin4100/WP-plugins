@@ -195,7 +195,7 @@ jQuery(function($) {
         }
 
         $('#customer_phone').change(function() {
-            $('#customer_custom_fields_cf_rglgzjat').val($('#customer_phone').val());
+            $('#customer_custom_fields_cf_rglgzjat').val($('#customer_phone').val()).parent('div.os-form-group').addClass('has-value');
         });
     }, 500);
 });
