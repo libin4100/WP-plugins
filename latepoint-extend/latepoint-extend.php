@@ -43,6 +43,8 @@ final class LatePointExt {
         add_action('wp_loaded', [$this, 'route']);
         add_action('wp_ajax_nopriv_check_certificate', [$this, 'checkCertificateSession']);
         add_action('wp_ajax_check_certificate', [$this, 'checkCertificate']);
+        add_action('wp_ajax_nopriv_check_certificate_sb', [$this, 'checkCertificateSessionSB']);
+        add_action('wp_ajax_check_certificate_sb', [$this, 'checkCertificateSB']);
         add_action('latepoint_includes', [$this, 'includes']);
         add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
         add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
@@ -108,6 +110,32 @@ final class LatePointExt {
 
         $id = trim($_POST['id']);
         if($id && !$this->checkCert($id)) {
+            $_SESSION['certCount'] += 1;
+            if($_SESSION['certCount'] >= 3)
+                $msg = "We're sorry. The certificate number provided does not match our records. Please contact Manitoba Blue Cross at <nobr>1-888-596-1032</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+            else
+                $msg = 'Certificate number does not match our records. Please try again.';
+
+            wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
+        }
+        wp_die();
+    }
+
+    public function checkCertificateSession()
+    {
+        if (!session_id()) {
+            session_start();
+        }
+        $this->checkCertificateSB();
+    }
+
+    public function checkCertificateSB()
+    {
+        if(!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
+        if($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
+
+        $id = trim($_POST['id']);
+        if($id && !$this->checkCertSB($id)) {
             $_SESSION['certCount'] += 1;
             if($_SESSION['certCount'] >= 3)
                 $msg = "We're sorry. The certificate number provided does not match our records. Please contact Manitoba Blue Cross at <nobr>1-888-596-1032</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
@@ -415,6 +443,9 @@ EOT;
         elseif($bookingObject->agent_id == 6)
             //MB Blue Cross
             $fields = $this->_fields('mbc');
+        elseif($bookingObject->agent_id == 7)
+            //Simply Benefits
+            $fields = $this->_fields('sb');
         elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
             $this->_fields('located');
         else
@@ -443,6 +474,12 @@ EOT;
                 }
                 if($bookingObject->agent_id == 6 && $k == 'cf_qOqKhbly') {
                     if(!$this->checkCert($custom_fields_data[$k] ?? '')) {
+                        $msg = 'Certificate number does not match our records. Please try again.';
+                        $errors[] = ['type' => 'validation', 'message' => $msg];
+                    }
+                }
+                if($bookingObject->agent_id == 7 && $k == 'cf_Vin78Day') {
+                    if(!$this->checkCertSB($custom_fields_data[$k] ?? '')) {
                         $msg = 'Certificate number does not match our records. Please try again.';
                         $errors[] = ['type' => 'validation', 'message' => $msg];
                     }
@@ -912,6 +949,12 @@ EOT;
     {
         global $wpdb;
         return $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
+    }
+
+    protected function checkCertSB($cert)
+    {
+        global $wpdb;
+        return $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}sb_members where concat('a', certificate) = '%s'", 'a' . $cert));
     }
 
     public function onDeactivate() {

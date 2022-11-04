@@ -135,7 +135,7 @@ jQuery(function($) {
             method: "POST",
             url: ajax_object.ajax_url,
             data: {
-                action: 'check_certificate',
+                action: 'check_certificate_sb',
                 id: $('#booking_custom_fields_cf_vin78day').val()
             },
         }).done(function() {
