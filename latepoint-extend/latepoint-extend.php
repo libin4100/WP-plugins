@@ -121,7 +121,7 @@ final class LatePointExt {
         wp_die();
     }
 
-    public function checkCertificateSession()
+    public function checkCertificateSessionSB()
     {
         if (!session_id()) {
             session_start();
