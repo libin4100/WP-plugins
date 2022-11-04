@@ -243,6 +243,9 @@ EOT;
         elseif($bookingObject->agent_id == 6)
             //MB Blue Cross
             $fields = $this->_fields('mbc');
+        elseif($bookingObject->agent_id == 7)
+            //Simply Benefits
+            $fields = $this->_fields('sb');
         elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
             $this->_fields('located');
         else
@@ -794,6 +797,36 @@ EOT;
             $fields = [
                 'mbc' => [
                     'show' => ['cf_qOqKhbly', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                    'hide' => [
+                        'cf_hbCNgimu',
+                        'cf_zDS7LUjv',
+                        'cf_H7MIk6Kt',
+                    ],
+                    'add' => [
+                        'first_name' => [
+                            'label' => __('First Name', 'latepoint'),
+                            'placeholder' => __('First Name', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'first_name'
+                        ],
+                        'last_name' => [
+                            'label' => __('Last Name', 'latepoint'),
+                            'placeholder' => __('Last Name', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'last_name'
+                        ],
+                    ]
+                ],
+                'sb' => [
+                    'show' => ['cf_Vin78Day', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
                     'hide' => [
                         'cf_hbCNgimu',
                         'cf_zDS7LUjv',

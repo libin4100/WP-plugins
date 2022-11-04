@@ -82,8 +82,21 @@ jQuery(function($) {
     $('body').on('mouseout', '.latepoint-body .mbc-help', function() {
         $('.latepoint-summary-w .mbc-image').remove();
     });
+    $('body').on('mouseover', '.latepoint-body .sb-help', function() {
+        $('.latepoint-summary-w').append('<img class="sb-image" src="/wp-content/uploads/2022/11/tempsnip.png" />');
+    });
+    $('body').on('click', '.latepoint-body .sb-help', function() {
+        if($('.latepoint-body .sb-image').length)
+            $('.latepoint-body .sb-image').remove();
+        else
+            $('.latepoint-body .step-custom-fields-for-booking-w').append('<img class="sb-image" src="/wp-content/uploads/2022/11/tempsnip.png" />');
+    });
+    $('body').on('mouseout', '.latepoint-body .sb-help', function() {
+        $('.latepoint-summary-w .sb-image').remove();
+    });
     $('body').on('click', '.latepoint-btn', function() {
         if($('.latepoint-body .mbc-image').length) $('.latepoint-body .mbc-image').remove();
+        if($('.latepoint-body .sb-image').length) $('.latepoint-body .sb-image').remove();
     })
 
     $('body').on('blur', '#booking_custom_fields_cf_qoqkhbly', function() {
