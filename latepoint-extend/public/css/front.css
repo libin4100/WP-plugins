@@ -1,6 +1,7 @@
-.latepoint-w .os-form-group.os-form-textfield-group label[for="booking_custom_fields_cf_qoqkhbly"] {
+.latepoint-w .os-form-group.os-form-textfield-group label[for="booking_custom_fields_cf_qoqkhbly"], 
+.latepoint-w .os-form-group.os-form-textfield-group label[for="booking_custom_fields_cf_vin78day"] {
     opacity: 1;
     position: unset !important;
     font-size: 14px !important;
 }
-.latepoint-summary-w .mbc-image { padding-right: 20px; }
+.latepoint-summary-w .mbc-image, .latepoint-summary-w .sb-image { padding-right: 20px; }
