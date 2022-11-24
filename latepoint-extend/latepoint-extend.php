@@ -328,6 +328,7 @@ EOT;
                     'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
                     'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)]);
             }
+            $this->_timezone($bookingObject);
             break;
         case 'datepicker':
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
@@ -962,6 +963,30 @@ EOT;
 
     public function onActivate() {
         if(class_exists('OsDatabaseHelper')) OsDatabaseHelper::check_db_version_for_addons();
+    }
+
+    protected function _timezone($bookingObject)
+    {
+        $booking = OsParamsHelper::get_param('booking');
+        $custom_fields_data = $booking['custom_fields'];
+        $timezone = '';
+        if(isset($booking['custom_fields']['cf_eee'])) {
+        } elseif($bookingObject->location_id ?? false) {
+            switch($booking_object->location_id) {
+            case 2:
+                $timezone = 'America/Winnipeg';
+                break;
+            case 9:
+                $timezone = 'America/Regina';
+                break;
+            case 10:
+                $timezone = 'America/Vancouver';
+                break;
+            }
+        }
+        if($timezone) {
+            OsTimeHelper::set_timezone_name_in_session($timezone);
+        }
     }
 }
 endif;
