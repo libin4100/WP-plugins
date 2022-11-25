@@ -328,7 +328,6 @@ EOT;
                     'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
                     'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)]);
             }
-            $this->_timezone($bookingObject);
             break;
         case 'datepicker':
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
@@ -453,6 +452,8 @@ EOT;
             $fields = $this->_fields('', true);
 
         if($stepName == 'custom_fields_for_booking') {
+            $this->_timezone($bookingObject);
+
             $booking = OsParamsHelper::get_param('booking');
             $custom_fields_data = $booking['custom_fields'];
             $custom_fields_for_booking = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'customer');
@@ -973,6 +974,8 @@ EOT;
         if(isset($booking['custom_fields']['cf_6A3SfgET'])) {
             if($booking['custom_fields']['cf_6A3SfgET'] == 'British Columbia')
                 $_SESSION['earliest'] = -180;
+            else
+                unset($_SESSION['earliest']);
         /*
         } elseif($bookingObject->location_id ?? false) {
             switch($booking_object->location_id) {
