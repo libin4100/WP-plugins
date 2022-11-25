@@ -328,7 +328,7 @@ EOT;
                     'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
                     'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)]);
             }
-            $this->_timezone($bookingObject);
+            //$this->_timezone($bookingObject);
             break;
         case 'datepicker':
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
