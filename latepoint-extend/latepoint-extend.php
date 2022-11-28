@@ -274,8 +274,10 @@ EOT;
         elseif($bookingObject->agent_id == 7)
             //Simply Benefits
             $fields = $this->_fields('sb');
-        elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
+        elseif(in_array($bookingObject->service_id, [2,3])) 
             $this->_fields('located');
+        elseif(in_array($bookingObject->service_id, [7,8])) 
+            $this->_fields('locatedOther');
         else
             $fields = $this->_fields('', true);
 
@@ -446,8 +448,10 @@ EOT;
         elseif($bookingObject->agent_id == 7)
             //Simply Benefits
             $fields = $this->_fields('sb');
-        elseif(in_array($bookingObject->service_id, [2,3,7,8])) 
+        elseif(in_array($bookingObject->service_id, [2,3])) 
             $this->_fields('located');
+        elseif(in_array($bookingObject->service_id, [7,8])) 
+            $this->_fields('locatedOther');
         else
             $fields = $this->_fields('', true);
 
@@ -835,7 +839,7 @@ EOT;
         } else {
             $fields = [
                 'mbc' => [
-                    'show' => ['cf_qOqKhbly', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                    'show' => ['cf_qOqKhbly', 'cf_6A3SfgET', 'cf_YXtUB2Jc', 'cf_sBJs0cqR'],
                     'hide' => [
                         'cf_hbCNgimu',
                         'cf_zDS7LUjv',
@@ -865,7 +869,7 @@ EOT;
                     ]
                 ],
                 'sb' => [
-                    'show' => ['cf_Vin78Day', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                    'show' => ['cf_Vin78Day', 'cf_6A3SfgET', 'cf_YXtUB2Jc', 'cf_sBJs0cqR'],
                     'hide' => [
                         'cf_hbCNgimu',
                         'cf_zDS7LUjv',
@@ -894,7 +898,8 @@ EOT;
                         ],
                     ]
                 ],
-                'located' => ['show' => ['cf_6A3SfgET']],
+                'located' => ['show' => ['cf_6A3SfgET', 'cf_YXtUB2Jc']],
+                'locatedOther' => ['show' => ['cf_6A3SfgET']],
                 'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
             ];
             $hideField = $onSave ? 'public' : 'hidden';
@@ -972,24 +977,17 @@ EOT;
         $custom_fields_data = $booking['custom_fields'];
         $timezone = '';
         if(isset($booking['custom_fields']['cf_6A3SfgET'])) {
-            if($booking['custom_fields']['cf_6A3SfgET'] == 'British Columbia')
+            unset($_SESSION['earliest']);
+
+            switch($booking['custom_fields']['cf_6A3SfgET']) {
+            case 'British Columbia':
                 $_SESSION['earliest'] = -180;
-            else
-                unset($_SESSION['earliest']);
-        /*
-        } elseif($bookingObject->location_id ?? false) {
-            switch($booking_object->location_id) {
-            case 2:
-                $timezone = 'America/Winnipeg';
                 break;
-            case 9:
-                $timezone = 'America/Regina';
-                break;
-            case 10:
-                $timezone = 'America/Vancouver';
+            case 'Manitoba':
+            case 'Saskatchewan':
+                $_SESSION['earliest'] = -60;
                 break;
             }
-         */
         }
         if($timezone) {
             OsTimeHelper::set_timezone_name_in_session($timezone);
