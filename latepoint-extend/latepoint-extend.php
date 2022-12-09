@@ -268,13 +268,17 @@ EOT;
         $this->_covid($bookingObject);
         if($this->covid || $bookingObject->service_id == 10) 
             $this->_fields('covid');
-        elseif($bookingObject->agent_id == 6)
+        elseif($bookingObject->agent_id == 6) {
             //MB Blue Cross
             $fields = $this->_fields('mbc');
-        elseif($bookingObject->agent_id == 7)
+            if(!in_array($bookingObject->service_id, [2,3,7,8]))
+                $fields['show'][] = ['cf_YXtUB2Jc'];
+        } elseif($bookingObject->agent_id == 7) {
             //Simply Benefits
             $fields = $this->_fields('sb');
-        elseif(in_array($bookingObject->service_id, [2,3])) 
+            if(!in_array($bookingObject->service_id, [2,3,7,8]))
+                $fields['show'][] = ['cf_YXtUB2Jc'];
+        } elseif(in_array($bookingObject->service_id, [2,3])) 
             $this->_fields('located');
         elseif(in_array($bookingObject->service_id, [7,8])) 
             $this->_fields('locatedOther');
@@ -445,12 +449,12 @@ EOT;
         elseif($bookingObject->agent_id == 6) {
             //MB Blue Cross
             $fields = $this->_fields('mbc');
-            if(!in_array($bookingObject->service_id, [7,8]))
+            if(!in_array($bookingObject->service_id, [2,3,7,8]))
                 $fields['show'][] = ['cf_YXtUB2Jc'];
         } elseif($bookingObject->agent_id == 7) {
             //Simply Benefits
             $fields = $this->_fields('sb');
-            if(!in_array($bookingObject->service_id, [7,8]))
+            if(!in_array($bookingObject->service_id, [2,3,7,8]))
                 $fields['show'][] = ['cf_YXtUB2Jc'];
         } elseif(in_array($bookingObject->service_id, [2,3])) 
             $this->_fields('located');
