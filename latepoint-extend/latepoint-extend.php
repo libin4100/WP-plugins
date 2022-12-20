@@ -540,10 +540,6 @@ We will schedule you for the next available appointment. Please watch out for ou
                 return;
             }
         }
-        if($stepName == 'datepicker' && $bookingObject->location_id == 1) {
-            $bookingObject->start_date = date('Y-m-d');
-            $bookingObject->start_time = 0;
-        }
     }
 
     protected function _covid($booking)
@@ -597,6 +593,10 @@ We will schedule you for the next available appointment. Please watch out for ou
             }
         }
         if(($model instanceof OsBookingModel)) {
+            if($model->location_id == 1) {
+                $model->start_date = date('Y-m-d');
+                $model->start_time = 0;
+            }
             $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'all');
             if(!isset($model->custom_fields)) $model->custom_fields = [];
             foreach(($data['custom_fields'] ?? []) as $key => $custom_field) {
