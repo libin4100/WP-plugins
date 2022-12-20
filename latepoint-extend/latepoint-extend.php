@@ -200,6 +200,14 @@ EOT;
         }
         $str = '';
         if(OsStepsHelper::$booking_object->location_id == 1) {
+            echo <<<EOT
+<script>
+jQuery(function($) {
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="datepicker"] .latepoint-desc-content').html('');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('');
+});
+</script>
+EOT;
             $str = <<<EOT
         if($('.os-summary-value-location').length 
             && $('.os-summary-value-location').text().includes('Ontario') 
@@ -377,6 +385,23 @@ EOT;
                     [
                         'step_name'         => $stepName, 
                         'show_next_btn'     => OsStepsHelper::can_step_show_next_btn($stepName), 
+                        'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName), 
+                        'is_first_step'     => OsStepsHelper::is_first_step($stepName), 
+                        'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
+                        'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                    ]
+                ));
+            }
+            if($bookingObject->location_id == 1) {
+                $html = '<div class="step-datepicker-w latepoint-step-content" data-step-name="datepicker">
+<div class="latepoint-desc-content" style="padding:0">Due to the recent billing changes, many virtual care providers have stopped services. We have experienced a significant increase in our volume. Please reach out to us again if you do not hear back after 1 business day. If this is an emergency, pls go to the nearest hospital.<br /><br />
+We will schedule you for the next available appointment. Please watch out for our email on appointment date and time.</div>
+                    </div>';
+                wp_send_json(array_merge(
+                    ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                    [
+                        'step_name'         => $stepName, 
+                        'show_next_btn'     => true, 
                         'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName), 
                         'is_first_step'     => OsStepsHelper::is_first_step($stepName), 
                         'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
