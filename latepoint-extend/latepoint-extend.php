@@ -675,6 +675,15 @@ jQuery(function($) {
 });
 </script>
 EOT;
+        if($booking->location_id == 1)
+            echo <<<EOT
+<script>
+jQuery(function($) {
+    $('.latepoint-body .confirmation-app-info ul li:first-child').hide();
+    $('.latepoint-body .confirmation-app-info ul li:first-child + li').hide();
+});
+</script>
+EOT;
     }
 
     public function confirmationInfoAfter($booking) {
