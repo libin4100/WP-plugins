@@ -396,6 +396,8 @@ EOT;
                 $html = '<div class="step-datepicker-w latepoint-step-content" data-step-name="datepicker">
 <div class="latepoint-desc-content" style="padding:0">Due to the recent billing changes, many virtual care providers have stopped services. We have experienced a significant increase in our volume. Please reach out to us again if you do not hear back after 1 business day. If this is an emergency, pls go to the nearest hospital.<br /><br />
 We will schedule you for the next available appointment. Please watch out for our email on appointment date and time.</div>
+' . OsFormHelper::hidden_field('booking[start_date]', 0, [ 'class' => 'latepoint_start_date', 'skip_id' => true]) . '
+' . OsFormHelper::hidden_field('booking[start_time]', 0, [ 'class' => 'latepoint_start_date', 'skip_id' => true]) . '
                     </div>';
                 wp_send_json(array_merge(
                     ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
@@ -593,10 +595,6 @@ We will schedule you for the next available appointment. Please watch out for ou
             }
         }
         if(($model instanceof OsBookingModel)) {
-            if($model->location_id == 1) {
-                $model->start_date = date('Y-m-d');
-                $model->start_time = 0;
-            }
             $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'all');
             if(!isset($model->custom_fields)) $model->custom_fields = [];
             foreach(($data['custom_fields'] ?? []) as $key => $custom_field) {
