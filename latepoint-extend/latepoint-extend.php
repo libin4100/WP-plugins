@@ -679,8 +679,8 @@ EOT;
             echo <<<EOT
 <script>
 jQuery(function($) {
-    $('.latepoint-body .confirmation-app-info ul li:first-child').hide();
-    $('.latepoint-body .confirmation-app-info ul li:first-child + li').hide();
+    $('.latepoint-body .confirmation-app-info ul li:first-child + li').remove();
+    $('.latepoint-body .confirmation-app-info ul li:first-child').remove();
 });
 </script>
 EOT;
