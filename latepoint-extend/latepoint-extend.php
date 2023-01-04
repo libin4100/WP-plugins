@@ -138,7 +138,7 @@ final class LatePointExt {
         if($id && !$this->checkCertSB($id)) {
             $_SESSION['certCount'] += 1;
             if($_SESSION['certCount'] >= 3)
-                $msg = "We're sorry. The certificate number provided does not match our records. Please contact Manitoba Blue Cross at <nobr>1-888-596-1032</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                $msg = "We're sorry. The certificate number provided does not match our records. Please contact Simply Benefits at <nobr>1-877-815-7751</nobr> or support@simplybenefits.ca to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
             else
                 $msg = 'Certificate number does not match our records. Please try again.';
 
@@ -300,10 +300,26 @@ EOT;
                     foreach($values as $id => $val) {
                         if(($val['visibility'] ?? false) != 'public')
                             $values[$id]['visibility'] = 'public';
-                        if($val['label'] == 'Doctor Preference')
+                        if($val['label'] == 'Doctor Preference' || $val['label'] == 'Reason of visit*')
                             unset($values[$id]);
                     }
                     OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
+                }
+            }
+            //ON health & returning patient
+            if($bookingObject->location_id == 1) {
+                $booking = OsParamsHelper::get_param('booking');
+                $custom_fields_data = $booking['custom_fields'];
+                if(($custom_fields_data['cf_x18jr0Vf'] ?? false) == 'Yes') {
+                    $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
+                    $values = json_decode($customFields, true);
+                    if($values) {
+                        foreach($values as $id => $val) {
+                            if($val['label'] == 'Reason of visit*')
+                                $values[$id]['visibility'] = 'public';
+                        }
+                        OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
+                    }
                 }
             }
             break;
