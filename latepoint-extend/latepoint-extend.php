@@ -300,7 +300,7 @@ EOT;
                     foreach($values as $id => $val) {
                         if(($val['visibility'] ?? false) != 'public')
                             $values[$id]['visibility'] = 'public';
-                        if($val['label'] == 'Doctor Preference' || $val['label'] == 'Reason of visit*')
+                        if($val['label'] == 'Doctor Preference' || $val['label'] == "Reason for today's visit ( required )")
                             unset($values[$id]);
                     }
                     OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
@@ -315,7 +315,7 @@ EOT;
                     $values = json_decode($customFields, true);
                     if($values) {
                         foreach($values as $id => $val) {
-                            if($val['label'] == 'Reason of visit*')
+                            if($val['label'] == "Reason for today's visit ( required )")
                                 $values[$id]['visibility'] = 'public';
                         }
                         OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
