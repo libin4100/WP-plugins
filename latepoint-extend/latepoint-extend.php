@@ -609,6 +609,9 @@ We will schedule you for the next available appointment. Please watch out for ou
             if($data['custom_fields'][$this->cFields['reason']] ?? false) {
                 $model->cf_reason = $data['custom_fields'][$this->cFields['reason']];
             }
+            if($data['custom_fields']['cf_4zkIbeeY'] ?? false) {
+                $model->visit_reason = $data['custom_fields']['cf_4zkIbeeY'];
+            }
         }
         if(($model instanceof OsBookingModel)) {
             $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'all');
@@ -629,6 +632,9 @@ We will schedule you for the next available appointment. Please watch out for ou
     public function saveAgent($model) {
         if($model->is_new_record()) return;
 
+        if($model->visit_reason ?? false) {
+            $model->save_meta_by_key('cf_4zkIbeeY', $model->visit_reason);
+        }
         if($model instanceof OsBookingModel) {
             if($model->at_clinic) {
                 $model->save_meta_by_key('at_clinic', 1);
