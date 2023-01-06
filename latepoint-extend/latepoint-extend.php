@@ -411,7 +411,7 @@ EOT;
             if($bookingObject->location_id == 1 && $bookingObject->agent_id == 2) {
                 $html = '<div class="step-datepicker-w latepoint-step-content" data-step-name="datepicker">
 <div class="latepoint-desc-content" style="padding:0">Due to the recent billing changes, many virtual care providers have stopped services. We have experienced a significant increase in our volume. Please reach out to us again if you do not hear back after 1 business day. If this is an emergency, pls go to the nearest hospital.<br /><br />
-We will schedule you for the next available appointment. Please watch out for our email on appointment date and time.</div>
+<strong>We will schedule you for the next available appointment.</strong> Please watch out for our email on appointment date and time.</div>
 ' . OsFormHelper::hidden_field('booking[start_date]', date('Y-m-d'), [ 'class' => 'latepoint_start_date', 'skip_id' => true]) . '
 ' . OsFormHelper::hidden_field('booking[start_time]', 0, [ 'class' => 'latepoint_start_time', 'skip_id' => true]) . '
                     </div>';
