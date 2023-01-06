@@ -622,7 +622,7 @@ EOT;
             }
             if($data['custom_fields']['cf_4zkIbeeY'] ?? false) {
                 $model->visit_reason = $data['custom_fields']['cf_4zkIbeeY'];
-                if($data['custom_fields']['cf_4zkIbeeY'] == 'Others' && ($data['custom_fields']['cf_NVByvyYw'] ?? false)) {
+                if($data['custom_fields']['cf_4zkIbeeY'] == 'Other' && ($data['custom_fields']['cf_NVByvyYw'] ?? false)) {
                     $model->visit_reason .= ' (' . $data['custom_fields']['cf_NVByvyYw'] . ')';
                 }
             }
