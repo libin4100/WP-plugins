@@ -315,7 +315,7 @@ EOT;
                     $values = json_decode($customFields, true);
                     if($values) {
                         foreach($values as $id => $val) {
-                            if($val['label'] == "Reason for today's visit ( required )")
+                            if(in_array($val['label'], ["Reason for today's visit ( required )", "Other Reason ( required )"]))
                                 $values[$id]['visibility'] = 'public';
                         }
                         OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
@@ -611,6 +611,9 @@ EOT;
             }
             if($data['custom_fields']['cf_4zkIbeeY'] ?? false) {
                 $model->visit_reason = $data['custom_fields']['cf_4zkIbeeY'];
+                if($data['custom_fields']['cf_4zkIbeeY'] == 'Others' && ($data['custom_fields']['cf_NVByvyYw'] ?? false)) {
+                    $model->visit_reason .= ' (' . $data['custom_fields']['cf_NVByvyYw'] . ')';
+                }
             }
         }
         if(($model instanceof OsBookingModel)) {

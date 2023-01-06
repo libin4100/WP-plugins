@@ -63,6 +63,13 @@ jQuery(function($) {
         if($('#booking_custom_fields_cf_vin78day').length && !$('#booking_custom_fields_cf_vin78day').parents('.os-col-12').is(':first-child')) {
             $('#booking_custom_fields_cf_vin78day').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
         }
+        if($('#customer_custom_fields_cf_4zkibeey').length) {
+            if($('#customer_custom_fields_cf_4zkibeey').val() == 'Other') {
+                $('#customer_custom_fields_cf_NVByvyYw').show()
+            } else {
+                $('#customer_custom_fields_cf_NVByvyYw').hide()
+            }
+        }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function() {
