@@ -65,9 +65,9 @@ jQuery(function($) {
         }
         if($('#customer_custom_fields_cf_4zkibeey').length) {
             if($('#customer_custom_fields_cf_4zkibeey').val() == 'Other') {
-                $('#customer_custom_fields_cf_NVByvyYw').show()
+                $('#customer_custom_fields_cf_nvbyvyyw').show()
             } else {
-                $('#customer_custom_fields_cf_NVByvyYw').hide()
+                $('#customer_custom_fields_cf_nvbyvyyw').hide()
             }
         }
     }, 100);
