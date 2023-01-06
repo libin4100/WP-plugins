@@ -549,13 +549,24 @@ EOT;
                 return;
             }
         }
-        if($stepName == 'contact' && $bookingObject->service_id == 10) {
-            $booking = OsParamsHelper::get_param('customer');
-            $data = $booking['custom_fields']['cf_DV0y9heS'] ?? false;
-            if(!$data || $data != 'on') {
-                remove_all_actions('latepoint_process_step');
-                wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['You need to read and accepte the consent acknowledgment to book the appointment.']));
-                return;
+        if($stepName == 'contact') {
+            if($bookingObject->service_id == 10) {
+                $booking = OsParamsHelper::get_param('customer');
+                $data = $booking['custom_fields']['cf_DV0y9heS'] ?? false;
+                if(!$data || $data != 'on') {
+                    remove_all_actions('latepoint_process_step');
+                    wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['You need to read and accepte the consent acknowledgment to book the appointment.']));
+                    return;
+                }
+            }
+
+            if($bookingObject->location_id == 1 && $bookingObject->agent_id == 2) {
+                $booking = OsParamsHelper::get_param('customer');
+                if((($booking['custom_fields']['cf_4zkIbeeY'] ?? false) == 'Other') && !($booking['custom_fields']['cf_NVByvyYw'] ?? false)) {
+                    remove_all_actions('latepoint_process_step');
+                    wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['Other Reason ( required ) can not be blank']));
+                    return;
+                }
             }
         }
     }
