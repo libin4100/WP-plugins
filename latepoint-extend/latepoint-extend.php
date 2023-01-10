@@ -620,12 +620,6 @@ EOT;
             if($data['custom_fields'][$this->cFields['reason']] ?? false) {
                 $model->cf_reason = $data['custom_fields'][$this->cFields['reason']];
             }
-            if($data['custom_fields']['cf_4zkIbeeY'] ?? false) {
-                $model->visit_reason = $data['custom_fields']['cf_4zkIbeeY'];
-                if($data['custom_fields']['cf_4zkIbeeY'] == 'Other' && ($data['custom_fields']['cf_NVByvyYw'] ?? false)) {
-                    $model->visit_reason .= ' (' . $data['custom_fields']['cf_NVByvyYw'] . ')';
-                }
-            }
         }
         if(($model instanceof OsBookingModel)) {
             $custom_fields_structure = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'all');
@@ -639,6 +633,13 @@ EOT;
                 $model->custom_fields['last_name'] = $data['custom_fields']['last_name'];
                 $model->cname = $data['custom_fields']['first_name'] . ' ' . ($data['custom_fields']['last_name'] ?? '');
                 $model->pname = '';
+            }
+            $booking = OsParamsHelper::get_param('customer');
+            if($booking['custom_fields']['cf_4zkIbeeY'] ?? false) {
+                $model->visit_reason = $booking['custom_fields']['cf_4zkIbeeY'];
+                if($booking['custom_fields']['cf_4zkIbeeY'] == 'Other' && ($booking['custom_fields']['cf_NVByvyYw'] ?? false)) {
+                    $model->visit_reason .= ' (' . $booking['custom_fields']['cf_NVByvyYw'] . ')';
+                }
             }
         }
     }
