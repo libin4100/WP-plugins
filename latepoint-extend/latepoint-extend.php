@@ -306,20 +306,18 @@ EOT;
                     OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                 }
             }
-            //ON health & returning patient
-            if($bookingObject->location_id == 1) {
-                $booking = OsParamsHelper::get_param('booking');
-                $custom_fields_data = $booking['custom_fields'];
-                if(($custom_fields_data['cf_x18jr0Vf'] ?? false) == 'Yes') {
-                    $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
-                    $values = json_decode($customFields, true);
-                    if($values) {
-                        foreach($values as $id => $val) {
-                            if(in_array($val['label'], ["Reason for today's visit ( required )", "Other Reason ( required )"]))
-                                $values[$id]['visibility'] = 'public';
-                        }
-                        OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
+            //returning patient
+            $booking = OsParamsHelper::get_param('booking');
+            $custom_fields_data = $booking['custom_fields'];
+            if(($custom_fields_data['cf_x18jr0Vf'] ?? false) == 'Yes') {
+                $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
+                $values = json_decode($customFields, true);
+                if($values) {
+                    foreach($values as $id => $val) {
+                        if(in_array($val['label'], ["Reason for today's visit ( required )", "Other Reason ( required )"]))
+                            $values[$id]['visibility'] = 'public';
                     }
+                    OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                 }
             }
             break;
