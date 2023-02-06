@@ -63,8 +63,8 @@ jQuery(function($) {
         if($('#booking_custom_fields_cf_vin78day').length && !$('#booking_custom_fields_cf_vin78day').parents('.os-col-12').is(':first-child')) {
             $('#booking_custom_fields_cf_vin78day').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
         }
-        if($('#booking_custom_fields_cf_SIt7Zefo').length && !$('#booking_custom_fields_cf_SIt7Zefo').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_SIt7Zefo').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
+        if($('#booking_custom_fields_cf_sit7zefo').length && !$('#booking_custom_fields_cf_sit7zefo').parents('.os-col-12').is(':first-child')) {
+            $('#booking_custom_fields_cf_sit7zefo').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
         }
         if($('#customer_custom_fields_cf_4zkibeey').length) {
             if($('#customer_custom_fields_cf_4zkibeey').val() == 'Other') {
