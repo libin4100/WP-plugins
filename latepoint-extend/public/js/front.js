@@ -166,14 +166,14 @@ jQuery(function($) {
         });
     });
 
-    $('body').on('blur', '#booking_custom_fields_cf_SIt7Zefo', function() {
+    $('body').on('blur', '#booking_custom_fields_cf_sit7zefo', function() {
         $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
         $.ajax({
             method: "POST",
             url: ajax_object.ajax_url,
             data: {
                 action: 'check_certificate_qh',
-                id: $('#booking_custom_fields_cf_SIt7Zefo').val()
+                id: $('#booking_custom_fields_cf_sit7zefo').val()
             },
         }).done(function() {
             $('.latepoint-body #certificate-error').remove();
