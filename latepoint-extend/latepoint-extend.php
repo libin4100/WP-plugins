@@ -45,6 +45,8 @@ final class LatePointExt {
         add_action('wp_ajax_check_certificate', [$this, 'checkCertificate']);
         add_action('wp_ajax_nopriv_check_certificate_sb', [$this, 'checkCertificateSessionSB']);
         add_action('wp_ajax_check_certificate_sb', [$this, 'checkCertificateSB']);
+        add_action('wp_ajax_nopriv_check_certificate_qh', [$this, 'checkCertificateSessionQH']);
+        add_action('wp_ajax_check_certificate_qh', [$this, 'checkCertificateQH']);
         add_action('latepoint_includes', [$this, 'includes']);
         add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
         add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
@@ -136,6 +138,32 @@ final class LatePointExt {
 
         $id = trim($_POST['id']);
         if($id && !$this->checkCertSB($id)) {
+            $_SESSION['certCount'] += 1;
+            if($_SESSION['certCount'] >= 3)
+                $msg = "We're sorry. The certificate number provided does not match our records. Please contact Simply Benefits at <nobr>1-877-815-7751</nobr> or support@simplybenefits.ca to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+            else
+                $msg = 'Certificate number does not match our records. Please try again.';
+
+            wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
+        }
+        wp_die();
+    }
+
+    public function checkCertificateSessionQH()
+    {
+        if (!session_id()) {
+            session_start();
+        }
+        $this->checkCertificateQH();
+    }
+
+    public function checkCertificateQH()
+    {
+        if(!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
+        if($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
+
+        $id = trim($_POST['id']);
+        if($id && !$this->checkCertQH($id)) {
             $_SESSION['certCount'] += 1;
             if($_SESSION['certCount'] >= 3)
                 $msg = "We're sorry. The certificate number provided does not match our records. Please contact Simply Benefits at <nobr>1-877-815-7751</nobr> or support@simplybenefits.ca to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
@@ -282,6 +310,9 @@ EOT;
         } elseif($bookingObject->agent_id == 7) {
             //Simply Benefits
             $fields = $this->_fields('sb');
+        } elseif($bookingObject->agent_id == 8) {
+            //Quick health access
+            $fields = $this->_fields('qh');
         } elseif(in_array($bookingObject->service_id, [2,3])) 
             $this->_fields('located');
         elseif(in_array($bookingObject->service_id, [7,8])) 
@@ -489,6 +520,9 @@ EOT;
         } elseif($bookingObject->agent_id == 7) {
             //Simply Benefits
             $fields = $this->_fields('sb');
+        } elseif($bookingObject->agent_id == 8) {
+            //Quick health access
+            $fields = $this->_fields('qh');
         } elseif(in_array($bookingObject->service_id, [2,3])) 
             $this->_fields('located');
         elseif(in_array($bookingObject->service_id, [7,8])) 
@@ -527,6 +561,12 @@ EOT;
                 }
                 if($bookingObject->agent_id == 7 && $k == 'cf_Vin78Day') {
                     if(!$this->checkCertSB($custom_fields_data[$k] ?? '')) {
+                        $msg = 'Certificate number does not match our records. Please try again.';
+                        $errors[] = ['type' => 'validation', 'message' => $msg];
+                    }
+                }
+                if($bookingObject->agent_id == 8 && $k == 'cf_SIt7Zefo') {
+                    if(!$this->checkCertQH($custom_fields_data[$k] ?? '')) {
                         $msg = 'Certificate number does not match our records. Please try again.';
                         $errors[] = ['type' => 'validation', 'message' => $msg];
                     }
@@ -969,6 +1009,36 @@ EOT;
                         ],
                     ]
                 ],
+                'qh' => [
+                    'show' => ['cf_SIt7Zefo', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                    'hide' => [
+                        'cf_hbCNgimu',
+                        'cf_zDS7LUjv',
+                        'cf_H7MIk6Kt',
+                    ],
+                    'add' => [
+                        'first_name' => [
+                            'label' => __('First Name', 'latepoint'),
+                            'placeholder' => __('First Name', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'first_name'
+                        ],
+                        'last_name' => [
+                            'label' => __('Last Name', 'latepoint'),
+                            'placeholder' => __('Last Name', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'last_name'
+                        ],
+                    ]
+                ],
                 //'located' => ['show' => ['cf_6A3SfgET', 'cf_YXtUB2Jc']],
                 'located' => ['show' => ['cf_6A3SfgET']],
                 'locatedOther' => ['show' => ['cf_6A3SfgET']],
@@ -1034,6 +1104,12 @@ EOT;
     {
         global $wpdb;
         return $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}sb_members where concat('a', certificate) = '%s'", 'a' . $cert));
+    }
+
+    protected function checkCertQH($cert)
+    {
+        global $wpdb;
+        return $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}qh_members where concat('a', certificate) = '%s'", 'a' . $cert));
     }
 
     public function onDeactivate() {
