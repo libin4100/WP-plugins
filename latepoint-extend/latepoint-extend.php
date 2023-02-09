@@ -228,12 +228,12 @@ EOT;
         }
         $str = '';
         if(OsStepsHelper::$booking_object->location_id == 1) {
-            $tmpDisabled = (ltrim(wp_get_referer(), '/') == get_home_url()) ? true : false;
+            $tmpDisabled = (rtrim(wp_get_referer(), '/') == get_home_url()) ? true : false;
             if($tmpDisabled) {
                 echo <<<EOT
 <script>
 jQuery(function($) {
-    $('.latepoint-side-panelt').hide();
+    $('.latepoint-side-panel').hide();
 });
 </script>
 EOT;
@@ -333,7 +333,7 @@ EOT;
 
         switch($stepName) {
         case 'services':
-            if($bookingObject->location_id == 1 && (ltrim(wp_get_referer(), '/') == get_home_url())) {
+            if($bookingObject->location_id == 1 && (rtrim(wp_get_referer(), '/') == get_home_url())) {
                 $html = '<div class="step-datepicker-w latepoint-step-content" data-step-name="datepicker">
 <div class="latepoint-desc-content" style="padding:0">Due to the recent government cut back, we are experiencing an overwhelming volume of requests. We stop accepting new requests temporarily. Please come back later and check again if service is resumed. Thank you for your support. If this is an emergency, please go to the nearest hospital.</div>
                     </div>';
