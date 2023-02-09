@@ -233,7 +233,8 @@ EOT;
                 echo <<<EOT
 <script>
 jQuery(function($) {
-    $('.latepoint-side-panel').hide();
+    $('.latepoint-side-panel, .latepoint-summary-w').remove();
+    $('.latepoint-lightbox-w .latepoint-lightbox-i').css('width', '540px');
 });
 </script>
 EOT;
@@ -334,12 +335,10 @@ EOT;
         switch($stepName) {
         case 'services':
             if($bookingObject->location_id == 1 && (rtrim(wp_get_referer(), '/') == get_home_url())) {
-                $html = '<div class="step-datepicker-w latepoint-step-content" data-step-name="datepicker">
+                echo '<div class="step-datepicker-w latepoint-step-content" data-step-name="datepicker">
 <div class="latepoint-desc-content" style="padding:0">Due to the recent government cut back, we are experiencing an overwhelming volume of requests. We stop accepting new requests temporarily. Please come back later and check again if service is resumed. Thank you for your support. If this is an emergency, please go to the nearest hospital.</div>
                     </div>';
-                wp_send_json(
-                    ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
-                );
+                remove_all_actions('latepoint_load_step');
             }
             break;
         case 'contact':
