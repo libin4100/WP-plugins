@@ -228,6 +228,16 @@ EOT;
         }
         $str = '';
         if(OsStepsHelper::$booking_object->location_id == 1) {
+            $tmpDisabled = (ltrim(wp_get_referer(), '/') == get_home_url()) ? true : false;
+            if($tmpDisabled) {
+                echo <<<EOT
+<script>
+jQuery(function($) {
+    $('.latepoint-side-panelt').hide();
+});
+</script>
+EOT;
+            } else {
             echo <<<EOT
 <script>
 jQuery(function($) {
@@ -245,6 +255,7 @@ EOT;
             $('#customer_custom_fields_cf_7lkik5fd').append('<option value="Pediatrician">Pediatrician</option>');
         }
 EOT;
+            }
         }
             echo <<<EOT
 <script>
@@ -321,6 +332,16 @@ EOT;
             $fields = $this->_fields('', true);
 
         switch($stepName) {
+        case 'services':
+            if($bookingObject->location_id == 1 && (ltrim(wp_get_referer(), '/') == get_home_url())) {
+                $html = '<div class="step-datepicker-w latepoint-step-content" data-step-name="datepicker">
+<div class="latepoint-desc-content" style="padding:0">Due to the recent government cut back, we are experiencing an overwhelming volume of requests. We stop accepting new requests temporarily. Please come back later and check again if service is resumed. Thank you for your support. If this is an emergency, please go to the nearest hospital.</div>
+                    </div>';
+                wp_send_json(
+                    ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                );
+            }
+            break;
         case 'contact':
             if(OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                 OsAuthHelper::logout_customer();
