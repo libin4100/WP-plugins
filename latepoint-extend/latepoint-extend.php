@@ -166,7 +166,7 @@ final class LatePointExt {
         if($id && !$this->checkCertQH($id)) {
             $_SESSION['certCount'] += 1;
             if($_SESSION['certCount'] >= 3)
-                $msg = "We're sorry. The certificate number provided does not match our records. Please contact Simply Benefits at <nobr>1-877-815-7751</nobr> or support@simplybenefits.ca to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                $msg = "We're sorry. The certificate number provided does not match our records. Please contact Quick Health Access at <nobr>1-800-789-8036</nobr> ext. 703 or paulina@quickhealthaccess.ca to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
             else
                 $msg = 'Certificate number does not match our records. Please try again.';
 
