@@ -344,11 +344,21 @@ EOT;
 
         switch($stepName) {
         case 'services':
-            if($bookingObject->location_id == 1 && (rtrim(wp_get_referer(), '/') == get_home_url())) {
-                echo '<div class="step-datepicker-w latepoint-step-content" data-step-name="datepicker">
-<div class="latepoint-desc-content" style="padding:0">Due to the recent government cut back, we are experiencing an overwhelming volume of requests.<br /><br />We stop accepting new requests temporarily. Please come back later and check again if service is resumed.<br /><br />Thank you for your support.<br />If this is an emergency, please go to the nearest hospital.</div>
-                    </div>';
+            if($bookingObject->location_id == 1) {
+                $type_id = 0;
+                $referral_tracking_value = $_COOKIE['referral_tracking'];
+                $check_url_type = $wpdb->get_results("SELECT * from wp_referral_info  WHERE `page_opened_session`='" . $referral_tracking_value . "' order by info_id asc limit 1");
+                foreach ($check_url_type as $type_values) {
+                    $type_id = $type_values->type_id;
+                }
+
+                //$tmpDisabled = (rtrim(wp_get_referer(), '/') == get_home_url()) ? true : false;
+                if($type_id == 5) {
+                    echo '<div class="step-datepicker-w latepoint-step-content" data-step-name="datepicker">
+                        <div class="latepoint-desc-content" style="padding:0">Due to the recent government cut back, we are experiencing an overwhelming volume of requests.<br /><br />We stop accepting new requests temporarily. Please come back later and check again if service is resumed.<br /><br />Thank you for your support.<br />If this is an emergency, please go to the nearest hospital.</div>
+                        </div>';
                 remove_all_actions('latepoint_load_step');
+                }
             }
             break;
         case 'contact':
