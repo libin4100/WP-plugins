@@ -196,6 +196,8 @@ final class LatePointExt {
 
     public function sidePanel($stepName)
     {
+        global $wpdb;
+
         $this->_covid(OsStepsHelper::$booking_object);
 
         if($this->covid || $this->others || $this->acorn) {
@@ -228,8 +230,15 @@ EOT;
         }
         $str = '';
         if(OsStepsHelper::$booking_object->location_id == 1) {
-            $tmpDisabled = (rtrim(wp_get_referer(), '/') == get_home_url()) ? true : false;
-            if($tmpDisabled) {
+            $type_id = 0;
+            $referral_tracking_value = $_COOKIE['referral_tracking'];
+            $check_url_type = $wpdb->get_results("SELECT * from wp_referral_info  WHERE `page_opened_session`='" . $referral_tracking_value . "' order by info_id asc limit 1");
+            foreach ($check_url_type as $type_values) {
+                $type_id = $type_values->type_id;
+            }
+
+            //$tmpDisabled = (rtrim(wp_get_referer(), '/') == get_home_url()) ? true : false;
+            if($type_id == 5) {
                 echo <<<EOT
 <script>
 jQuery(function($) {
@@ -240,7 +249,7 @@ jQuery(function($) {
 </script>
 EOT;
             } else {
-            echo <<<EOT
+                echo <<<EOT
 <script>
 jQuery(function($) {
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="datepicker"] .latepoint-desc-content').html('');
@@ -248,7 +257,7 @@ jQuery(function($) {
 });
 </script>
 EOT;
-            $str = <<<EOT
+                $str = <<<EOT
         if($('.os-summary-value-location').length 
             && $('.os-summary-value-location').text().includes('Ontario') 
             && $('#customer_custom_fields_cf_7lkik5fd').length 
