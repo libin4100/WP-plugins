@@ -323,6 +323,7 @@ EOT;
     }
 
     public function loadStep($stepName, $bookingObject, $format = 'json') {
+        global $wpdb;
         $this->_covid($bookingObject);
         if($this->covid || $bookingObject->service_id == 10) 
             $this->_fields('covid');
