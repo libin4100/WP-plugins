@@ -69,7 +69,7 @@ final class LatePointExt {
         add_filter('gettext', [$this, 'gettext'], 10, 3);
         add_filter('latepoint_replace_booking_vars', [$this, 'replace'], 20, 2);
         add_filter('latepoint_customer_model_validations', [$this, 'customerFilter']);
-        add_filter('latepoint_step_names_in_order', [$this, 'stepNames'], 20, 2);
+        add_filter('latepoint_step_names_in_order', [$this, 'stepNames'], 2, 2);
         add_filter('latepoint_should_step_be_skipped', [$this, 'beSkipped'], 20, 3 );
 
         register_activation_hook(__FILE__, [$this, 'onActivate']);
@@ -566,20 +566,59 @@ EOT;
 
         //Steps for QHA Care Navigation
         case 'qhc_service':
-            $custom_fields_controller = new OsCustomFieldsController();
-            $custom_fields_controller->vars['booking'] = $bookingObject;
-            $custom_fields_controller->vars['current_step'] = $stepName;
-            $custom_fields_controller->set_layout('none');
-            $custom_fields_controller->set_return_format($format);
-            $custom_fields_controller->format_render('_step_qhc_service', [], [
-                'step_name'         => $stepName, 
-                'show_next_btn'     => OsStepsHelper::can_step_show_next_btn($stepName), 
-                'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName), 
-                'is_first_step'     => OsStepsHelper::is_first_step($stepName), 
-                'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
-                'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
-            ]);
+            if($bookingObject->service_id == 13) {
+                $controller = new OsConditionsController();
+                $html = $controller->render($controller->get_view_uri('_step_qhc_service'), 'none', [
+                    'booking' => $bookingObject,
+                    'current_step' => $stepName
+                ]);
+                wp_send_json(array_merge(
+                    ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                    [
+                        'step_name'         => $stepName, 
+                        'show_next_btn'     => true, 
+                        'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName), 
+                        'is_first_step'     => OsStepsHelper::is_first_step($stepName), 
+                        'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
+                        'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                    ]
+                ));
+            }
             break;
+        case 'qhc_contact':
+            $controller = new OsConditionsController();
+            $html = $controller->render($controller->get_view_uri('_step_qhc_contact'), 'none', [
+                'booking' => $bookingObject,
+                'current_step' => $stepName
+            ]);
+            wp_send_json(array_merge(
+                ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                [
+                    'step_name'         => $stepName, 
+                    'show_next_btn'     => true, 
+                    'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName), 
+                    'is_first_step'     => OsStepsHelper::is_first_step($stepName), 
+                    'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
+                    'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                ]
+            ));
+        case 'qhc_additional':
+            $controller = new OsConditionsController();
+            $html = $controller->render($controller->get_view_uri('_step_qhc_additional'), 'none', [
+                'booking' => $bookingObject,
+                'current_step' => $stepName
+            ]);
+            wp_send_json(array_merge(
+                ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                [
+                    'step_name'         => $stepName, 
+                    'show_next_btn'     => true, 
+                    'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName), 
+                    'is_first_step'     => OsStepsHelper::is_first_step($stepName), 
+                    'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
+                    'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                ]
+            ));
         }
     }
 
@@ -662,6 +701,24 @@ EOT;
                 remove_all_actions('latepoint_process_step');
                 wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => $error_messages));
                 return;
+            }
+
+            if ($bookingObject->service_id == 13) {
+                $customer_params = [
+                    'email' => $custom_fields_data['email'],
+                    'phone' => $custom_fields_data['phone'],
+                    'first_name' => $custom_fields_data['first_name'],
+                    'last_name' => $custom_fields_data['last_name'],
+                ];
+                $customer = new OsCustomerModel();
+                $check = $customer->where(['email' => $customer_params['email']])->get_results_as_models();
+                if($check) {
+                    $customer = $check[0];
+                }
+                $customer->set_data($customer_params);
+                if ($customer->save()) {
+                    OsStepsHelper::$booking_object->customer_id = $customer->id;
+                }
             }
         }
         if($stepName == 'contact') {
@@ -1011,6 +1068,26 @@ EOT;
                 'description' => __('Thank you for choosing Gotodoctor as your Virtual Healthcare provider. Please proceed to make payment and check your email for further instructions. *If this is an emergency, go to the nearest hospital or call 911.*<br /><strong>DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</strong>', 'latepoint-extand-master'),
             ];
         }
+        if(OsStepsHelper::$booking_object->service_id == 13) {
+            $steps['qhc_service'] = [
+                'title' => __('Services', 'latepoint-extand-master'),
+                'order_number' => 4,
+                'sub_title' => __('Services', 'latepoint-extand-master'),
+                'description' => '',
+            ];
+            $steps['qhc_contact'] = [
+                'title' => __('Contact Person Details', 'latepoint-extand-master'),
+                'order_number' => 4,
+                'sub_title' => __('Contact Person Details', 'latepoint-extand-master'),
+                'description' => '',
+            ];
+            $steps['qhc_additional'] = [
+                'title' => __('Additional Information', 'latepoint-extand-master'),
+                'order_number' => 4,
+                'sub_title' => __('Additional Information', 'latepoint-extand-master'),
+                'description' => '',
+            ];
+        }
         return $steps;
     }
 
@@ -1223,20 +1300,25 @@ EOT;
 
     public function stepNames($steps, $show_all_steps)
     {
-        if(OsStepsHelper::$booking_object->service_id == 13) {
-            if($index = array_search('confirmation', $steps)) {
-                array_splice($steps, $index, 0, ['qhc_service', 'qhc_contact', 'qhc_additional']);
+        $restrictions = OsParamsHelper::get_param('restrictions');
+        if (OsStepsHelper::$booking_object->service_id == 13 || ($restrictions['selected_service'] ?? false) == 13) {
+            if ($index = array_search('datepicker', $steps)) {
+                array_splice($steps, $index, 2, ['qhc_service', 'qhc_contact', 'qhc_additional']);
             }
-        }
+        }   
         return $steps;
     }
 
     public function beSkipped($skip, $step, $booking_object)
     {
         if($booking_object->service_id == 13) {
-            if(in_array($step, ['datepicker', 'contact'])) {
+            if(in_array($step, ['datepicker', 'contact']))
                 $skip = true;
-            }
+            if(in_array($step, ['qhc_service', 'qhc_contact', 'qhc_additional']))
+                $skip = false;
+        } else {
+            if(in_array($step, ['qhc_service', 'qhc_contact', 'qhc_additional']))
+                $skip = true;
         }
         return $skip;
     }
