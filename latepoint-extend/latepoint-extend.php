@@ -827,6 +827,12 @@ EOT;
                     $model->cname = $data['custom_fields']['first_name'] . ' ' . ($data['custom_fields']['last_name'] ?? '');
                     $model->pname = '';
                 }
+                if ($data['custom_fields']['email'] ?? false) {
+                    $model->custom_fields['email'] = $data['custom_fields']['email'];
+                }
+                if ($data['custom_fields']['phone'] ?? false) {
+                    $model->custom_fields['phone'] = $data['custom_fields']['phone'];
+                }
                 $booking = OsParamsHelper::get_param('customer');
                 if ($booking['custom_fields']['cf_4zkIbeeY'] ?? false) {
                     $model->visit_reason = $booking['custom_fields']['cf_4zkIbeeY'];
