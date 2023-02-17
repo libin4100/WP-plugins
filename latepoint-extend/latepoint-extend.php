@@ -835,7 +835,7 @@ EOT;
                     }
                 }
 
-                if ($qhc = $data['qhc'] ?? false]) {
+                if ($qhc = $data['qhc'] ?? false) {
                     $model->qhc = json_encode($qhc);
                 }
             }
