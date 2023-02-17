@@ -743,7 +743,7 @@ EOT;
                     break;
                 case 'qhc_additional':
                     $booking = OsParamsHelper::get_param('booking');
-                    $qhc = $booking['qhc'];
+                    $qhc = $booking['custom_fields'];
                     $customer_params = [
                         'first_name' => $qhc['first_name'],
                         'last_name' => $qhc['last_name'],
