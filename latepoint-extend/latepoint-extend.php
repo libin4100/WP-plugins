@@ -742,7 +742,8 @@ EOT;
                 case 'qhc_contact':
                     break;
                 case 'qhc_additional':
-                    $qhc = OsParamsHelper::get_param('booking')['qhc'];
+                    $booking = OsParamsHelper::get_param('booking');
+                    $qhc = $booking['qhc'];
                     $customer_params = [
                         'first_name' => $qhc['first_name'],
                         'last_name' => $qhc['last_name'],
@@ -834,7 +835,7 @@ EOT;
                     }
                 }
 
-                if ($qhc = OsParamsHelper::get_param('booking')['qhc'] ?? false]) {
+                if ($qhc = $data['qhc'] ?? false]) {
                     $model->qhc = json_encode($qhc);
                 }
             }
