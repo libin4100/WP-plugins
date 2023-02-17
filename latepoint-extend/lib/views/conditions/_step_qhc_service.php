@@ -39,7 +39,7 @@
 <script>
     jQuery(document).ready(function($) {
         var $other = $('#qhc_service_other');
-        var $otherDetail = $('#other_detail').parents('os-col-12');
+        var $otherDetail = $('#other_detail').parents('.os-col-12');
         $otherDetail.hide();
         $other.on('change', function() {
             if ($other.is(':checked')) {
