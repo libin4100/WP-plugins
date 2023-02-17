@@ -1389,7 +1389,7 @@ EOT;
             $saveName = uniqid() . '-' . $file_name;
             if (wp_upload_bits($saveName, null, file_get_contents($file_tmp))) {
                 //return the file url
-                $response = array('status' => 'success', 'file' => wp_upload_dir()['baseurl'] . '/' . $saveName);
+                $response = array('status' => 'success', 'file' => wp_upload_dir()['url'] . '/' . $saveName);
             } else {
                 $response = array('status' => 'error', 'message' => __('Error uploading file', 'latepoint'));
             }

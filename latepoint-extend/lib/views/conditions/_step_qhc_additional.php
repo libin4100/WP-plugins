@@ -30,8 +30,8 @@
                 data: form_data,
                 type: 'post',
                 success: function(response) {
-                    if (response.success) {
-                        $('#additional_file').val(response.data);
+                    if (response.status == 'success') {
+                        $('#additional_file').val(response.file);
                     }
                 }
             });
