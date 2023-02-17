@@ -65,6 +65,9 @@ if (!class_exists('LatePointExt')) :
             add_action('latepoint_booking_created_frontend', [$this, 'bookingCreated']);
             add_action('latepoint_steps_side_panel_after', [$this, 'sidePanel']);
             add_action('latepoint_model_set_data', [$this, 'setModelData'], 5, 2);
+            //Add action to save ajax file upload
+            add_action('wp_ajax_nopriv_latepoint_file_upload', [$this, 'fileUpload']);
+            add_action('wp_ajax_latepoint_file_upload', [$this, 'fileUpload']);
 
             add_filter('latepoint_installed_addons', [$this, 'registerAddon']);
             add_filter('latepoint_side_menu', [$this, 'addMenu']);
@@ -1372,6 +1375,24 @@ EOT;
                     $skip = true;
             }
             return $skip;
+        }
+
+        /**
+         * File upload handler
+         */
+        public function fileUpload()
+        {
+            check_ajax_referer('latepoint_file_upload', 'security');
+            $file = $_FILES['file'];
+            $file_name = $file['name'];
+            $file_tmp = $file['tmp_name'];
+            $saveName = uniqid() . '-' . $file_name;
+            if (wp_upload_bits($saveName, null, file_get_contents($file_tmp))) {
+                $response = array('status' => 'success', 'file' => $saveName);
+            } else {
+                $response = array('status' => 'error', 'message' => __('Error uploading file', 'latepoint'));
+            }
+            wp_send_json($response);
         }
 
         protected function checkCert($cert)

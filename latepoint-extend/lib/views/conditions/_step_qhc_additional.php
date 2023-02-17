@@ -11,3 +11,29 @@
         <input type="hidden" name="booking[start_time]" value="0">
     </div>
 </div>
+<script>
+    jQuery(document).ready(function($) {
+        //Upload file when user select file
+        $('#additional_file').on('change', function() {
+            var file_data = $('#additional_file').prop('files')[0];
+            var form_data = new FormData();
+            form_data.append('additinal_file', file_data);
+            form_data.append('action', 'latepoint_upload_file');
+            form_data.append('security', '<?= wp_create_nonce('latepoint_upload_file') ?>');
+            $.ajax({
+                url: '<?= admin_url('admin-ajax.php') ?>',
+                dataType: 'json',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form_data,
+                type: 'post',
+                success: function(response) {
+                    if (response.success) {
+                        $('#additional_file').val(response.data);
+                    }
+                }
+            });
+        });
+    });
+</script>
