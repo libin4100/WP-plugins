@@ -715,19 +715,6 @@ EOT;
                         return;
                     }
 
-                    if ($bookingObject->service_id == 13) {
-                        $customer_params = OsParamsHelper::get_param('qhc');
-                        $customer = new OsCustomerModel();
-                        $check = $customer->where(['email' => $customer_params['email']])->get_results_as_models();
-                        if ($check) {
-                            $customer = $check[0];
-                        }
-                        $customer->set_data($customer_params);
-                        if ($customer->save()) {
-                            OsAuthHelper::authorize_customer($customer->id);
-                            OsStepsHelper::$booking_object->customer_id = $customer->id;
-                        }
-                    }
                     break;
                 case 'contact':
                     if ($bookingObject->service_id == 10) {
@@ -755,6 +742,17 @@ EOT;
                 case 'qhc_contact':
                     break;
                 case 'qhc_additional':
+                    $customer_params = OsParamsHelper::get_param('qhc');
+                    $customer = new OsCustomerModel();
+                    $check = $customer->where(['email' => $customer_params['email']])->get_results_as_models();
+                    if ($check) {
+                        $customer = $check[0];
+                    }
+                    $customer->set_data($customer_params);
+                    if ($customer->save()) {
+                        OsAuthHelper::authorize_customer($customer->id);
+                        OsStepsHelper::$booking_object->customer_id = $customer->id;
+                    }
                     break;
             }
         }
