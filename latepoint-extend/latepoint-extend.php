@@ -52,7 +52,7 @@ final class LatePointExt {
         add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
         add_action('latepoint_admin_enqueue_scripts', [$this, 'adminScripts']);
         add_action('wp_enqueue_scripts', [$this, 'frontScripts']);
-        add_action('latepoint_model_save', [$this, 'saveAgent']);
+        add_action('latepoint_model_save', [$this, 'saveModel']);
         add_action('latepoint_booking_quick_edit_form_after',[$this, 'outputQuickForm']);
         add_action('latepoint_step_confirmation_head_info_before',[$this, 'confirmationInfoBefore']);
         add_action('latepoint_step_confirmation_before',[$this, 'confirmationInfoAfter']);
@@ -335,7 +335,8 @@ EOT;
         remove_all_actions('latepoint_booking_steps_contact_after');
     }
 
-    public function loadStep($stepName, $bookingObject, $format = 'json') {
+    public function loadStep($stepName, $bookingObject, $format = 'json') 
+    {
         global $wpdb;
         $this->_covid($bookingObject);
         if($this->covid || $bookingObject->service_id == 10) 
@@ -646,7 +647,8 @@ EOT;
         else
             $fields = $this->_fields('', true);
 
-        if($stepName == 'custom_fields_for_booking') {
+        switch($stepName) {
+        case 'custom_fields_for_booking':
             $this->_timezone($bookingObject);
 
             $booking = OsParamsHelper::get_param('booking');
@@ -717,11 +719,12 @@ EOT;
                 }
                 $customer->set_data($customer_params);
                 if ($customer->save()) {
-                    OsStepsHelper::$booking_object->customer_id = $customer->id;
+                            OsAuthHelper::authorize_customer($customer->id);
+                            OsStepsHelper::$booking_object->customer_id = $customer->id;
                 }
             }
-        }
-        if($stepName == 'contact') {
+            break;
+        case 'contact':
             if($bookingObject->service_id == 10) {
                 $booking = OsParamsHelper::get_param('customer');
                 $data = $booking['custom_fields']['cf_DV0y9heS'] ?? false;
@@ -740,6 +743,14 @@ EOT;
                     return;
                 }
             }
+            break;
+
+            case 'qhc_service':
+                break;
+            case 'qhc_contact':
+                break;
+            case 'qhc_additional':
+                break;
         }
     }
 
@@ -813,10 +824,14 @@ EOT;
                     $model->visit_reason .= ' (' . $booking['custom_fields']['cf_NVByvyYw'] . ')';
                 }
             }
+            
+            if($qhc = OsParamsHelper::get_param('qhc')) {
+                $model->qhc = json_encode($qhc);
+            }
         }
     }
 
-    public function saveAgent($model) {
+    public function saveModel($model) {
         if($model->is_new_record()) return;
 
         if($model->visit_reason ?? false) {
@@ -857,6 +872,10 @@ EOT;
                         $agentSmser->new_booking_notification($agent, $model);
                     }
                 }
+            }
+            
+            if($model->qhc) {
+                $model->save_meta_by_key('qhc', $model->qhc);
             }
         }
     }
