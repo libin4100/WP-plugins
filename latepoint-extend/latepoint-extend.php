@@ -1383,7 +1383,7 @@ EOT;
         public function fileUpload()
         {
             check_ajax_referer('latepoint_file_upload', 'security');
-            $file = $_FILES['file'];
+            $file = $_FILES['additinal_file'];
             $file_name = $file['name'];
             $file_tmp = $file['tmp_name'];
             $saveName = uniqid() . '-' . $file_name;

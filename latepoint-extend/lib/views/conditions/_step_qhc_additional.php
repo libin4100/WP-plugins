@@ -18,8 +18,8 @@
             var file_data = $('#additional_file').prop('files')[0];
             var form_data = new FormData();
             form_data.append('additinal_file', file_data);
-            form_data.append('action', 'latepoint_upload_file');
-            form_data.append('security', '<?= wp_create_nonce('latepoint_upload_file') ?>');
+            form_data.append('action', 'latepoint_file_upload');
+            form_data.append('security', '<?= wp_create_nonce('latepoint_file_upload') ?>');
             $.ajax({
                 url: '<?= admin_url('admin-ajax.php') ?>',
                 dataType: 'json',

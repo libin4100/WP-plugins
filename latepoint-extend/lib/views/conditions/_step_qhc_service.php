@@ -27,7 +27,7 @@
         ];
 
         foreach ($list as $i => $custom_field) {
-            $id = 'qhc_service_' . ($custom_field == 'Other' ? $custom_field : $i);
+            $id = 'qhc_service_' . ($custom_field == 'Other' ? 'other' : $i);
             echo OsFormHelper::checkbox_field('booking[qhc][' . $custom_field . ']', $custom_field, 'on', ($booking->get_meta_by_key($custom_field, 'off') == 'on'), ['id' => $id], ['class' => 'os-col-12']);
             if ($custom_field == 'Other') {
                 echo OsFormHelper::text_field('booking[qhc][other_detail]', 'Please specify', $booking->get_meta_by_key('other_detail', ''), ['class' => 'os-form-control', 'placeholder' => 'Please specify', 'id' => 'other_detail'], array('class' => 'os-col-12'));
