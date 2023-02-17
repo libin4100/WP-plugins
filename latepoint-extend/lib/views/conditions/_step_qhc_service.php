@@ -1,0 +1,37 @@
+<div class="step-qhc-service-w latepoint-step-content" data-step-name="qhc_service">
+    <div class="os-row">
+    <?php
+    $list = [
+        'Allergy and immunology',
+        'Addictions',
+        'Mental health',
+        'Internal medicine',
+        'Orthopedic surgery',
+        'Audiology',
+        'Medical aesthetics',
+        'Chiropody/foot care',
+        'Medical marijuana',
+        'Pain management',
+        'Respiratory care',
+        'Specialist referral',
+        'Medical diagnostics and imaging',
+        'Paediatric care',
+        'Medical procedure/surgery',
+        'social and community support services',
+        'Home health and community care',
+        'Rehab services',
+        'Dental care and orthotics',
+        'Family medicine',
+        'Other'
+    ];
+            
+    foreach ($list as $i => $custom_field) {
+        $id = 'qhc_service_' . $i;
+        echo OsFormHelper::checkbox_field('booking[custom_fields][' . $custom_field . ']', $custom_field, 'on', ($booking->get_meta_by_key($custom_field, 'off') == 'on'), ['id' => $id], ['class' => 'os-col-12']);
+        if($custom_field == 'Other') {
+            echo OsFormHelper::text_field('booking[custom_fields][other_detail]', 'Please specify', $booking->get_meta_by_key('other_detail', ''), ['class' => 'os-form-control', 'placeholder' => 'Please specify'], array('class' => 'os-col-12'));
+        }
+    } 
+    ?>
+    </div>
+</div>

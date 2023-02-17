@@ -69,6 +69,8 @@ final class LatePointExt {
         add_filter('gettext', [$this, 'gettext'], 10, 3);
         add_filter('latepoint_replace_booking_vars', [$this, 'replace'], 20, 2);
         add_filter('latepoint_customer_model_validations', [$this, 'customerFilter']);
+        add_filter('latepoint_step_names_in_order', [$this, 'stepNames'], 20, 2);
+        add_filter('latepoint_should_step_be_skipped', [$this, 'beSkipped'], 20, 3 );
 
         register_activation_hook(__FILE__, [$this, 'onActivate']);
         register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
@@ -228,6 +230,17 @@ jQuery(function($) {
 </script>
 EOT;
         }
+        if(OsStepsHelper::$booking_object->service_id == 13 && $stepName->name == 'custom_fields_for_booking') {
+            echo <<<EOT
+<script>
+jQuery(function($) {
+    $('li[data-step-name="custom_fields_for_booking"] span').text('Client Details');
+    $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Client Details');
+    $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
+});
+</script>
+EOT;
+        }
         $str = '';
         if(OsStepsHelper::$booking_object->location_id == 1) {
             $type_id = 0;
@@ -335,7 +348,10 @@ EOT;
             $fields = $this->_fields('sb');
         } elseif($bookingObject->agent_id == 8) {
             //Quick health access
-            $fields = $this->_fields('qh');
+            if($bookingObject->service_id == 13)
+                $fields = $this->_fields('qhc');
+            else
+                $fields = $this->_fields('qh');
         } elseif(in_array($bookingObject->service_id, [2,3])) 
             $this->_fields('located');
         elseif(in_array($bookingObject->service_id, [7,8])) 
@@ -547,6 +563,23 @@ EOT;
                 if($agents) $bookingObject->agents = json_encode($agents);
             }
             break;
+
+        //Steps for QHA Care Navigation
+        case 'qhc_service':
+            $custom_fields_controller = new OsCustomFieldsController();
+            $custom_fields_controller->vars['booking'] = $bookingObject;
+            $custom_fields_controller->vars['current_step'] = $stepName;
+            $custom_fields_controller->set_layout('none');
+            $custom_fields_controller->set_return_format($format);
+            $custom_fields_controller->format_render('_step_qhc_service', [], [
+                'step_name'         => $stepName, 
+                'show_next_btn'     => OsStepsHelper::can_step_show_next_btn($stepName), 
+                'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName), 
+                'is_first_step'     => OsStepsHelper::is_first_step($stepName), 
+                'is_last_step'      => OsStepsHelper::is_last_step($stepName), 
+                'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+            ]);
+            break;
         }
     }
 
@@ -563,7 +596,10 @@ EOT;
             $fields = $this->_fields('sb');
         } elseif($bookingObject->agent_id == 8) {
             //Quick health access
-            $fields = $this->_fields('qh');
+            if($bookingObject->service_id == 13)
+                $fields = $this->_fields('qhc');
+            else
+                $fields = $this->_fields('qh');
         } elseif(in_array($bookingObject->service_id, [2,3])) 
             $this->_fields('located');
         elseif(in_array($bookingObject->service_id, [7,8])) 
@@ -1080,6 +1116,56 @@ EOT;
                         ],
                     ]
                 ],
+                'qhc' => [
+                    'show' => ['cf_SIt7Zefo', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                    'hide' => [
+                        'cf_hbCNgimu',
+                        'cf_zDS7LUjv',
+                        'cf_H7MIk6Kt',
+                    ],
+                    'add' => [
+                        'first_name' => [
+                            'label' => __('Client First Name', 'latepoint'),
+                            'placeholder' => __('Client First Name', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'first_name'
+                        ],
+                        'last_name' => [
+                            'label' => __('Client Last Name', 'latepoint'),
+                            'placeholder' => __('Client Last Name', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'last_name'
+                        ],
+                        'phone' => [
+                            'label' => __('Client Contact Number', 'latepoint'),
+                            'placeholder' => __('Client Contact Number', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'phone'
+                        ],
+                        'email' => [
+                            'label' => __('Client Email', 'latepoint'),
+                            'placeholder' => __('Client Email', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'email'
+                        ],
+                    ]
+                ],
                 //'located' => ['show' => ['cf_6A3SfgET', 'cf_YXtUB2Jc']],
                 'located' => ['show' => ['cf_6A3SfgET']],
                 'locatedOther' => ['show' => ['cf_6A3SfgET']],
@@ -1133,6 +1219,26 @@ EOT;
     {
         $validations['email'] = array('presence', 'email');
         return $validations;
+    }
+
+    public function stepNames($steps, $show_all_steps)
+    {
+        if(OsStepsHelper::$booking_object->service_id == 13) {
+            if($index = array_search('confirmation', $steps)) {
+                array_splice($steps, $index, 0, ['qhc_service', 'qhc_contact', 'qhc_additional']);
+            }
+        }
+        return $steps;
+    }
+
+    public function beSkipped($skip, $step, $booking_object)
+    {
+        if($booking_object->service_id == 13) {
+            if(in_array($step, ['datepicker', 'contact'])) {
+                $skip = true;
+            }
+        }
+        return $skip;
     }
 
     protected function checkCert($cert)
