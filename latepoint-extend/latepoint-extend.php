@@ -236,13 +236,15 @@ jQuery(function($) {
 </script>
 EOT;
             }
-            if (OsStepsHelper::$booking_object->service_id == 13 && $stepName->name == 'custom_fields_for_booking') {
+            if (OsStepsHelper::$booking_object->service_id == 13) {
                 echo <<<EOT
 <script>
 jQuery(function($) {
     $('li[data-step-name="custom_fields_for_booking"] span').text('Client Details');
     $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Client Details');
     $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Request submitted');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. Our team will review your request and contact you within the next 3 business days to collect any additional information required. If you do not hear from us please call us to confirm your request was received.');
 });
 </script>
 EOT;
@@ -1133,12 +1135,6 @@ EOT;
                     'order_number' => 4,
                     'sub_title' => __('Additional Information', 'latepoint-extand-master'),
                     'description' => '',
-                ];
-                $steps['confirmation'] = [
-                    'title' => __('Your appointment request was received', 'latepoint-extand-master'),
-                    'order_number' => 8,
-                    'sub_title' => __('Appointment Request', 'latepoint-extand-master'),
-                    'description' => __('Thank you for choosing Gotodoctor.ca. Our team will review your request and contact you within the next 3 business days to collect any additional information required. If you do not hear from us please call us to confirm your request was received.'),
                 ];
             }
             return $steps;
