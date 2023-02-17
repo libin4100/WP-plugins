@@ -1134,6 +1134,12 @@ EOT;
                     'sub_title' => __('Additional Information', 'latepoint-extand-master'),
                     'description' => '',
                 ];
+                $steps['confirmation'] = [
+                    'title' => __('Your appointment request was received', 'latepoint-extand-master'),
+                    'order_number' => 8,
+                    'sub_title' => __('Appointment Request', 'latepoint-extand-master'),
+                    'description' => __('Thank you for choosing Gotodoctor.ca. Our team will review your request and contact you within the next 3 business days to collect any additional information required. If you do not hear from us please call us to confirm your request was received.'),
+                ];
             }
             return $steps;
         }
@@ -1246,6 +1252,7 @@ EOT;
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',
                             'cf_H7MIk6Kt',
+                            'cf_nxwjDAcZ',
                         ],
                         'add' => [
                             'first_name' => [
