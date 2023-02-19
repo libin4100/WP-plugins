@@ -247,7 +247,7 @@ jQuery(function($) {
     $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Client Details');
     $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Request submitted');
-    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. Our team will review your request and contact you within the next 3 business days to collect any additional information required. If you do not hear from us please call us to confirm your request was received.');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. Our team will review your request and contact you within the next 3 business days to collect any additional information required. If you do not hear from us please call us to confirm your request was received.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*');
 });
 </script>
 EOT;
@@ -1403,7 +1403,7 @@ EOT;
             $saveName = uniqid() . '-' . $file_name;
             if (wp_upload_bits($saveName, null, file_get_contents($file_tmp))) {
                 //return the file url
-                $response = array('status' => 'success', 'file' => wp_upload_dir()['url'] . '/' . $saveName);
+                $response = array('status' => 'success', 'file' => wp_upload_dir()['url'] . '/' . $saveName, 'original_name' => $file_name);
             } else {
                 $response = array('status' => 'error', 'message' => __('Error uploading file', 'latepoint'));
             }
