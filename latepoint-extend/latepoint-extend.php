@@ -1122,20 +1122,20 @@ EOT;
             }
             if (OsStepsHelper::$booking_object->service_id == 13) {
                 $steps['qhc_service'] = [
-                    'title' => __('Services', 'latepoint-extand-master'),
+                    'title' => __('Services Required', 'latepoint-extand-master'),
                     'order_number' => 4,
                     'sub_title' => __('Services', 'latepoint-extand-master'),
                     'description' => '',
                 ];
                 $steps['qhc_contact'] = [
                     'title' => __('Contact Person Details', 'latepoint-extand-master'),
-                    'order_number' => 4,
+                    'order_number' => 5,
                     'sub_title' => __('Contact Person Details', 'latepoint-extand-master'),
                     'description' => '',
                 ];
                 $steps['qhc_additional'] = [
                     'title' => __('Additional Information', 'latepoint-extand-master'),
-                    'order_number' => 4,
+                    'order_number' => 6,
                     'sub_title' => __('Additional Information', 'latepoint-extand-master'),
                     'description' => '',
                 ];
@@ -1294,6 +1294,14 @@ EOT;
                                 'required' => 'on',
                                 'id' => 'email'
                             ],
+                        ],
+                        'merge' => [
+                            'cf_x18jr0Vf' => [
+                                'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
+                            ],
+                            'cf_6A3SfgET' => [
+                                'label' => __('Where are you or the client currently located?', 'latepoint'),
+                            ],
                         ]
                     ],
                     //'located' => ['show' => ['cf_6A3SfgET', 'cf_YXtUB2Jc']],
@@ -1309,6 +1317,9 @@ EOT;
                             $values[$id]['visibility'] = $hideField;
                         if (in_array($id ?? false, ($fields[$type]['show'] ?? [])))
                             $values[$id]['visibility'] = 'public';
+
+                        if ($fields[$type]['merge'][$id] ?? false)
+                            $values[$id] = array_merge($values[$id], $fields[$type]['merge'][$id]);
                     }
                     $values = ($fields[$type]['add'] ?? []) + $values;
                     OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
@@ -1321,6 +1332,9 @@ EOT;
                                 $values[$id]['visibility'] = $hideField;
                             if (in_array($id ?? false, ($fields[$type]['show'] ?? [])))
                                 $values[$id]['visibility'] = 'public';
+
+                            if ($fields[$type]['merge'][$id] ?? false)
+                                $values[$id] = array_merge($values[$id], $fields[$type]['merge'][$id]);
                         }
                         //$values = ($fields[$type]['add'] ?? []) + $values;
                         OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
