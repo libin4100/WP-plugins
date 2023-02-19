@@ -5,7 +5,10 @@
         echo OsFormHelper::text_field('booking[qhc][additional_waittime]', 'What is your current wait time for the services you need?', $booking->get_meta_by_key('additional_waittime', ''), ['class' => 'os-form-control', 'placeholder' => 'What is your current wait time for the services you need?'], array('class' => 'os-col-12'));
         ?>
         <div class="os-col-12 os-col-sm-12">
-            <div class="os-form-group os-form-group-transparent"><label for="additional_file_upload">Please upload all the relevent documents for our care navigator to review (i.e. consult notes, imaging reports, blood work, etc.)</label><input type="file" placeholder="Please upload all the relevent documents for our care navigator to review (i.e. consult notes, imaging reports, blood work, etc.)" name="booking_file" value="" class="os-form-control" id="additional_file_upload" multiple></div>
+            <div class="os-form-group os-form-group-transparent"><label for="additional_file_upload">Please upload all the relevent documents for our care navigator to review (i.e. consult notes, imaging reports, blood work, etc.)</label><input type="file" placeholder="Please upload all the relevent documents for our care navigator to review (i.e. consult notes, imaging reports, blood work, etc.)" name="booking_file" value="" class="os-form-control" id="additional_file_upload"></div>
+            <div class="latepoint-loading" style="display: none;">
+                <div class="lds-dual-ring"></div>
+            </div>
             <!--Show the uploaded file name with delete button-->
             <div class="uploaded_file"></div>
         </div>
@@ -18,6 +21,10 @@
     jQuery(document).ready(function($) {
         //Upload file when user select file
         $('#additional_file_upload').on('change', function() {
+            _this = $(this);
+            $(this).prop('disabled', true);
+            //Show the loading icon
+            $('.latepoint-loading').show();
             var file_data = $('#additional_file_upload').prop('files')[0];
             var form_data = new FormData();
             form_data.append('additinal_file', file_data);
@@ -38,6 +45,10 @@
                         $('#additional_file_upload').val('');
                         $('.uploaded_file').append('<div class="uploaded_file_name">' + response.original_name + ' <a href="#" class="delete_file" data-file="' + response.file + '">x</a></div>');
                     }
+                },
+                complete: function() {
+                    _this.prop('disabled', false);
+                    $('.latepoint-loading').hide();
                 }
             });
         });
@@ -49,6 +60,7 @@
                     $(this).remove();
                 }
             });
+            $(this).parent().remove();
         });
     });
 </script>
@@ -57,5 +69,33 @@
         font-size: 14px;
         font-weight: 500;
         opacity: 0.8;
+    }
+
+    .lds-dual-ring {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+    }
+
+    .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 64px;
+        height: 64px;
+        margin: 8px;
+        border-radius: 50%;
+        border: 6px solid #8e97b3;
+        border-color: #8e97b3 transparent #8e97b3 transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+    }
+
+    @keyframes lds-dual-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
     }
 </style>
