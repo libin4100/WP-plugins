@@ -955,7 +955,7 @@ EOT;
             }
             if (file_exists(__DIR__ . '/config.php')) require_once(__DIR__ . '/config.php');
             !isset($db) && $db = 'https://teledact.ca/';
-            if (($booking->service_id != 10) && ($booking->customer->phone ?? false)) {
+            if ((!in_array($booking->service_id, [10, 13])) && ($booking->customer->phone ?? false)) {
                 $body = ['phone' => $booking->customer->phone];
                 if (defined('WPLANG')) $body['lang'] = WPLANG;
                 $sms = wp_remote_post($db . 'api/gtd/sms', ['method' => 'POST', 'body' => $body]);
