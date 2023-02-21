@@ -68,6 +68,9 @@ if (!class_exists('LatePointExt')) :
             //Add action to save ajax file upload
             add_action('wp_ajax_nopriv_latepoint_file_upload', [$this, 'fileUpload']);
             add_action('wp_ajax_latepoint_file_upload', [$this, 'fileUpload']);
+            //Add action to delete file
+            add_action('wp_ajax_nopriv_latepoint_ext_file_delete_unshaken1869', [$this, 'fileDelete']);
+            add_action('wp_ajax_latepoint_ext_file_delete_unshaken1869', [$this, 'fileDelete']);
 
             add_filter('latepoint_installed_addons', [$this, 'registerAddon']);
             add_filter('latepoint_side_menu', [$this, 'addMenu']);
@@ -1412,6 +1415,19 @@ EOT;
                 $response = array('status' => 'error', 'message' => __('Error uploading file', 'latepoint'));
             }
             wp_send_json($response);
+        }
+
+        /**
+         * File delete handler
+         */
+        public function fileDelete()
+        {
+            //Convert the url to the absolute path
+            foreach (($_POST['file'] ?? []) as $file) {
+                if (strpos($file, wp_upload_dir()['baseurl']) === 0)
+                    wp_delete_file(str_replace(wp_upload_dir()['baseurl'], wp_upload_dir()['basedir'], $file));
+            }
+            wp_send_json(['status' => 'success']);
         }
 
         protected function checkCert($cert)
