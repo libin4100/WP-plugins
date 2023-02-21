@@ -35,20 +35,20 @@
         }
         ?>
     </div>
-</div>
-<script>
-    jQuery(document).ready(function($) {
-        var $other = $('#qhc_service_other');
-        var $otherDetail = $('#other_detail').parents('.os-col-12');
-        $otherDetail.hide();
-        $other.on('change', function() {
-            if ($other.is(':checked')) {
-                $otherDetail.show();
-                $otherDetail.find('input').focus().prop('required', true);
-            } else {
-                $otherDetail.hide();
-                $otherDetail.find('input').prop('required', false);
-            }
+    <script>
+        jQuery(document).ready(function($) {
+            var $other = $('#qhc_service_other');
+            var $otherDetail = $('#other_detail').parents('.os-col-12');
+            $otherDetail.hide();
+            $other.on('change', function() {
+                if ($other.is(':checked')) {
+                    $otherDetail.show();
+                    $otherDetail.find('input').focus().prop('required', true);
+                } else {
+                    $otherDetail.hide();
+                    $otherDetail.find('input').prop('required', false);
+                }
+            });
         });
-    });
-</script>
+    </script>
+</div>
