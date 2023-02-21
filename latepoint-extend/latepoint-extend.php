@@ -255,11 +255,13 @@ EOT;
             $str = '';
             if (OsStepsHelper::$booking_object->location_id == 1) {
                 $type_id = 0;
+                /*
                 $referral_tracking_value = $_COOKIE['referral_tracking'];
                 $check_url_type = $wpdb->get_results("SELECT * from wp_referral_info  WHERE `page_opened_session`='" . $referral_tracking_value . "' order by info_id asc limit 1");
                 foreach ($check_url_type as $type_values) {
                     $type_id = $type_values->type_id;
                 }
+                */
 
                 //$tmpDisabled = (rtrim(wp_get_referer(), '/') == get_home_url()) ? true : false;
                 if ($type_id == 5) {
@@ -375,11 +377,13 @@ EOT;
                 case 'services':
                     if ($bookingObject->location_id == 1) {
                         $type_id = 0;
+                        /*
                         $referral_tracking_value = $_COOKIE['referral_tracking'];
                         $check_url_type = $wpdb->get_results("SELECT * from wp_referral_info  WHERE `page_opened_session`='" . $referral_tracking_value . "' order by info_id asc limit 1");
                         foreach ($check_url_type as $type_values) {
                             $type_id = $type_values->type_id;
                         }
+                        */
 
                         //$tmpDisabled = (rtrim(wp_get_referer(), '/') == get_home_url()) ? true : false;
                         if ($type_id == 5) {
@@ -1124,7 +1128,7 @@ EOT;
                 $steps['qhc_service'] = [
                     'title' => __('Services Required', 'latepoint-extand-master'),
                     'order_number' => 4,
-                    'sub_title' => __('Services', 'latepoint-extand-master'),
+                    'sub_title' => __('Services Required', 'latepoint-extand-master'),
                     'description' => '',
                 ];
                 $steps['qhc_contact'] = [
