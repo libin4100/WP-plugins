@@ -1405,9 +1405,9 @@ EOT;
             $file_name = $file['name'];
             $file_tmp = $file['tmp_name'];
             $saveName = uniqid() . '-' . $file_name;
-            if (wp_upload_bits($saveName, null, file_get_contents($file_tmp))) {
+            if ($r = wp_upload_bits($saveName, null, file_get_contents($file_tmp))) {
                 //return the file url
-                $response = array('status' => 'success', 'file' => wp_upload_dir()['url'] . '/' . $saveName, 'original_name' => $file_name);
+                $response = array('status' => 'success', 'file' => $r['url'], 'original_name' => $file_name);
             } else {
                 $response = array('status' => 'error', 'message' => __('Error uploading file', 'latepoint'));
             }
