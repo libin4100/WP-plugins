@@ -937,7 +937,7 @@ jQuery(function($) {
 });
 </script>
 EOT;
-            if ($booking->location_id == 1)
+            if ($booking->location_id == 1 || $booking->service_id == 13)
                 echo <<<EOT
 <script>
 jQuery(function($) {
