@@ -5,7 +5,7 @@
         echo OsFormHelper::text_field('booking[qhc][additional_waittime]', 'What is your current wait time for the services you need?', $booking->get_meta_by_key('additional_waittime', ''), ['class' => 'os-form-control', 'placeholder' => 'What is your current wait time for the services you need?'], array('class' => 'os-col-12'));
         ?>
         <div class="os-col-12 os-col-sm-12">
-            <div class="os-form-group os-form-group-transparent"><label for="additional_file_upload">Please upload all the relevent documents for our care navigator to review (i.e. consult notes, imaging reports, blood work, etc.)</label><input type="file" placeholder="Please upload all the relevent documents for our care navigator to review (i.e. consult notes, imaging reports, blood work, etc.)" name="booking_file" value="" class="os-form-control" id="additional_file_upload"></div>
+            <div class="os-form-group os-form-group-transparent"><label for="additional_file_upload">Please upload all the relevent documents for our care navigator to review (i.e. consult notes, imaging reports, blood work, etc.)</label><input type="file" name="booking_file" value="" class="os-form-control" id="additional_file_upload"></div>
             <div class="latepoint-loading" style="display: none;">
                 <div class="lds-dual-ring"></div>
             </div>
@@ -86,6 +86,17 @@
             border: 6px solid #8e97b3;
             border-color: #8e97b3 transparent #8e97b3 transparent;
             animation: lds-dual-ring 1.2s linear infinite;
+        }
+
+        #additional_file_upload {
+            color: transparent !important;
+        }
+
+        #additional_file_upload::after {
+            content: 'Click on Choose File to attach additional documents';
+            color: #8e97b3;
+            position: absolute;
+            left: 90px;
         }
 
         @keyframes lds-dual-ring {
