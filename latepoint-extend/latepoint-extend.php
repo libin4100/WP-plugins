@@ -259,10 +259,12 @@ EOT;
             if (OsStepsHelper::$booking_object->location_id == 1) {
                 $type_id = 0;
                 /*
-                $referral_tracking_value = $_COOKIE['referral_tracking'];
-                $check_url_type = $wpdb->get_results("SELECT * from wp_referral_info  WHERE `page_opened_session`='" . $referral_tracking_value . "' order by info_id asc limit 1");
-                foreach ($check_url_type as $type_values) {
-                    $type_id = $type_values->type_id;
+                if (OsStepsHelper::$booking_object->agent_id == 2) {
+                    $referral_tracking_value = $_COOKIE['referral_tracking'];
+                    $check_url_type = $wpdb->get_results("SELECT * from wp_referral_info  WHERE `page_opened_session`='" . $referral_tracking_value . "' order by info_id asc limit 1");
+                    foreach ($check_url_type as $type_values) {
+                        $type_id = $type_values->type_id;
+                    }
                 }
                 */
 
@@ -381,10 +383,12 @@ EOT;
                     if ($bookingObject->location_id == 1) {
                         $type_id = 0;
                         /*
-                        $referral_tracking_value = $_COOKIE['referral_tracking'];
-                        $check_url_type = $wpdb->get_results("SELECT * from wp_referral_info  WHERE `page_opened_session`='" . $referral_tracking_value . "' order by info_id asc limit 1");
-                        foreach ($check_url_type as $type_values) {
-                            $type_id = $type_values->type_id;
+                        if ($bookingObject->agent_id == 2) {
+                            $referral_tracking_value = $_COOKIE['referral_tracking'];
+                            $check_url_type = $wpdb->get_results("SELECT * from wp_referral_info  WHERE `page_opened_session`='" . $referral_tracking_value . "' order by info_id asc limit 1");
+                            foreach ($check_url_type as $type_values) {
+                                $type_id = $type_values->type_id;
+                            }
                         }
                         */
 
