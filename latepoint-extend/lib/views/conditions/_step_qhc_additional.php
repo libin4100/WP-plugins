@@ -96,7 +96,8 @@
             content: 'Click on Choose File to attach additional documents';
             color: #8e97b3;
             position: absolute;
-            left: 90px;
+            left: 95px;
+            bottom: 3px;
         }
 
         @keyframes lds-dual-ring {
