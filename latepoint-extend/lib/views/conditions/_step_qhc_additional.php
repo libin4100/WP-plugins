@@ -9,6 +9,7 @@
                 <label for="additional_file_upload">
                     Please upload all the relevent documents for our care navigator to review (i.e. consult notes, imaging reports, blood work, etc.)
                     <div class="btn btn-block latepoint-btn latepoint-btn-secondary">
+                        <strong>Add Files</strong>
                         <input type="file" name="booking_file" value="" class="os-form-control" style="display:none" id="additional_file_upload">
                     </div>
                 </label>
