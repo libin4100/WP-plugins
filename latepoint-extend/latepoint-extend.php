@@ -256,6 +256,38 @@ jQuery(function($) {
 EOT;
             }
             $str = '';
+            $locationSettings = (new OsConditionsController)->getLocationSettings();
+            if ($locationSettings) {
+                foreach ($locationSettings as $locationSetting) {
+                    if (
+                        OsStepsHelper::$booking_object->location_id == $locationSetting['location_id'] &&
+                        in_array(OsStepsHelper::$booking_object->agent_id, $locationSetting['agents'])
+                    ) {
+                        $show = true;
+                        if ($locationSetting['referrals']) {
+                            $type_id = 0;
+                            $referral_tracking_value = $_COOKIE['referral_tracking'];
+                            $check_url_type = $wpdb->get_results("SELECT * from wp_referral_info  WHERE `page_opened_session`='" . $referral_tracking_value . "' order by info_id asc limit 1");
+                            foreach ($check_url_type as $type_values) {
+                                $type_id = $type_values->type_id;
+                            }
+                            if ($type_id && !in_array($type_id, $locationSetting['referrals'])) {
+                                $show = false;
+                            }
+                        }
+                        if ($show)
+                            echo <<<EOT
+<script>
+jQuery(function($) {
+    $('.latepoint-side-panel, .latepoint-summary-w').remove();
+    $('.latepoint-lightbox-w .latepoint-lightbox-i').css('width', '540px');
+    $('.latepoint-lightbox-w .latepoint-lightbox-i .os-heading-text').text('{$locationSetting['label']}');
+});
+</script>
+EOT;
+                    }
+                }
+            }
             if (OsStepsHelper::$booking_object->location_id == 1) {
                 $type_id = 0;
                 /*
@@ -380,6 +412,32 @@ EOT;
 
             switch ($stepName) {
                 case 'services':
+                    $locationSettings = (new OsConditionsController)->getLocationSettings();
+                    if ($locationSettings) {
+                        foreach ($locationSettings as $locationSetting) {
+                            if (
+                                $bookingObject->location_id == $locationSetting['location_id'] &&
+                                in_array($bookingObject->agent_id, $locationSetting['agents'])
+                            ) {
+                                $show = true;
+                                if ($locationSetting['referrals']) {
+                                    $type_id = 0;
+                                    $referral_tracking_value = $_COOKIE['referral_tracking'];
+                                    $check_url_type = $wpdb->get_results("SELECT * from wp_referral_info  WHERE `page_opened_session`='" . $referral_tracking_value . "' order by info_id asc limit 1");
+                                    foreach ($check_url_type as $type_values) {
+                                        $type_id = $type_values->type_id;
+                                    }
+                                    if ($type_id && !in_array($type_id, $locationSetting['referrals'])) {
+                                        $show = false;
+                                    }
+                                }
+                                if ($show) {
+                                    echo '<div class="latepoint-desc-content" style="padding:0">' . nl2br($locationSetting['message']) . '</div>';
+                                    remove_all_actions('latepoint_load_step');
+                                }
+                            }
+                        }
+                    }
                     if ($bookingObject->location_id == 1) {
                         $type_id = 0;
                         /*
@@ -966,11 +1024,13 @@ EOT;
             }
             if (file_exists(__DIR__ . '/config.php')) require_once(__DIR__ . '/config.php');
             !isset($db) && $db = 'https://teledact.ca/';
+            /*
             if ((!in_array($booking->service_id, [10, 13])) && ($booking->customer->phone ?? false)) {
                 $body = ['phone' => $booking->customer->phone];
                 if (defined('WPLANG')) $body['lang'] = WPLANG;
                 $sms = wp_remote_post($db . 'api/gtd/sms', ['method' => 'POST', 'body' => $body]);
             }
+            */
             if ($this->covid || $this->others || $this->acorn || $booking->service_id == 10) {
                 $ref = '';
                 $extraClass = '';
@@ -1093,6 +1153,7 @@ EOT;
         public function addMenu($menus)
         {
             if (!OsAuthHelper::is_admin_logged_in()) return $menus;
+            $menus[] = ['id' => 'location_switch', 'label' => __('Location Setting', 'latepoint-extand-master'), 'icon' => 'latepoint-icon latepoint-icon-layers', 'link' => OsRouterHelper::build_link(['conditions', 'location'])];
             $menus[] = ['id' => 'condition_filter', 'label' => __('Conditions', 'latepoint-extand-master'), 'icon' => 'latepoint-icon latepoint-icon-layers', 'link' => OsRouterHelper::build_link(['conditions', 'index'])];
             return $menus;
         }
