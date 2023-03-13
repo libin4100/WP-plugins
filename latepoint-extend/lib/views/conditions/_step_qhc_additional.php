@@ -51,6 +51,8 @@
                             $('.additional_file').last().val(response.file).after(clone);
                             $('#additional_file_upload').val('');
                             $('.uploaded_file').append('<div class="uploaded_file_name">' + response.original_name + ' <a href="#" class="delete_file" data-file="' + response.file + '">x</a></div>');
+                        } else {
+                            alert(response.message);
                         }
                     },
                     complete: function() {
