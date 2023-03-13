@@ -1543,6 +1543,12 @@ EOT;
             $file_name = $file['name'];
             $file_tmp = $file['tmp_name'];
             $saveName = uniqid() . '-' . $file_name;
+            //check file type by mime, allowed types are: jpg, jpeg, png, gif, pdf, doc, docx, xls, xlsx, txt, csv
+            $allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/plain', 'text/csv'];
+            if (!in_array($file['type'], $allowedMimes)) {
+                wp_send_json(array('status' => 'error', 'message' => __('File type not allowed', 'latepoint')));
+            }
+
             if ($r = wp_upload_bits($saveName, null, file_get_contents($file_tmp))) {
                 //return the file url
                 $response = array('status' => 'success', 'file' => $r['url'], 'original_name' => $file_name);
