@@ -1548,6 +1548,10 @@ EOT;
             if (!in_array($file['type'], $allowedMimes)) {
                 wp_send_json(array('status' => 'error', 'message' => __('File type not allowed', 'latepoint')));
             }
+            //check file size, max size is 10MB
+            if ($file['size'] > 10485760) {
+                wp_send_json(array('status' => 'error', 'message' => __('File size too big', 'latepoint')));
+            }
 
             if ($r = wp_upload_bits($saveName, null, file_get_contents($file_tmp))) {
                 //return the file url
