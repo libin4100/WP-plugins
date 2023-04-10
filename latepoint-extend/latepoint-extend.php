@@ -92,8 +92,18 @@ if (!class_exists('LatePointExt')) :
         public function gettext($translation, $text, $domain)
         {
             if ($domain == 'latepoint') {
-                if ($translation == 'Location')
-                    $translation = str_replace('Location', 'Health Card', $translation);
+                switch ($translation) {
+                    case 'Location':
+                        $translation = 'Health Card';
+                        break;
+                    case 'Your Email Address':
+                        if ((OsStepsHelper::$booking_object->agent_id ?? null) == 2) {
+                            $translation = 'Email Address';
+                        } else {
+                            $translation = 'Contact Email Address';
+                        }
+                        break;
+                }
             }
             return $translation;
         }
