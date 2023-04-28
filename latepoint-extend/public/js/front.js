@@ -66,6 +66,9 @@ jQuery(function ($) {
         if ($('#booking_custom_fields_cf_sit7zefo').length && !$('#booking_custom_fields_cf_sit7zefo').parents('.os-col-12').is(':first-child')) {
             $('#booking_custom_fields_cf_sit7zefo').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
         }
+        if ($('#booking_custom_fields_cf_sit7zefp').length && !$('#booking_custom_fields_cf_sit7zefp').parents('.os-col-12').is(':first-child')) {
+            $('#booking_custom_fields_cf_sit7zefp').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
+        }
         if ($('#booking_custom_fields_cf_wzbhg9eb').length && !$('#booking_custom_fields_cf_wzbhg9eb').parents('.os-col-12').is(':first-child')) {
             $('#booking_custom_fields_cf_wzbhg9eb').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
         }
@@ -177,6 +180,33 @@ jQuery(function ($) {
             data: {
                 action: 'check_certificate_qh',
                 id: $('#booking_custom_fields_cf_sit7zefo').val()
+            },
+        }).done(function () {
+            $('.latepoint-body #certificate-error').remove();
+        }).always(function () {
+            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
+        }).fail(function (xhr) {
+            if (xhr.status == 404) {
+                if (xhr.responseJSON.data.count >= 3) {
+                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
+                    $('.latepoint-body').empty();
+                }
+
+                if (!$('.latepoint-body #certificate-error').length)
+                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
+                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
+            }
+        });
+    });
+
+    $('body').on('blur', '#booking_custom_fields_cf_sit7zefp', function () {
+        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
+        $.ajax({
+            method: "POST",
+            url: ajax_object.ajax_url,
+            data: {
+                action: 'check_certificate_p',
+                id: $('#booking_custom_fields_cf_sit7zefp').val()
             },
         }).done(function () {
             $('.latepoint-body #certificate-error').remove();

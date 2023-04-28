@@ -52,6 +52,8 @@ if (!class_exists('LatePointExt')) :
             add_action('wp_ajax_check_certificate_sb', [$this, 'checkCertificateSB']);
             add_action('wp_ajax_nopriv_check_certificate_qh', [$this, 'checkCertificateSessionQH']);
             add_action('wp_ajax_check_certificate_qh', [$this, 'checkCertificateQH']);
+            add_action('wp_ajax_nopriv_check_certificate_p', [$this, 'checkCertificateSessionP']);
+            add_action('wp_ajax_check_certificate_p', [$this, 'checkCertificateP']);
             add_action('wp_ajax_nopriv_check_certificate_aas', [$this, 'checkCertificateSessionAAS']);
             add_action('wp_ajax_check_certificate_aas', [$this, 'checkCertificateAAS']);
             add_action('latepoint_includes', [$this, 'includes']);
@@ -189,6 +191,32 @@ if (!class_exists('LatePointExt')) :
 
             $id = trim($_POST['id']);
             if ($id && !$this->checkCertQH($id)) {
+                $_SESSION['certCount'] += 1;
+                if ($_SESSION['certCount'] >= 3)
+                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Quick Health Access at <nobr>1-800-789-8036</nobr> ext. 703 or paulina@quickhealthaccess.ca to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                else
+                    $msg = 'Certificate number does not match our records. Please try again.';
+
+                wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
+            }
+            wp_die();
+        }
+
+        public function checkCertificateSessionP()
+        {
+            if (!session_id()) {
+                session_start();
+            }
+            $this->checkCertificateP();
+        }
+
+        public function checkCertificateP()
+        {
+            if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
+            if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
+
+            $id = trim($_POST['id']);
+            if ($id && !$this->checkCertP($id)) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
                     $msg = "We're sorry. The certificate number provided does not match our records. Please contact Quick Health Access at <nobr>1-800-789-8036</nobr> ext. 703 or paulina@quickhealthaccess.ca to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
@@ -444,6 +472,12 @@ EOT;
             } elseif ($bookingObject->agent_id == 9) {
                 //AAS
                 $fields = $this->_fields('aas');
+            } elseif ($bookingObject->agent_id == 10) {
+                //Quick health access
+                if ($bookingObject->service_id == 13)
+                    $fields = $this->_fields('pc');
+                else
+                    $fields = $this->_fields('p');
             } elseif (in_array($bookingObject->service_id, [2, 3]))
                 $this->_fields('located');
             elseif (in_array($bookingObject->service_id, [7, 8]))
@@ -813,6 +847,12 @@ EOT;
                         }
                         if ($bookingObject->agent_id == 8 && $k == 'cf_SIt7Zefo') {
                             if (!$this->checkCertQH($custom_fields_data[$k] ?? '')) {
+                                $msg = 'Certificate number does not match our records. Please try again.';
+                                $errors[] = ['type' => 'validation', 'message' => $msg];
+                            }
+                        }
+                        if ($bookingObject->agent_id == 10 && $k == 'cf_SIt7Zefp') {
+                            if (!$this->checkCertP($custom_fields_data[$k] ?? '')) {
                                 $msg = 'Certificate number does not match our records. Please try again.';
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
@@ -1426,6 +1466,95 @@ EOT;
                             ],
                         ]
                     ],
+                    'p' => [
+                        'show' => ['cf_SIt7Zefp', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                        ],
+                        'add' => [
+                            'first_name' => [
+                                'label' => __('First Name', 'latepoint'),
+                                'placeholder' => __('First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Last Name', 'latepoint'),
+                                'placeholder' => __('Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                        ]
+                    ],
+                    'pc' => [
+                        'show' => ['cf_SIt7Zefp', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                            'cf_nxwjDAcZ',
+                        ],
+                        'add' => [
+                            'first_name' => [
+                                'label' => __('Client First Name', 'latepoint'),
+                                'placeholder' => __('Client First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Client Last Name', 'latepoint'),
+                                'placeholder' => __('Client Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                            'phone' => [
+                                'label' => __('Client Contact Number', 'latepoint'),
+                                'placeholder' => __('Client Contact Number', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'phone'
+                            ],
+                            'email' => [
+                                'label' => __('Client Email', 'latepoint'),
+                                'placeholder' => __('Client Email', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'email'
+                            ],
+                        ],
+                        'merge' => [
+                            'cf_x18jr0Vf' => [
+                                'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
+                            ],
+                            'cf_6A3SfgET' => [
+                                'label' => __('Where are you or the client currently located?', 'latepoint'),
+                            ],
+                        ]
+                    ],
                     'aas' => [
                         'show' => ['cf_WzbhG9eB', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
                         'hide' => [
@@ -1601,6 +1730,12 @@ EOT;
         {
             global $wpdb;
             return $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}qh_members where concat('a', certificate) = '%s'", 'a' . $cert));
+        }
+
+        protected function checkCertP($cert)
+        {
+            global $wpdb;
+            return $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partners_members where concat('a', certificate) = '%s'", 'a' . $cert));
         }
 
         protected function checkCertAAS($cert)
