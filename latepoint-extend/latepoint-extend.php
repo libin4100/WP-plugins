@@ -473,7 +473,7 @@ EOT;
                 //AAS
                 $fields = $this->_fields('aas');
             } elseif ($bookingObject->agent_id == 10) {
-                //Quick health access
+                //Partners
                 if ($bookingObject->service_id == 13)
                     $fields = $this->_fields('pc');
                 else
@@ -802,6 +802,12 @@ EOT;
             } elseif ($bookingObject->agent_id == 9) {
                 //AAS
                 $fields = $this->_fields('aas');
+            } elseif ($bookingObject->agent_id == 10) {
+                //Partners
+                if ($bookingObject->service_id == 13)
+                    $fields = $this->_fields('pc');
+                else
+                    $fields = $this->_fields('p');
             } elseif (in_array($bookingObject->service_id, [2, 3]))
                 $this->_fields('located');
             elseif (in_array($bookingObject->service_id, [7, 8]))
