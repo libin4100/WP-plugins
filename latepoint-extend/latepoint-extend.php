@@ -401,7 +401,7 @@ EOT;
 EOT;
                 }
             }
-            if ($this->others && $bookingObject->agent_id == 8) {
+            if (($bookingObject->location_id == 4) && ($bookingObject->agent_id == 8)) {
                 $str = <<<EOT
 ele = $('.latepoint-booking-form-element');
 if(!$('#booking_custom_fields_cf_6a3sfget').length || ($('#booking_custom_fields_cf_6a3sfget').val() == 'Quebec')) {
