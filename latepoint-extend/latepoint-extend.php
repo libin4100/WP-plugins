@@ -536,6 +536,38 @@ EOT;
                             remove_all_actions('latepoint_load_step');
                         }
                     }
+                    if ($this->others && $bookingObject->agent_id == 8) {
+                        $sc = "<script>jQuery(function($) { 
+                            setInterval(function() {
+                                ele = $('.latepoint-booking-form-element');
+                                if(!$('#booking_custom_fields_cf_6a3sfget').length || ($('#booking_custom_fields_cf_6a3sfget').val() == 'Quebec')) {
+                                    latepoint_update_summary_field(t, 'price', '0');
+                                } else {
+                                    latepoint_update_summary_field(t, 'price', '$66');
+                                }
+                            }, 100);
+                         });</script>";
+                        $controller = new OsCustomFieldsController();
+                        $customFields = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'customer');
+                        $controller->vars['custom_fields_for_booking'] = $customFields;
+                        $controller->vars['booking'] = $bookingObject;
+                        $controller->vars['current_step'] = $stepName;
+                        $controller->set_layout('none');
+                        $controller->set_return_format($format);
+                        $html = $controller->render($controller->get_view_uri("_step_custom_fields_for_booking", false), 'none', []);
+                        $html = substr($html, 0, -6) . $sc . '</div>';
+                        wp_send_json(array_merge(
+                            ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                            [
+                                'step_name'         => $stepName,
+                                'show_next_btn'     => OsStepsHelper::can_step_show_next_btn($stepName),
+                                'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
+                                'is_first_step'     => OsStepsHelper::is_first_step($stepName),
+                                'is_last_step'      => OsStepsHelper::is_last_step($stepName),
+                                'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                            ]
+                        ));
+                    }
                     break;
                 case 'contact':
                     if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
@@ -600,29 +632,6 @@ EOT;
                             'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
                         ]);
                     }
-                    if ($this->others && $bookingObject->agent_id == 8) {
-                        $sc = "<script>jQuery(function($) { $('.os-summary-value-price').parents('.os-summary-line').hide(); });</script>";
-                        $controller = new OsCustomFieldsController();
-                        $customFields = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'customer');
-                        $controller->vars['custom_fields_for_booking'] = $customFields;
-                        $controller->vars['booking'] = $bookingObject;
-                        $controller->vars['current_step'] = $stepName;
-                        $controller->set_layout('none');
-                        $controller->set_return_format($format);
-                        $html = $controller->render($controller->get_view_uri("_step_custom_fields_for_booking", false), 'none', []);
-                        $html = substr($html, 0, -6) . $sc . '</div>';
-                        wp_send_json(array_merge(
-                            ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
-                            [
-                                'step_name'         => $stepName,
-                                'show_next_btn'     => OsStepsHelper::can_step_show_next_btn($stepName),
-                                'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
-                                'is_first_step'     => OsStepsHelper::is_first_step($stepName),
-                                'is_last_step'      => OsStepsHelper::is_last_step($stepName),
-                                'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
-                            ]
-                        ));
-                    }
                     break;
                 case 'datepicker':
                     if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
@@ -685,35 +694,6 @@ EOT;
 ' . OsFormHelper::hidden_field('booking[start_date]', date('Y-m-d'), ['class' => 'latepoint_start_date', 'skip_id' => true]) . '
 ' . OsFormHelper::hidden_field('booking[start_time]', 0, ['class' => 'latepoint_start_time', 'skip_id' => true]) . '
                     </div>';
-                        wp_send_json(array_merge(
-                            ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
-                            [
-                                'step_name'         => $stepName,
-                                'show_next_btn'     => true,
-                                'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
-                                'is_first_step'     => OsStepsHelper::is_first_step($stepName),
-                                'is_last_step'      => OsStepsHelper::is_last_step($stepName),
-                                'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
-                            ]
-                        ));
-                    }
-
-                    //QHA others
-                    if ($bookingObject->agent_id == 8 && $this->others) {
-                        $sc = '';
-                        $param = OsParamsHelper::get_param('booking');
-                        $location = $param['custom_fields']['cf_6A3SfgET'];
-                        if ($location != 'Quebec') {
-                            $sc = "<script>jQuery('.os-summary-value-price').parents('.os-summary-line').show();</script>";
-                        }
-                        $controller = new OsStepsController();
-                        $controller->vars = $controller->vars_for_view;
-                        $controller->vars['booking'] = $bookingObject;
-                        $controller->vars['current_step'] = $stepName;
-                        $controller->set_layout('none');
-                        $controller->set_return_format($format);
-                        $html = $controller->render($controller->get_view_uri("_{$stepName}", false), 'none', []);
-                        $html = substr($html, 0, -6) . $sc . '</div>';
                         wp_send_json(array_merge(
                             ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
                             [
