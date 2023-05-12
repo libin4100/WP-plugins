@@ -280,7 +280,8 @@ if (!class_exists('LatePointExt')) :
         {
             global $wpdb;
 
-            $this->_covid(OsStepsHelper::$booking_object);
+            $bookingObject = OsStepsHelper::get_booking_object();
+            $this->_covid($bookingObject);
 
             if ($this->covid || $this->others || $this->acorn) {
                 $url = site_url('wp-content/uploads/2021/05/icon1x.png');
@@ -400,7 +401,7 @@ EOT;
 EOT;
                 }
             }
-            if ($this->others && OsStepsHelper::$booking_object->agent_id == 8) {
+            if ($this->others && $bookingObject->agent_id == 8) {
                 $str = <<<EOT
 ele = $('.latepoint-booking-form-element');
 if(!$('#booking_custom_fields_cf_6a3sfget').length || ($('#booking_custom_fields_cf_6a3sfget').val() == 'Quebec')) {
