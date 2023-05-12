@@ -404,7 +404,7 @@ EOT;
             if (($bookingObject->location_id == 4) && ($bookingObject->agent_id == 8)) {
                 $str = <<<EOT
 ele = $('.latepoint-booking-form-element');
-if($('#booking_custom_fields_cf_6a3sfget').length && ($('#booking_custom_fields_cf_6a3sfget').val() != 'Quebec')) {
+if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && ($('#booking_custom_fields_cf_6a3sfget').val() != 'Quebec')) {
     $('.os-priced-item').attr('data-item-price', 66);
     $('.latepoint-priced-component').val(66);
     latepoint_update_summary_field(ele, 'price', '$66');
