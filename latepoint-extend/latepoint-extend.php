@@ -401,33 +401,11 @@ EOT;
 EOT;
                 }
             }
-            if (($bookingObject->location_id == 4) && ($bookingObject->agent_id == 8)) {
-                echo <<<EOT
-<script>
-jQuery(function($) {
-    ele = $('.latepoint-booking-form-element');
-    function sprice() {
-        if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && ($('#booking_custom_fields_cf_6a3sfget').val() != 'Quebec')) {
-            $('.os-priced-item').attr('data-item-price', 66);
-            $('.latepoint-priced-component').val(66);
-            latepoint_update_summary_field(ele, 'price', '$66');
-        } else {
-            $('.os-priced-item').attr('data-item-price', 0);
-            $('.latepoint-priced-component').val(0);
-            latepoint_update_summary_field(ele, 'price', 0);
-        }
-    }
-    sprice();
-    ele.on('change', '#booking_custom_fields_cf_6a3sfget', function() {
-        sprice();
-    });
-});
-</script>
-EOT;
-            }
+            $lid = intval($bookingObject->location_id ?? 0);
             echo <<<EOT
 <script>
 jQuery(function($) {
+    latepoint_location_id = {$lid};
     setInterval(function() {
         $str
         if($('#customer_custom_fields_cf_eh0zhq9s.init').length) {
@@ -444,6 +422,32 @@ jQuery(function($) {
 });
 </script>
 EOT;
+            if (($bookingObject->location_id == 4) && ($bookingObject->agent_id == 8)) {
+                echo <<<EOT
+<script>
+jQuery(function($) {
+    ele = $('.latepoint-booking-form-element');
+    function sprice() {
+        if(latepoint_location_id == 4) {
+            if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && ($('#booking_custom_fields_cf_6a3sfget').val() != 'Quebec')) {
+                $('.os-priced-item').attr('data-item-price', 66);
+                $('.latepoint-priced-component').val(66);
+                latepoint_update_summary_field(ele, 'price', '$66');
+            } else {
+                $('.os-priced-item').attr('data-item-price', 0);
+                $('.latepoint-priced-component').val(0);
+                latepoint_update_summary_field(ele, 'price', 0);
+            }
+        }
+    }
+    sprice();
+    ele.on('change', '#booking_custom_fields_cf_6a3sfget', function() {
+        sprice();
+    });
+});
+</script>
+EOT;
+            }
         }
 
         public function contactAfter($customer)
