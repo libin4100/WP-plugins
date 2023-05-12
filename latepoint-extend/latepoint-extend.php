@@ -400,6 +400,16 @@ EOT;
 EOT;
                 }
             }
+            if ($this->others && OsStepsHelper::$booking_object->agent_id == 8) {
+                $str = <<<EOT
+ele = $('.latepoint-booking-form-element');
+if(!$('#booking_custom_fields_cf_6a3sfget').length || ($('#booking_custom_fields_cf_6a3sfget').val() == 'Quebec')) {
+    latepoint_update_summary_field(t, 'price', '0');
+} else {
+    latepoint_update_summary_field(t, 'price', '$66');
+}
+EOT;
+            }
             echo <<<EOT
 <script>
 jQuery(function($) {
@@ -419,20 +429,6 @@ jQuery(function($) {
 });
 </script>
 EOT;
-            if ($this->others && OsStepsHelper::$booking_object->agent_id == 8) {
-                echo <<<EOT
-                        <script>jQuery(function($) { 
-                            setInterval(function() {
-                                ele = $('.latepoint-booking-form-element');
-                                if(!$('#booking_custom_fields_cf_6a3sfget').length || ($('#booking_custom_fields_cf_6a3sfget').val() == 'Quebec')) {
-                                    latepoint_update_summary_field(t, 'price', '0');
-                                } else {
-                                    latepoint_update_summary_field(t, 'price', '$66');
-                                }
-                            }, 100);
-                         });</script>
-EOT;
-            }
         }
 
         public function contactAfter($customer)
