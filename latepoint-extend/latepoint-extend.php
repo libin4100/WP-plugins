@@ -405,8 +405,10 @@ EOT;
                 $str = <<<EOT
 ele = $('.latepoint-booking-form-element');
 if($('#booking_custom_fields_cf_6a3sfget').length && ($('#booking_custom_fields_cf_6a3sfget').val() != 'Quebec')) {
+    $('.latepoint-priced-component').val(66);
     latepoint_update_summary_field(ele, 'price', '$66');
 } else {
+    $('.latepoint-priced-component').val(0);
     latepoint_update_summary_field(ele, 'price', 0);
 }
 EOT;
