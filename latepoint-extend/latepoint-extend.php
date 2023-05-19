@@ -30,6 +30,8 @@ if (!class_exists('LatePointExt')) :
         protected $covid;
         protected $others;
         protected $acorn;
+        protected $diff;
+        protected $amount = 66;
 
         protected $cFields = [
             'reason' => 'cf_E6XolZDI'
@@ -439,6 +441,32 @@ jQuery(function($) {
                 latepoint_update_summary_field(ele, 'price', 0);
             }
         }
+    }
+    sprice();
+    ele.on('change', '#booking_custom_fields_cf_6a3sfget', function() {
+        sprice();
+    });
+});
+</script>
+EOT;
+            }
+            if (in_array($bookingObject->agent_id, [2, 7, 9, 10])) {
+                $location = $bookingObject->location->name ?? '';
+                echo <<<EOT
+<script>
+jQuery(function($) {
+    hlocation = '{$location}';
+    ele = $('.latepoint-booking-form-element');
+    function sprice() {
+            if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && !hlocation.includes($('#booking_custom_fields_cf_6a3sfget').val())) {
+                $('.os-priced-item').attr('data-item-price', 66);
+                $('.latepoint-priced-component').val(66);
+                latepoint_update_summary_field(ele, 'price', '$66');
+            } else {
+                $('.os-priced-item').attr('data-item-price', 0);
+                $('.latepoint-priced-component').val(0);
+                latepoint_update_summary_field(ele, 'price', 0);
+            }
     }
     sprice();
     ele.on('change', '#booking_custom_fields_cf_6a3sfget', function() {
@@ -1159,11 +1187,12 @@ EOT;
                 if (defined('WPLANG')) $body['lang'] = WPLANG;
                 $sms = wp_remote_post($db . 'api/gtd/sms', ['method' => 'POST', 'body' => $body]);
             }
-            */
             if ($this->covid || $this->others || $this->acorn || $booking->service_id == 10) {
                 if ($this->others && ($booking->agent_id == 8) && $booking->get_meta_by_key('cf_6A3SfgET') == 'Quebec')
                     return;
+            */
 
+            if ($this->needInvoice($booking)) {
                 $ref = '';
                 $extraClass = '';
                 if ($booking->type_id) {
@@ -1194,7 +1223,7 @@ EOT;
                     ];
                     $invoiceType = 'Covid Test';
                 }
-                if ($this->others) {
+                if ($this->others || $this->diff) {
                     $returnUrl = function_exists('pll_get_post') ? get_the_permalink(pll_get_post(get_page_by_path('thank-you-booking-a-virtual-healthcare-appointment')->ID)) : site_url('thank-you-booking-a-virtual-healthcare-appointment');
                     $merge = [
                         'type' => __('Private Pay - Virtual Healthcare Appointment', 'latepoint-extand-master'),
@@ -1244,7 +1273,7 @@ EOT;
                         'first_name' => $booking->get_meta_by_key('cf_hbCNgimu', ''),
                         'message' => $booking->get_meta_by_key('cf_H7MIk6Kt', null),
                         'invoice_type' => $invoiceType,
-                        'amount' => $booking->service ? $booking->service->charge_amount : '',
+                        'amount' => ($booking->service && ($booking->service->charge_amount > 0)) ? $booking->service->charge_amount : $this->amount,
                         'currency' => 'cad',
                         'referral' => 'latepoint_' . ($booking->id ?: ''),
                         'return_url' => $returnUrl,
@@ -1260,6 +1289,21 @@ EOT;
                         echo '<div class="latepoint-footer request-move"><a href="' . $res->data->payment_link . '" class="latepoint-btn latepoint-btn-primary latepoint-next-btn' . $extraClass . '" data-label="' . __('Make Payment', 'latepoint-extand-master') . '" style="width: auto"><span>' . __('Make Payment', 'latepoint-extand-master') . '</span> <i class="latepoint-icon-arrow-2-right"></i></a></div>';
                 }
             }
+        }
+        protected function needInvoice($booking)
+        {
+            $ploc = $booking->get_meta_by_key('cf_6A3SfgET', '');
+            $loc = $booking->location ? $booking->location->name : '';
+            if (
+                ($booking->service_id == 10)
+                || $this->acorn
+                || $this->covid
+                || ($this->others && (($booking->agent_id != 8) || $booking->get_meta_by_key('cf_6A3SfgET') != 'Quebec'))
+                || $this->diff = (in_array($booking->agent_id, [2, 7, 9, 10]) && (stripos($loc, $ploc) === false))
+            ) {
+                return true;
+            }
+            return false;
         }
 
         public function adminScripts()
