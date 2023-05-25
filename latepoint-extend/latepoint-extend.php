@@ -452,7 +452,7 @@ EOT;
             }
             if (in_array($bookingObject->agent_id, [2, 7, 8, 9, 10])) {
                 $location = $bookingObject->location->name ?? '';
-                if (($bookingObject->agent_id == 8) && ($bookingObject->location_id == 4)) continue;
+                if (($bookingObject->agent_id == 8) && ($bookingObject->location_id == 4)) break;
                 echo <<<EOT
 <script>
 jQuery(function($) {
