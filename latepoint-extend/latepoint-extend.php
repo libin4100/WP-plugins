@@ -424,14 +424,14 @@ jQuery(function($) {
 });
 </script>
 EOT;
-            if (($bookingObject->location_id == 4) && ($bookingObject->agent_id == 8)) {
+            if ($bookingObject->agent_id == 8 && $bookingObject->location_id == 4) {
                 echo <<<EOT
 <script>
 jQuery(function($) {
     ele = $('.latepoint-booking-form-element');
     function sprice() {
         if(latepoint_location_id == 4) {
-            if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && ($('#booking_custom_fields_cf_6a3sfget').val() != 'Quebec')) {
+            if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && !['Quebec', 'New Brunswick'].includes($('#booking_custom_fields_cf_6a3sfget').val())) {
                 $('.os-priced-item').attr('data-item-price', 66);
                 $('.latepoint-priced-component').val(66);
                 latepoint_update_summary_field(ele, 'price', '$66');
@@ -450,7 +450,7 @@ jQuery(function($) {
 </script>
 EOT;
             }
-            if (in_array($bookingObject->agent_id, [2, 7, 9, 10]) || (($bookingObject->agent_id == 8) && ($bookingObject->location_id != 4))) {
+            if (in_array($bookingObject->agent_id, [2, 7, 9, 10]) || ($bookingObject->agent_id == 8 && $bookingObject->location_id != 4)) {
                 $location = $bookingObject->location->name ?? '';
                 echo <<<EOT
 <script>
