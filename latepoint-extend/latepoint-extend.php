@@ -476,6 +476,30 @@ jQuery(function($) {
 </script>
 EOT;
             }
+            // On returning patient
+            if (in_array($bookingObject->agent_id, [2, 3, 4])) {
+                echo <<<EOT
+<script>
+jQuery(function($) {
+    $('body').on('DOMSubtreeModified', '.latepoint-booking-form-element', function() {
+        showhide();
+    });
+    $('body').on('change', '#booking_custom_fields_cf_x18jr0vf', function() {
+        showhide();
+    });
+    function showhide() {
+        if($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_x18jr0vf').val() != 'Yes') {
+            $('#booking_custom_fields_cf_wfhtigvf').closest('.os-form-group').hide();
+            $('#booking_custom_fields_cf_zoxsdwez').closest('.os-form-group').hide();
+        } else {
+            $('#booking_custom_fields_cf_wfhtigvf').closest('.os-form-group').show();
+            $('#booking_custom_fields_cf_zoxsdwez').closest('.os-form-group').show();
+        }
+    }
+});
+</script>
+EOT;
+            }
         }
 
         public function contactAfter($customer)
@@ -515,35 +539,8 @@ EOT;
         {
             global $wpdb;
             $this->_covid($bookingObject);
-            if ($this->covid || $bookingObject->service_id == 10)
-                $this->_fields('covid');
-            elseif ($bookingObject->agent_id == 6) {
-                //MB Blue Cross
-                $fields = $this->_fields('mbc');
-            } elseif ($bookingObject->agent_id == 7) {
-                //Simply Benefits
-                $fields = $this->_fields('sb');
-            } elseif ($bookingObject->agent_id == 8) {
-                //Quick health access
-                if ($bookingObject->service_id == 13)
-                    $fields = $this->_fields('qhc');
-                else
-                    $fields = $this->_fields('qh');
-            } elseif ($bookingObject->agent_id == 9) {
-                //AAS
-                $fields = $this->_fields('aas');
-            } elseif ($bookingObject->agent_id == 10) {
-                //Partners
-                if ($bookingObject->service_id == 13)
-                    $fields = $this->_fields('pc');
-                else
-                    $fields = $this->_fields('p');
-            } elseif (in_array($bookingObject->service_id, [2, 3]))
-                $this->_fields('located');
-            elseif (in_array($bookingObject->service_id, [7, 8]))
-                $this->_fields('locatedOther');
-            else
-                $fields = $this->_fields('', true);
+
+            $this->setField($bookingObject);
 
             switch ($stepName) {
                 case 'services':
@@ -846,35 +843,8 @@ EOT;
         public function processStep($stepName, $bookingObject)
         {
             $this->_covid($bookingObject);
-            if ($this->covid || $bookingObject->service_id == 10)
-                $this->_fields('covid');
-            elseif ($bookingObject->agent_id == 6) {
-                //MB Blue Cross
-                $fields = $this->_fields('mbc');
-            } elseif ($bookingObject->agent_id == 7) {
-                //Simply Benefits
-                $fields = $this->_fields('sb');
-            } elseif ($bookingObject->agent_id == 8) {
-                //Quick health access
-                if ($bookingObject->service_id == 13)
-                    $fields = $this->_fields('qhc');
-                else
-                    $fields = $this->_fields('qh');
-            } elseif ($bookingObject->agent_id == 9) {
-                //AAS
-                $fields = $this->_fields('aas');
-            } elseif ($bookingObject->agent_id == 10) {
-                //Partners
-                if ($bookingObject->service_id == 13)
-                    $fields = $this->_fields('pc');
-                else
-                    $fields = $this->_fields('p');
-            } elseif (in_array($bookingObject->service_id, [2, 3]))
-                $this->_fields('located');
-            elseif (in_array($bookingObject->service_id, [7, 8]))
-                $this->_fields('locatedOther');
-            else
-                $fields = $this->_fields('', true);
+
+            $this->setField($bookingObject);
 
             switch ($stepName) {
                 case 'custom_fields_for_booking':
@@ -927,6 +897,12 @@ EOT;
                         if ($bookingObject->agent_id == 9 && $k == 'cf_WzbhG9eB') {
                             if (!$this->checkCertAAS($custom_fields_data[$k] ?? '')) {
                                 $msg = 'Certificate number does not match our records. Please try again.';
+                                $errors[] = ['type' => 'validation', 'message' => $msg];
+                            }
+                        }
+                        if (in_array($bookingObject->agent_id, [2, 3, 4]) && in_array($k, ['cf_WFHtiGvf', 'cf_ZoXsdwEZ'])) {
+                            if (($custom_fields_data['cf_x18jr0Vf'] ?? '') == 'Yes' && !($custom_fields_data[$k] ?? '')) {
+                                $msg = $f['label'] . ' is required.';
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
                         }
@@ -992,6 +968,52 @@ EOT;
                         OsStepsHelper::$booking_object->customer_id = $customer->id;
                     }
                     break;
+            }
+        }
+
+        public function setField($bookingObject)
+        {
+            switch (true) {
+                case $this->covid || $bookingObject->service_id == 10:
+                    $this->_fields('covid');
+                    break;
+                case in_array($bookingObject->agent_id, [2, 3, 4]):
+                    $fields = $this->_fields('returning');
+                    break;
+                case $bookingObject->agent_id == 6:
+                    //MB Blue Cross
+                    $fields = $this->_fields('mbc');
+                    break;
+                case $bookingObject->agent_id == 7:
+                    //Simply Benefits
+                    $fields = $this->_fields('sb');
+                    break;
+                case $bookingObject->agent_id == 8:
+                    //Quick health access
+                    if ($bookingObject->service_id == 13)
+                        $fields = $this->_fields('qhc');
+                    else
+                        $fields = $this->_fields('qh');
+                    break;
+                case $bookingObject->agent_id == 9:
+                    //AAS
+                    $fields = $this->_fields('aas');
+                    break;
+                case $bookingObject->agent_id == 10:
+                    //Partners
+                    if ($bookingObject->service_id == 13)
+                        $fields = $this->_fields('pc');
+                    else
+                        $fields = $this->_fields('p');
+                    break;
+                case in_array($bookingObject->service_id, [2, 3]):
+                    $this->_fields('located');
+                    break;
+                case in_array($bookingObject->service_id, [7, 8]):
+                    $this->_fields('locatedOther');
+                    break;
+                default:
+                    $fields = $this->_fields('', true);
             }
         }
 
@@ -1675,6 +1697,7 @@ EOT;
                     'located' => ['show' => ['cf_6A3SfgET']],
                     'locatedOther' => ['show' => ['cf_6A3SfgET']],
                     'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
+                    'returning' => ['show' => ['cf_WFHtiGvf', 'cf_ZoXsdwEZ']],
                 ];
                 $hideField = $onSave ? 'public' : 'hidden';
                 $values = is_array($customFields) ? $customFields : json_decode($customFields, true);
