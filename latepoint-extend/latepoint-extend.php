@@ -488,6 +488,9 @@ jQuery(function($) {
         showhide();
     });
     function showhide() {
+        if($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_wfhtigvf').attr('type') != 'date') {
+            $('#booking_custom_fields_cf_wfhtigvf').attr('type', 'date');
+        }
         if($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_x18jr0vf').val() != 'Yes') {
             $('#booking_custom_fields_cf_wfhtigvf').closest('.os-form-group').hide();
             $('#booking_custom_fields_cf_zoxsdwez').closest('.os-form-group').hide();
@@ -902,7 +905,7 @@ EOT;
                         }
                         if (in_array($bookingObject->agent_id, [2, 3, 4]) && in_array($k, ['cf_WFHtiGvf', 'cf_ZoXsdwEZ'])) {
                             if (($custom_fields_data['cf_x18jr0Vf'] ?? '') == 'Yes' && !($custom_fields_data[$k] ?? '')) {
-                                $msg = $f['label'] . ' is required.';
+                                $msg = $f['label'] . ' is required';
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
                         }
