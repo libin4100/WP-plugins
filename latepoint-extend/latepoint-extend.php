@@ -1323,7 +1323,10 @@ EOT;
                 ($booking->service_id == 10)
                 || $this->acorn
                 || $this->covid
-                || ($this->others && (($booking->agent_id != 8) || !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec', 'New Brunswick'])))
+                || ($this->others && (
+                    !in_array($booking->agent_id, [6, 8]) || 
+                    (($booking->agent_id == 8) && !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec', 'New Brunswick']))
+                ))
                 || $this->diff = (in_array($booking->agent_id, [2, 7, 9, 10]) && (stripos($loc, $ploc) === false))
             ) {
                 return true;
