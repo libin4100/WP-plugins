@@ -450,7 +450,10 @@ jQuery(function($) {
 </script>
 EOT;
             }
-            if (in_array($bookingObject->agent_id, [2, 7, 9, 10]) || ($bookingObject->agent_id == 8 && !in_array($bookingObject->location_id, [4, 14]))) {
+            if (
+                (in_array($bookingObject->agent_id, [2, 7, 9, 10]) && !in_array($bookingObject->location_id, [14]))
+                || ($bookingObject->agent_id == 8 && !in_array($bookingObject->location_id, [4, 14]))
+            ) {
                 $location = $bookingObject->location->name ?? '';
                 echo <<<EOT
 <script>
