@@ -1319,6 +1319,9 @@ EOT;
         {
             $ploc = $booking->get_meta_by_key('cf_6A3SfgET', '');
             $loc = $booking->location ? $booking->location->name : '';
+            if($booking->service_id == 13) {
+                return false;
+            }
             if (
                 ($booking->service_id == 10)
                 || $this->acorn
@@ -1329,7 +1332,7 @@ EOT;
                 ))
                 || $this->diff = (
                     (in_array($booking->agent_id, [2, 7, 9, 10]) && (stripos($loc, $ploc) === false))
-                    || (in_array($booking->agent_id, [8]) && ($booking->service_id != 13) && !$this->others && (stripos($loc, $ploc) === false))
+                    || (in_array($booking->agent_id, [8]) && !$this->others && (stripos($loc, $ploc) === false))
                 )
             ) {
                 return true;
