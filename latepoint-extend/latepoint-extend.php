@@ -906,7 +906,7 @@ EOT;
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
                         }
-                        if (in_array($bookingObject->agent_id, [2, 3, 4]) && in_array($k, ['cf_WFHtiGvf', 'cf_ZoXsdwEZ'])) {
+                        if (in_array($bookingObject->agent_id, [2, 3, 4]) && in_array($k, ['cf_WFHtiGvf'])) {
                             if (($custom_fields_data['cf_x18jr0Vf'] ?? '') == 'Yes' && !($custom_fields_data[$k] ?? '')) {
                                 $msg = $f['label'] . ' is required';
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
