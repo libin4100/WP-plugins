@@ -983,7 +983,7 @@ EOT;
                 case $this->covid || $bookingObject->service_id == 10:
                     $this->_fields('covid');
                     break;
-                case in_array($bookingObject->agent_id, [2, 3, 4]):
+                case (in_array($bookingObject->agent_id, [2, 3, 4]) && $bookingObject->location_id == 1):
                     $fields = $this->_fields('returning');
                     break;
                 case $bookingObject->agent_id == 6:
