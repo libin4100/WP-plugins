@@ -907,9 +907,15 @@ EOT;
                             }
                         }
                         if ($this->returningExtra($bookingObject) && in_array($k, ['cf_WFHtiGvf'])) {
-                            if (($custom_fields_data['cf_x18jr0Vf'] ?? '') == 'Yes' && !($custom_fields_data[$k] ?? '')) {
-                                $msg = $f['label'] . ' is required';
-                                $errors[] = ['type' => 'validation', 'message' => $msg];
+                            if (($custom_fields_data['cf_x18jr0Vf'] ?? '') == 'Yes') {
+                                if (!($custom_fields_data[$k] ?? '')) {
+                                    $msg = $f['label'] . ' is required';
+                                    $errors[] = ['type' => 'validation', 'message' => $msg];
+                                } elseif (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $custom_fields_data[$k]) != 1) {
+                                    //If the value is not a valid date, return error
+                                    $msg = $f['label'] . ' is not a valid date';
+                                    $errors[] = ['type' => 'validation', 'message' => $msg];
+                                }
                             }
                         }
                     }
