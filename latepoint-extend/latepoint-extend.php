@@ -480,7 +480,7 @@ jQuery(function($) {
 EOT;
             }
             // On returning patient
-            if (in_array($bookingObject->agent_id, [2, 3, 4])) {
+            if($this->returningExtra($bookingObject)) {
                 echo <<<EOT
 <script>
 jQuery(function($) {
@@ -1341,6 +1341,14 @@ EOT;
                 return true;
             }
             return false;
+        }
+
+        protected function returningExtra($booking)
+        {
+            return (
+                (($booking->location_id == 1) && in_array($booking->agent_id, [2, 3, 4]))
+                || (in_array($booking->location_id, [2, 9]) && ($booking->agent_id == 6))
+            ) ? true : false;
         }
 
         public function adminScripts()
