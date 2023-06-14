@@ -983,9 +983,6 @@ EOT;
                 case $this->covid || $bookingObject->service_id == 10:
                     $this->_fields('covid');
                     break;
-                case (in_array($bookingObject->agent_id, [2, 3, 4]) && $bookingObject->location_id == 1):
-                    $fields = $this->_fields('returning');
-                    break;
                 case $bookingObject->agent_id == 6:
                     //MB Blue Cross
                     $fields = $this->_fields('mbc');
@@ -1020,6 +1017,10 @@ EOT;
                     break;
                 default:
                     $fields = $this->_fields('', true);
+            }
+
+            if($this->returningExtra($bookingObject)){
+                $this->_fields('returning');
             }
         }
 
@@ -1438,11 +1439,19 @@ EOT;
 
         private function _fields($type = false, $reset = false)
         {
+            static $cfBooking;
             $setting = new OsSettingsModel();
-            $cfBooking = $setting->where(['name' => 'custom_fields_for_booking'])->set_limit(1)->get_results_as_models();
-            $cfCustomer = $setting->where(['name' => 'custom_fields_for_customer'])->set_limit(1)->get_results_as_models();
-            if ($cfBooking)
-                $customFields = $cfBooking->value;
+            if (!$cfBooking) {
+                $cfBooking = $setting->where(['name' => 'custom_fields_for_booking'])->set_limit(1)->get_results_as_models();
+                $cfCustomer = $setting->where(['name' => 'custom_fields_for_customer'])->set_limit(1)->get_results_as_models();
+                if ($cfBooking)
+                    $customFields = $cfBooking->value;
+            } else {
+                $customFields = OsSettingsHelper::$loaded_values['custom_fields_for_booking'];
+                $cfCustomer->value = OsSettingsHelper::$loaded_values['custom_fields_for_customer'];
+
+            }
+            
             if ($reset) {
                 OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = $cfBooking->value;
                 OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = $cfCustomer->value;
