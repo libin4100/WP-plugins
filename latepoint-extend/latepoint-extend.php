@@ -1355,6 +1355,7 @@ EOT;
             return (
                 (($booking->location_id == 1) && in_array($booking->agent_id, [2, 3, 4]))
                 || (in_array($booking->location_id, [2, 9]) && ($booking->agent_id == 6))
+                || (in_array($booking->location_id, [1, 10, 15]) && ($booking->agent_id == 7))
             ) ? true : false;
         }
 
