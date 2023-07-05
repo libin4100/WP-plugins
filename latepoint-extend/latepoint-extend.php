@@ -480,7 +480,7 @@ jQuery(function($) {
 EOT;
             }
             // On returning patient
-            if($this->returningExtra($bookingObject)) {
+            if ($this->returningExtra($bookingObject)) {
                 echo <<<EOT
 <script>
 jQuery(function($) {
@@ -1025,7 +1025,7 @@ EOT;
                     $fields = $this->_fields('', true);
             }
 
-            if($this->returningExtra($bookingObject)){
+            if ($this->returningExtra($bookingObject)) {
                 $this->_fields('returning');
             }
         }
@@ -1329,15 +1329,14 @@ EOT;
         {
             $ploc = $booking->get_meta_by_key('cf_6A3SfgET', '');
             $loc = $booking->location ? $booking->location->name : '';
-            if($booking->service_id == 13) {
+            if ($booking->service_id == 13) {
                 return false;
             }
             if (
                 ($booking->service_id == 10)
                 || $this->acorn
                 || $this->covid
-                || ($this->others && (
-                    !in_array($booking->agent_id, [6, 8]) || 
+                || ($this->others && (!in_array($booking->agent_id, [6, 8]) ||
                     (($booking->agent_id == 8) && !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec', 'New Brunswick']))
                 ))
                 || $this->diff = (
@@ -1353,8 +1352,8 @@ EOT;
         protected function returningExtra($booking)
         {
             return (
-                (($booking->location_id == 1) && in_array($booking->agent_id, [2, 3, 4]))
-                || ($booking->agent_id == 6)
+                (($booking->location_id == 1) && in_array($booking->agent_id, [3, 4]))
+                || in_array($booking->agent_id, [2, 6])
                 || (in_array($booking->location_id, [1, 10, 15]) && ($booking->agent_id == 7))
                 || (in_array($booking->location_id, [1, 4, 14]) && ($booking->agent_id == 8))
                 || (in_array($booking->location_id, [1]) && ($booking->agent_id == 9))
@@ -1458,9 +1457,8 @@ EOT;
             } else {
                 $customFields = OsSettingsHelper::$loaded_values['custom_fields_for_booking'];
                 $cfCustomer->value = OsSettingsHelper::$loaded_values['custom_fields_for_customer'];
-
             }
-            
+
             if ($reset) {
                 OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = $cfBooking->value;
                 OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = $cfCustomer->value;
