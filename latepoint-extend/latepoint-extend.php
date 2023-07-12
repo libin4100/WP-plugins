@@ -1353,8 +1353,7 @@ EOT;
         {
             return (
                 (($booking->location_id == 1) && in_array($booking->agent_id, [3, 4]))
-                || in_array($booking->agent_id, [2, 6])
-                || (in_array($booking->location_id, [1, 10, 15]) && ($booking->agent_id == 7))
+                || in_array($booking->agent_id, [2, 6, 7])
                 || (in_array($booking->location_id, [1, 4, 14]) && ($booking->agent_id == 8))
                 || (in_array($booking->location_id, [1]) && ($booking->agent_id == 9))
             ) ? true : false;
