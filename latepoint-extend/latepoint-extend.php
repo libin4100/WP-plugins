@@ -60,6 +60,8 @@ if (!class_exists('LatePointExt')) :
             add_action('wp_ajax_check_certificate_p', [$this, 'checkCertificateP']);
             add_action('wp_ajax_nopriv_check_certificate_aas', [$this, 'checkCertificateSessionAAS']);
             add_action('wp_ajax_check_certificate_aas', [$this, 'checkCertificateAAS']);
+            add_action('wp_ajax_nopriv_check_certificate_fl', [$this, 'checkCertificateSessionFL']);
+            add_action('wp_ajax_check_certificate_fl', [$this, 'checkCertificateFL']);
             add_action('latepoint_includes', [$this, 'includes']);
             add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
             add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
@@ -172,6 +174,32 @@ if (!class_exists('LatePointExt')) :
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
                     $msg = "We're sorry. The certificate number provided does not match our records. Please contact Simply Benefits at <nobr>1-877-815-7751</nobr> or support@simplybenefits.ca to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                else
+                    $msg = 'Certificate number does not match our records. Please try again.';
+
+                wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
+            }
+            wp_die();
+        }
+
+        public function checkCertificateSessionFL()
+        {
+            if (!session_id()) {
+                session_start();
+            }
+            $this->checkCertificateFL();
+        }
+
+        public function checkCertificateFL()
+        {
+            if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
+            if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
+
+            $id = trim($_POST['id']);
+            if ($id && !$this->checkCertPartner($id, 'fabricland')) {
+                $_SESSION['certCount'] += 1;
+                if ($_SESSION['certCount'] >= 3)
+                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                 else
                     $msg = 'Certificate number does not match our records. Please try again.';
 
@@ -906,6 +934,12 @@ EOT;
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
                         }
+                        if ($bookingObject->agent_id == 11 && $k == 'cf_pnWPrUIe') {
+                            if (!$this->checkCertPartner($custom_fields_data[$k] ?? '', 'fabricland')) {
+                                $msg = 'Certificate number does not match our records. Please try again.';
+                                $errors[] = ['type' => 'validation', 'message' => $msg];
+                            }
+                        }
                         if ($this->returningExtra($bookingObject) && in_array($k, ['cf_WFHtiGvf'])) {
                             if (($custom_fields_data['cf_x18jr0Vf'] ?? '') == 'Yes') {
                                 if (!($custom_fields_data[$k] ?? '')) {
@@ -1014,6 +1048,10 @@ EOT;
                         $fields = $this->_fields('pc');
                     else
                         $fields = $this->_fields('p');
+                    break;
+                case $bookingObject->agent_id == 11:
+                    //Fabricland
+                    $fields = $this->_fields('fabricland');
                     break;
                 case in_array($bookingObject->service_id, [2, 3]):
                     $this->_fields('located');
@@ -1336,8 +1374,9 @@ EOT;
                 ($booking->service_id == 10)
                 || $this->acorn
                 || $this->covid
-                || ($this->others && (!in_array($booking->agent_id, [6, 8]) ||
-                    (($booking->agent_id == 8) && !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec', 'New Brunswick']))
+                || ($this->others && (!in_array($booking->agent_id, [6, 8, 11])
+                    || (($booking->agent_id == 8) && !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec', 'New Brunswick']))
+                    || (($booking->agent_id == 11) && !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec']))
                 ))
                 || $this->diff = (
                     (in_array($booking->agent_id, [2, 7, 9, 10]) && (stripos($loc, $ploc) === false))
@@ -1731,6 +1770,36 @@ EOT;
                             ],
                         ]
                     ],
+                    'fabricland' => [
+                        'show' => ['cf_pnWPrUIe', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                        ],
+                        'add' => [
+                            'first_name' => [
+                                'label' => __('First Name', 'latepoint'),
+                                'placeholder' => __('First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Last Name', 'latepoint'),
+                                'placeholder' => __('Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                        ]
+                    ],
                     //'located' => ['show' => ['cf_6A3SfgET', 'cf_YXtUB2Jc']],
                     'located' => ['show' => ['cf_6A3SfgET']],
                     'locatedOther' => ['show' => ['cf_6A3SfgET']],
@@ -1889,6 +1958,12 @@ EOT;
         {
             global $wpdb;
             return $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}aas_members where concat('a', certificate) = '%s'", 'a' . $cert));
+        }
+
+        protected function checkCertPartner($cert, $partner)
+        {
+            global $wpdb;
+            return $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
         }
 
         public function onDeactivate()
