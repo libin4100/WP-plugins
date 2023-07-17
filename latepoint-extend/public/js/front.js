@@ -104,6 +104,18 @@ jQuery(function ($) {
     $('body').on('mouseover', '.latepoint-body .sb-help', function () {
         $('.latepoint-summary-w').append('<img class="sb-image" src="/wp-content/uploads/2022/11/tempsnip.png" />');
     });
+    $('body').on('mouseover', '.latepoint-body .fabricland-help', function () {
+        $('.latepoint-summary-w').append('<img class="fabricland-image" src="/wp-content/uploads/2023/07/fabricland.png" />');
+    });
+    $('body').on('click', '.latepoint-body .fabricland-help', function () {
+        if ($('.latepoint-body .fabricland-image').length)
+            $('.latepoint-body .fabricland-image').remove();
+        else
+            $('.latepoint-body .step-custom-fields-for-booking-w').append('<img class="fabricland-image" src="/wp-content/uploads/2023/07/fabricland.png" />');
+    });
+    $('body').on('mouseout', '.latepoint-body .fabricland-help', function () {
+        $('.latepoint-summary-w .fabricland-image').remove();
+    });
     $('body').on('click', '.latepoint-body .sb-help', function () {
         if ($('.latepoint-body .sb-image').length)
             $('.latepoint-body .sb-image').remove();
