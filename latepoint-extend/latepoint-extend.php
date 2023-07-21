@@ -1051,7 +1051,10 @@ EOT;
                     break;
                 case $bookingObject->agent_id == 11:
                     //Fabricland
-                    $fields = $this->_fields('fabricland');
+                    if ($bookingObject->service_id == 13)
+                        $fields = $this->_fields('fc');
+                    else
+                        $fields = $this->_fields('fabricland');
                     break;
                 case in_array($bookingObject->service_id, [2, 3]):
                     $this->_fields('located');
@@ -1379,7 +1382,7 @@ EOT;
                     || (($booking->agent_id == 11) && !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec']))
                 ))
                 || $this->diff = (
-                    (in_array($booking->agent_id, [2, 7, 9, 10]) && (stripos($loc, $ploc) === false))
+                    (in_array($booking->agent_id, [2, 7, 9, 10, 11]) && (stripos($loc, $ploc) === false))
                     || (in_array($booking->agent_id, [8]) && !$this->others && (stripos($loc, $ploc) === false))
                 )
             ) {
@@ -1392,7 +1395,7 @@ EOT;
         {
             return (
                 (($booking->location_id == 1) && in_array($booking->agent_id, [3, 4]))
-                || in_array($booking->agent_id, [2, 6, 7, 8, 9])
+                || in_array($booking->agent_id, [2, 6, 7, 8, 9, 10, 11])
             ) ? true : false;
         }
 
@@ -1795,6 +1798,65 @@ EOT;
                                 'options' => '',
                                 'required' => 'on',
                                 'id' => 'last_name'
+                            ],
+                        ]
+                    ],
+                    'fc' => [
+                        'show' => ['cf_pnWPrUIe', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                            'cf_nxwjDAcZ',
+                        ],
+                        'add' => [
+                            'first_name' => [
+                                'label' => __('Client First Name', 'latepoint'),
+                                'placeholder' => __('Client First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Client Last Name', 'latepoint'),
+                                'placeholder' => __('Client Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                            'phone' => [
+                                'label' => __('Client Contact Number', 'latepoint'),
+                                'placeholder' => __('Client Contact Number', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'phone'
+                            ],
+                            'email' => [
+                                'label' => __('Client Email', 'latepoint'),
+                                'placeholder' => __('Client Email', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'email'
+                            ],
+                        ],
+                        'merge' => [
+                            'cf_x18jr0Vf' => [
+                                'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
+                            ],
+                            'cf_6A3SfgET' => [
+                                'label' => __('Where are you or the client currently located?', 'latepoint'),
                             ],
                         ]
                     ],
