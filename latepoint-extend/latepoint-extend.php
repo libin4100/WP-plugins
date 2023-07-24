@@ -478,6 +478,32 @@ jQuery(function($) {
 </script>
 EOT;
             }
+            if ($bookingObject->agent_id == 11 && $bookingObject->location_id == 4) {
+                echo <<<EOT
+<script>
+jQuery(function($) {
+    ele = $('.latepoint-booking-form-element');
+    function sprice() {
+        if(latepoint_location_id == 4) {
+            if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && !['Quebec'].includes($('#booking_custom_fields_cf_6a3sfget').val())) {
+                $('.os-priced-item').attr('data-item-price', 66);
+                $('.latepoint-priced-component').val(66);
+                latepoint_update_summary_field(ele, 'price', '$66');
+            } else {
+                $('.os-priced-item').attr('data-item-price', 0);
+                $('.latepoint-priced-component').val(0);
+                latepoint_update_summary_field(ele, 'price', 0);
+            }
+        }
+    }
+    sprice();
+    ele.on('change', '#booking_custom_fields_cf_6a3sfget', function() {
+        sprice();
+    });
+});
+</script>
+EOT;
+            }
             if (
                 (in_array($bookingObject->agent_id, [2, 7, 9, 10]) && !in_array($bookingObject->location_id, [14]))
                 || ($bookingObject->agent_id == 8 && !in_array($bookingObject->location_id, [4, 14]))
