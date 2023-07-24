@@ -478,22 +478,28 @@ jQuery(function($) {
 </script>
 EOT;
             }
-            if ($bookingObject->agent_id == 11 && $bookingObject->location_id == 4) {
+            if ($bookingObject->agent_id == 11 && ($bookingObject->location_id != 14)) {
+                $location = $bookingObject->location->name ?? '';
                 echo <<<EOT
 <script>
 jQuery(function($) {
     ele = $('.latepoint-booking-form-element');
+    hlocation = '{$location}';
     function sprice() {
-        if(latepoint_location_id == 4) {
-            if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && !['Quebec'].includes($('#booking_custom_fields_cf_6a3sfget').val())) {
-                $('.os-priced-item').attr('data-item-price', 66);
-                $('.latepoint-priced-component').val(66);
-                latepoint_update_summary_field(ele, 'price', '$66');
-            } else {
-                $('.os-priced-item').attr('data-item-price', 0);
-                $('.latepoint-priced-component').val(0);
-                latepoint_update_summary_field(ele, 'price', 0);
-            }
+        var cLoc = $('#booking_custom_fields_cf_6a3sfget').val();
+        if (
+            $('#booking_custom_fields_cf_6a3sfget').length
+            && cLoc
+            && !['Quebec'].includes(cLoc)
+            && !hlocation.includes(cLoc)
+        ) {
+            $('.os-priced-item').attr('data-item-price', 66);
+            $('.latepoint-priced-component').val(66);
+            latepoint_update_summary_field(ele, 'price', '$66');
+        } else {
+            $('.os-priced-item').attr('data-item-price', 0);
+            $('.latepoint-priced-component').val(0);
+            latepoint_update_summary_field(ele, 'price', 0);
         }
     }
     sprice();
@@ -1404,12 +1410,12 @@ EOT;
                 || $this->acorn
                 || $this->covid
                 || ($this->others && (!in_array($booking->agent_id, [6, 8, 11])
-                    || (($booking->agent_id == 8) && !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec', 'New Brunswick']))
-                    || (($booking->agent_id == 11) && ($booking->location_id == 4) && !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec']))
+                    || (($booking->agent_id == 8) && !in_array($ploc, ['Quebec', 'New Brunswick']))
+                    || (($booking->agent_id == 11) && !in_array($$ploc, ['Quebec']))
                 ))
                 || $this->diff = (
                     (in_array($booking->agent_id, [2, 7, 9, 10]) && (stripos($loc, $ploc) === false))
-                    || (in_array($booking->agent_id, [11]) && ($booking->location_id != 4) && (stripos($loc, $ploc) === false))
+                    || (in_array($booking->agent_id, [11]) && !in_array($$ploc, ['Quebec']) && (stripos($loc, $ploc) === false))
                     || (in_array($booking->agent_id, [8]) && !$this->others && (stripos($loc, $ploc) === false))
                 )
             ) {
