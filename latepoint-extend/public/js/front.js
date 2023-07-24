@@ -108,7 +108,10 @@ jQuery(function ($) {
         $('.latepoint-summary-w').append('<img class="sb-image" src="/wp-content/uploads/2022/11/tempsnip.png" />');
     });
     $('body').on('mouseover', '.latepoint-body .fabricland-help', function () {
-        $('.latepoint-summary-w').append('<img class="fabricland-image" src="/wp-content/uploads/2023/07/fabricland.png" />');
+        if ($('.latepoint-summary-w').is(':visible'))
+            $('.latepoint-summary-w').append('<img class="fabricland-image" src="/wp-content/uploads/2023/07/fabricland.png" />');
+        else
+            $('.latepoint-body .step-custom-fields-for-booking-w').append('<img class="fabricland-image" src="/wp-content/uploads/2023/07/fabricland.png" />');
     });
     $('body').on('click', '.latepoint-body .fabricland-help', function () {
         if ($('.latepoint-body .fabricland-image').length)
