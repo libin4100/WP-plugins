@@ -1405,10 +1405,11 @@ EOT;
                 || $this->covid
                 || ($this->others && (!in_array($booking->agent_id, [6, 8, 11])
                     || (($booking->agent_id == 8) && !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec', 'New Brunswick']))
-                    || (($booking->agent_id == 11) && !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec']))
+                    || (($booking->agent_id == 11) && ($booking->location_id == 4) && !in_array($booking->get_meta_by_key('cf_6A3SfgET'), ['Quebec']))
                 ))
                 || $this->diff = (
-                    (in_array($booking->agent_id, [2, 7, 9, 10, 11]) && (stripos($loc, $ploc) === false))
+                    (in_array($booking->agent_id, [2, 7, 9, 10]) && (stripos($loc, $ploc) === false))
+                    || (in_array($booking->agent_id, [11]) && ($booking->location_id != 4) && (stripos($loc, $ploc) === false))
                     || (in_array($booking->agent_id, [8]) && !$this->others && (stripos($loc, $ploc) === false))
                 )
             ) {
