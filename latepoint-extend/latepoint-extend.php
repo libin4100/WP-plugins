@@ -1411,11 +1411,11 @@ EOT;
                 || $this->covid
                 || ($this->others && (!in_array($booking->agent_id, [6, 8, 11])
                     || (($booking->agent_id == 8) && !in_array($ploc, ['Quebec', 'New Brunswick']))
-                    || (($booking->agent_id == 11) && !in_array($$ploc, ['Quebec']))
+                    || (($booking->agent_id == 11) && !in_array($ploc, ['Quebec']))
                 ))
                 || $this->diff = (
                     (in_array($booking->agent_id, [2, 7, 9, 10]) && (stripos($loc, $ploc) === false))
-                    || (in_array($booking->agent_id, [11]) && !$this->others && !in_array($$ploc, ['Quebec']) && (stripos($loc, $ploc) === false))
+                    || (in_array($booking->agent_id, [11]) && !$this->others && !in_array($ploc, ['Quebec']) && (stripos($loc, $ploc) === false))
                     || (in_array($booking->agent_id, [8]) && !$this->others && (stripos($loc, $ploc) === false))
                 )
             ) {
