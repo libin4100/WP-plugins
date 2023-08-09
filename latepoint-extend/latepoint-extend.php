@@ -544,6 +544,7 @@ EOT;
                 echo <<<EOT
 <script>
 jQuery(function($) {
+    var aid = {$bookingObject->agent_id};
     $('body').on('DOMSubtreeModified', '.latepoint-booking-form-element', function() {
         showhide();
     });
@@ -554,7 +555,7 @@ jQuery(function($) {
         if($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_wfhtigvf').attr('type') != 'date') {
             $('#booking_custom_fields_cf_wfhtigvf').attr('type', 'date');
         }
-        if($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_x18jr0vf').val() != 'Yes') {
+        if($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_x18jr0vf').val() != 'Yes' || aid != 2) {
             $('#booking_custom_fields_cf_wfhtigvf').closest('.os-form-group').hide();
             $('#booking_custom_fields_cf_zoxsdwez').closest('.os-form-group').hide();
         } else {
@@ -973,7 +974,7 @@ EOT;
                             }
                         }
                         if ($this->returningExtra($bookingObject) && in_array($k, ['cf_WFHtiGvf'])) {
-                            if (($custom_fields_data['cf_x18jr0Vf'] ?? '') == 'Yes') {
+                            if (($custom_fields_data['cf_x18jr0Vf'] ?? '') == 'Yes' || $bookingObject->agent_id == 2) {
                                 if (!($custom_fields_data[$k] ?? '')) {
                                     $msg = $f['label'] . ' is required';
                                     $errors[] = ['type' => 'validation', 'message' => $msg];
