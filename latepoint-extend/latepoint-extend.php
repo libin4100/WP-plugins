@@ -555,7 +555,7 @@ jQuery(function($) {
         if($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_wfhtigvf').attr('type') != 'date') {
             $('#booking_custom_fields_cf_wfhtigvf').attr('type', 'date');
         }
-        if($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_x18jr0vf').val() != 'Yes' || aid != 2) {
+        if($('#booking_custom_fields_cf_wfhtigvf').length && ($('#booking_custom_fields_cf_x18jr0vf').val() != 'Yes' && aid != 2)) {
             $('#booking_custom_fields_cf_wfhtigvf').closest('.os-form-group').hide();
             $('#booking_custom_fields_cf_zoxsdwez').closest('.os-form-group').hide();
         } else {
