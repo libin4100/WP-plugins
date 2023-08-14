@@ -1077,7 +1077,7 @@ EOT;
                     break;
                 case $bookingObject->agent_id == 10:
                     //Partners
-                    if ($bookingObject->service_id == 13)
+                    if ($bookingObject->service_id == 13 || $bookingObject->service_id == 14)
                         $fields = $this->_fields('pc');
                     else
                         $fields = $this->_fields('p');
