@@ -355,6 +355,25 @@ jQuery(function($) {
 </script>
 EOT;
             }
+            if (OsStepsHelper::$booking_object->service_id == 14) {
+                echo <<<EOT
+<script>
+jQuery(function($) {
+    $('li[data-step-name="custom_fields_for_booking"] span').text('Client Details');
+    $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Client Details');
+    $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Request submitted');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. Our team will review your request and contact you within the next 3 business days to collect any additional information required. If you do not hear from us please call us to confirm your request was received.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*');
+    $('.latepoint-footer a.latepoint-btn.latepoint-next-btn').attr('data-os-success-action', 'redirect').attr('data-os-redirect-to', 'https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en').addClass('latepoint-btn-redirection');
+    $('.latepoint-footer a.latepoint-btn.latepoint-next-btn').click(function(e) {
+        e.preventDefault();
+        $('.latepoint-lightbox-close').click();
+        window.location.href = 'https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en';
+    });
+});
+</script>
+EOT;
+            }
             $str = '';
             $locationSettings = (new OsConditionsController)->getLocationSettings();
             if ($locationSettings) {
@@ -915,6 +934,12 @@ EOT;
 
             switch ($stepName) {
                 case 'custom_fields_for_booking':
+                    if($bookingObject->service_id == 14) {
+                        remove_all_actions('latepoint_process_step');
+                        wp_send_json(array('status' => LATEPOINT_STATUS_SUCCESS, 'message' => ''));
+                        return;
+                    }
+
                     $this->_timezone($bookingObject);
 
                     $booking = OsParamsHelper::get_param('booking');
@@ -1964,6 +1989,8 @@ EOT;
                 if ($index = array_search('datepicker', $steps)) {
                     array_splice($steps, $index, 2, ['qhc_service', 'qhc_contact', 'qhc_additional']);
                 }
+            } elseif (OsStepsHelper::$booking_object->service_id == 14 || ($restrictions['selected_service'] ?? false) == 14) {
+                $steps = [];
             }
             return $steps;
         }
@@ -1977,6 +2004,10 @@ EOT;
                     $skip = false;
             } else {
                 if (in_array($step, ['qhc_service', 'qhc_contact', 'qhc_additional']))
+                    $skip = true;
+            }
+            if ($booking_object->service_id == 14) {
+                if (!in_array($step, ['custom_fields_for_booking']))
                     $skip = true;
             }
             return $skip;
