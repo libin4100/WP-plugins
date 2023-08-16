@@ -564,7 +564,7 @@ EOT;
 <script>
 jQuery(function($) {
     var aid = {$bookingObject->agent_id};
-    var alist = [2, 10];
+    var alist = [2, 6, 7, 8, 9, 10, 11];
     $('body').on('DOMSubtreeModified', '.latepoint-booking-form-element', function() {
         showhide();
     });
@@ -935,7 +935,7 @@ EOT;
 
             switch ($stepName) {
                 case 'custom_fields_for_booking':
-                    if($bookingObject->service_id == 14) {
+                    if ($bookingObject->service_id == 14) {
                         remove_all_actions('latepoint_process_step');
                         wp_send_json(array('status' => LATEPOINT_STATUS_SUCCESS, 'message' => ''));
                         return;
