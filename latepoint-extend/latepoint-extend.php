@@ -564,6 +564,7 @@ EOT;
 <script>
 jQuery(function($) {
     var aid = {$bookingObject->agent_id};
+    var alist = [2, 10];
     $('body').on('DOMSubtreeModified', '.latepoint-booking-form-element', function() {
         showhide();
     });
@@ -574,7 +575,7 @@ jQuery(function($) {
         if($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_wfhtigvf').attr('type') != 'date') {
             $('#booking_custom_fields_cf_wfhtigvf').attr('type', 'date');
         }
-        if($('#booking_custom_fields_cf_wfhtigvf').length && ($('#booking_custom_fields_cf_x18jr0vf').val() != 'Yes' && aid != 2)) {
+        if($('#booking_custom_fields_cf_wfhtigvf').length && ($('#booking_custom_fields_cf_x18jr0vf').val() != 'Yes' && !alist.includes(aid))) {
             $('#booking_custom_fields_cf_wfhtigvf').closest('.os-form-group').hide();
             $('#booking_custom_fields_cf_zoxsdwez').closest('.os-form-group').hide();
         } else {
