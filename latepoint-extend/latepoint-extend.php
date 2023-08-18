@@ -368,7 +368,7 @@ jQuery(function($) {
     $('.latepoint-footer a.latepoint-btn.latepoint-next-btn').click(function(e) {
         e.preventDefault();
         $('.latepoint-lightbox-close').click();
-        window.location.href = 'https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en';
+        window.location.href = 'https://app2.connectedwellness.com/ui/login/main?goto=%2Fui%2Fncw%2FNotifications%2F64cdc95ecf43aa164f824ea4&locale=en&org=gtd';
     });
 });
 </script>
