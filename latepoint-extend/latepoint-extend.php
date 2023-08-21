@@ -704,7 +704,7 @@ EOT;
                             foreach ($values as $id => $val) {
                                 if (
                                     in_array($val['label'], ["Reason for today's visit ( required )", "Other Reason ( required )"])
-                                    || in_array($val['id'], ['cf_x18jr0Vf'])
+                                    || in_array($id, ['cf_DrKevcqV'])
                                 )
                                     $values[$id]['visibility'] = 'public';
                             }
