@@ -702,7 +702,10 @@ EOT;
                         $values = json_decode($customFields, true);
                         if ($values) {
                             foreach ($values as $id => $val) {
-                                if (in_array($val['label'], ["Reason for today's visit ( required )", "Other Reason ( required )"]))
+                                if (
+                                    in_array($val['label'], ["Reason for today's visit ( required )", "Other Reason ( required )"])
+                                    || in_array($val['id'], ['cf_x18jr0Vf'])
+                                )
                                     $values[$id]['visibility'] = 'public';
                             }
                             OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
