@@ -1131,6 +1131,9 @@ EOT;
             if ($this->returningExtra($bookingObject)) {
                 $this->_fields('returning');
             }
+            if ($this->isReturning()) {
+                $this->_fields('returningOnly');
+            }
         }
 
         protected function _covid($booking)
@@ -1452,6 +1455,13 @@ EOT;
                 return true;
             }
             return false;
+        }
+
+        protected function isReturning()
+        {
+            $booking = OsParamsHelper::get_param('booking');
+            $custom_fields_data = $booking['custom_fields'];
+            return ($custom_fields_data['cf_x18jr0Vf'] ?? false) == 'Yes';
         }
 
         protected function returningExtra($booking)
@@ -1928,8 +1938,9 @@ EOT;
                     'locatedOther' => ['show' => ['cf_6A3SfgET']],
                     'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
                     'returning' => ['show' => ['cf_WFHtiGvf', 'cf_ZoXsdwEZ']],
+                    'returningOnly' => ['show' => ['cf_DrKevcqV', 'cf_4zkIbeeY']],
                 ];
-                $hideField = $onSave ? 'public' : 'hidden';
+                $hideField = ($onSave ?? false) ? 'public' : 'hidden';
                 $values = is_array($customFields) ? $customFields : json_decode($customFields, true);
                 if ($values && $fields[$type]) {
                     foreach ($values as $id => $val) {
