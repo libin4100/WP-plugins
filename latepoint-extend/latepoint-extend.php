@@ -1132,7 +1132,7 @@ EOT;
             if ($this->returningExtra($bookingObject)) {
                 $this->_fields('returning');
             }
-            if ($this->isReturning()) {
+            if (($bookingObject->service_id != 13) && $this->isReturning()) {
                 $this->_fields('returningOnly');
             }
         }
