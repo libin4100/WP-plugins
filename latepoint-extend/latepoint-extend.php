@@ -1071,7 +1071,8 @@ EOT;
                         $customer = $check[0];
                     }
                     $customer->set_data($customer_params);
-                    if ($customer->save()) {
+                    $customer->save();
+                    if ($customer->id ?? false) {
                         OsAuthHelper::authorize_customer($customer->id);
                         OsStepsHelper::$booking_object->customer_id = $customer->id;
                     }
