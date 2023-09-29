@@ -471,7 +471,6 @@ jQuery(function($) {
 });
 </script>
 EOT;
-        if (!in_array($bookingObject->location_id, [16])) {
             if ($bookingObject->agent_id == 8 && $bookingObject->location_id == 4) {
                 echo <<<EOT
 <script>
@@ -559,7 +558,6 @@ jQuery(function($) {
 </script>
 EOT;
             }
-        }
             // On returning patient
             if ($this->returningExtra($bookingObject)) {
                 echo <<<EOT
