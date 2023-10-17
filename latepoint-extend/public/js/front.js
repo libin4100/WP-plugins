@@ -81,6 +81,13 @@ jQuery(function ($) {
             } else {
                 $('#customer_custom_fields_cf_nvbyvyyw').parents('.os-col-12').hide()
             }
+            if ($('#customer_custom_fields_cf_4zkibeey').val() == 'Prescription renewal') {
+                $('#customer_custom_fields_cf_cvndxx2e').parents('.os-col-12').show()
+                $('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').show()
+            } else {
+                $('#customer_custom_fields_cf_cvndxx2e').parents('.os-col-12').hide()
+                $('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').hide()
+            }
         }
     }, 100);
 

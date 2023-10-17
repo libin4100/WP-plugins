@@ -694,23 +694,6 @@ EOT;
                             OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                         }
                     }
-                    //returning patient
-                    $booking = OsParamsHelper::get_param('booking');
-                    $custom_fields_data = $booking['custom_fields'];
-                    if (($custom_fields_data['cf_x18jr0Vf'] ?? false) == 'Yes') {
-                        $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
-                        $values = json_decode($customFields, true);
-                        if ($values) {
-                            foreach ($values as $id => $val) {
-                                if (
-                                    in_array($val['label'], ["Reason for today's visit ( required )", "Other Reason ( required )"])
-                                    || in_array($id, ['cf_DrKevcqV'])
-                                )
-                                    $values[$id]['visibility'] = 'public';
-                            }
-                            OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
-                        }
-                    }
                     break;
                 case 'custom_fields_for_booking':
                     $_SESSION['certCount'] = 0;
@@ -1939,7 +1922,7 @@ EOT;
                     'locatedOther' => ['show' => ['cf_6A3SfgET']],
                     'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
                     'returning' => ['show' => ['cf_WFHtiGvf', 'cf_ZoXsdwEZ']],
-                    'returningOnly' => ['show' => ['cf_DrKevcqV', 'cf_4zkIbeeY']],
+                    'returningOnly' => ['show' => ['cf_DrKevcqV', 'cf_4zkIbeeY', 'cf_NVByvyYw', 'cf_cVndXX2e', 'cf_iAoOucDc']],
                 ];
                 $hideField = ($onSave ?? false) ? 'public' : 'hidden';
                 $values = is_array($customFields) ? $customFields : json_decode($customFields, true);
