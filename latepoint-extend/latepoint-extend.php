@@ -1032,6 +1032,11 @@ EOT;
                             wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['Other Reason ( required ) can not be blank']));
                             return;
                         }
+                        if ((($booking['custom_fields']['cf_4zkIbeeY'] ?? false) == 'Other') && (!($booking['custom_fields']['cf_cVndXX2e'] ?? false) || !($booking['custom_fields']['cf_iAoOucDc'] ?? false))) {
+                            remove_all_actions('latepoint_process_step');
+                            wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['Pharmacy can not be blank']));
+                            return;
+                        }
                     }
                     break;
 
@@ -1194,6 +1199,10 @@ EOT;
                     $model->visit_reason = $booking['custom_fields']['cf_4zkIbeeY'];
                     if ($booking['custom_fields']['cf_4zkIbeeY'] == 'Other' && ($booking['custom_fields']['cf_NVByvyYw'] ?? false)) {
                         $model->visit_reason .= ' (' . $booking['custom_fields']['cf_NVByvyYw'] . ')';
+                    }
+                    if ($booking['custom_fields']['cf_4zkIbeeY'] == 'Prescription renewal' && ($booking['custom_fields']['cf_cVndXX2e'] ?? false)) {
+                        $model->visit_reason .= '||||prescription_renewal_pharmacy:' . $booking['custom_fields']['cf_cVndXX2e']
+                            . '||||prescription_renewal_pharmacy_phone:' . $booking['custom_fields']['cf_iAoOucDc'];
                     }
                 }
 
