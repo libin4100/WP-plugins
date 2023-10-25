@@ -1037,6 +1037,10 @@ EOT;
                         return;
                     }
                     break;
+                
+                case 'qha_time':
+                    
+                    break;
 
                 case 'qhc_service':
                     break;
@@ -1198,7 +1202,7 @@ EOT;
                     if ($booking['custom_fields']['cf_4zkIbeeY'] == 'Other' && ($booking['custom_fields']['cf_NVByvyYw'] ?? false)) {
                         $model->visit_reason .= ' (' . $booking['custom_fields']['cf_NVByvyYw'] . ')';
                     }
-                    if ($booking['custom_fields']['cf_4zkIbeeY'] == 'Prescription renewal' && ($booking['custom_fields']['cf_cVndXX2e'] ?? false)) {
+                    if (($booking['custom_fields']['cf_4zkIbeeY'] == 'Prescription renewal') && ($booking['custom_fields']['cf_cVndXX2e'] ?? false)) {
                         $model->visit_reason .= '||||prescription_renewal_pharmacy:' . $booking['custom_fields']['cf_cVndXX2e']
                             . '||||prescription_renewal_pharmacy_phone:' . $booking['custom_fields']['cf_iAoOucDc'];
                     }
@@ -1542,6 +1546,14 @@ EOT;
                     'title' => __('Additional Information', 'latepoint-extand-master'),
                     'order_number' => 6,
                     'sub_title' => __('Additional Information', 'latepoint-extand-master'),
+                    'description' => '',
+                ];
+            }
+            if ((OsStepsHelper::$booking_object->agent_id == 8) && (OsStepsHelper::$booking_object->service_id != 13)) {
+                $steps['qha_time'] = [
+                    'title' => __('Appointment Request:', 'latepoint-extand-master'),
+                    'order_number' => 3,
+                    'sub_title' => __('Appointment Request:', 'latepoint-extand-master'),
                     'description' => '',
                 ];
             }
