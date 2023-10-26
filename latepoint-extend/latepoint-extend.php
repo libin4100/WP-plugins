@@ -870,7 +870,7 @@ EOT;
                         wp_send_json(array_merge(
                             ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
                             [
-                                'step_name'         => $stepName,
+                                'step_name'         => 'datepicker',
                                 'show_next_btn'     => true,
                                 'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
                                 'is_first_step'     => OsStepsHelper::is_first_step($stepName),
@@ -1573,10 +1573,10 @@ EOT;
                     'description' => '',
                 ];
             }
-            if ((OsStepsHelper::$booking_object->agent_id == 8) && (OsStepsHelper::$booking_object->service_id != 13)) {
+            if ((OsStepsHelper::$booking_object->agent_id == 8)) {
                 $steps['qha_time'] = [
                     'title' => __('Appointment Request:', 'latepoint-extand-master'),
-                    'order_number' => 2,
+                    'order_number' => 4,
                     'sub_title' => __('Appointment Request:', 'latepoint-extand-master'),
                     'description' => '',
                 ];
@@ -2043,8 +2043,8 @@ EOT;
                     || (isset($restrictions['selected_service']) && ($restrictions['selected_service'] != 13))
                 )
             ) {
-                if ($index = array_search('services', $steps)) {
-                    array_splice($steps, $index, 1, ['services', 'qha_time']);
+                if ($index = array_search('datepicker', $steps)) {
+                    array_splice($steps, $index, 1, ['qha_time', 'datepicker']);
                 }
             }
             return $steps;
