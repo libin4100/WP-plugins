@@ -803,6 +803,11 @@ EOT;
                     }
                     break;
                 case 'confirmation':
+                    $booking = OsParamsHelper::get_param('booking');
+                    if (($booking['qha_time'] ?? false) == 'fatest') {
+                        $bookingObject->start_date = date('Y-m-d');
+                        $bookingObject->start_time = date('H') * 60 + date('i');
+                    }
                     $defaultAgents = OsAgentHelper::get_agents_for_service_and_location($bookingObject->service_id, $bookingObject->location_id);
                     $availableAgents = [];
                     if ($bookingObject->start_date && $bookingObject->start_time) {
@@ -854,6 +859,26 @@ EOT;
                         if ($agents) $bookingObject->agents = json_encode($agents);
                     }
                     break;
+                    //Steps for QHA appointment request
+                case 'qha_time':
+                    if ($bookingObject->agent_id == 8 && $bookingObject->service_id != 13) {
+                        $controller = new OsConditionsController();
+                        $html = $controller->render($controller->get_view_uri('_step_qha_time'), 'none', [
+                            'booking' => $bookingObject,
+                            'current_step' => $stepName
+                        ]);
+                        wp_send_json(array_merge(
+                            ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                            [
+                                'step_name'         => $stepName,
+                                'show_next_btn'     => true,
+                                'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
+                                'is_first_step'     => OsStepsHelper::is_first_step($stepName),
+                                'is_last_step'      => OsStepsHelper::is_last_step($stepName),
+                                'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                            ]
+                        ));
+                    }
 
                     //Steps for QHA Care Navigation
                 case 'qhc_service':
@@ -1039,7 +1064,6 @@ EOT;
                     break;
                 
                 case 'qha_time':
-                    
                     break;
 
                 case 'qhc_service':
@@ -1552,7 +1576,7 @@ EOT;
             if ((OsStepsHelper::$booking_object->agent_id == 8) && (OsStepsHelper::$booking_object->service_id != 13)) {
                 $steps['qha_time'] = [
                     'title' => __('Appointment Request:', 'latepoint-extand-master'),
-                    'order_number' => 3,
+                    'order_number' => 2,
                     'sub_title' => __('Appointment Request:', 'latepoint-extand-master'),
                     'description' => '',
                 ];
@@ -2003,12 +2027,25 @@ EOT;
         public function stepNames($steps, $show_all_steps)
         {
             $restrictions = OsParamsHelper::get_param('restrictions');
+            $booking = OsParamsHelper::get_param('booking');
             if (OsStepsHelper::$booking_object->service_id == 13 || ($restrictions['selected_service'] ?? false) == 13) {
                 if ($index = array_search('datepicker', $steps)) {
                     array_splice($steps, $index, 2, ['qhc_service', 'qhc_contact', 'qhc_additional']);
                 }
             } elseif (OsStepsHelper::$booking_object->service_id == 14 || ($restrictions['selected_service'] ?? false) == 14) {
                 $steps = [];
+            } elseif (
+                (
+                    (isset($booking['agent_id']) && ($booking['agent_id'] == 8))
+                    || (isset($restrictions['selected_agent']) && ($restrictions['selected_agent'] == 8))
+                ) && (
+                    (isset($booking['service_id']) && ($booking['service_id'] != 13))
+                    || (isset($restrictions['selected_service']) && ($restrictions['selected_service'] != 13))
+                )
+            ) {
+                if ($index = array_search('services', $steps)) {
+                    array_splice($steps, $index, 1, ['services', 'qha_time']);
+                }
             }
             return $steps;
         }
@@ -2022,6 +2059,13 @@ EOT;
                     $skip = false;
             } else {
                 if (in_array($step, ['qhc_service', 'qhc_contact', 'qhc_additional']))
+                    $skip = true;
+            }
+            if (($booking_object->agent_id == 8) && ($booking_object->service_id != 13)) {
+                if (in_array($step, ['qha_time']))
+                    $skip = false;
+                $params = OsParamsHelper::get_param('booking');
+                if ((($params['qha_time'] ?? false) == 'fastest') && ($step == 'datepicker'))
                     $skip = true;
             }
             if ($booking_object->service_id == 14) {
