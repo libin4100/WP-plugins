@@ -861,7 +861,7 @@ EOT;
                     break;
                     //Steps for QHA appointment request
                 case 'qha_time':
-                    if ($bookingObject->agent_id == 8 && $bookingObject->service_id != 13) {
+                    if ($bookingObject->service_id != 13) {
                         $controller = new OsConditionsController();
                         $html = $controller->render($controller->get_view_uri('_step_qha_time'), 'none', [
                             'booking' => $bookingObject,
