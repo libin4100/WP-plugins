@@ -1572,8 +1572,7 @@ EOT;
                     'sub_title' => __('Additional Information', 'latepoint-extand-master'),
                     'description' => '',
                 ];
-            }
-            if ((OsStepsHelper::$booking_object->agent_id == 8)) {
+            } else {
                 $steps['qha_time'] = [
                     'title' => __('Appointment Request:', 'latepoint-extand-master'),
                     'order_number' => 4,
@@ -2061,7 +2060,7 @@ EOT;
                 if (in_array($step, ['qhc_service', 'qhc_contact', 'qhc_additional']))
                     $skip = true;
             }
-            if (($booking_object->agent_id == 8) && ($booking_object->service_id != 13)) {
+            if ($booking_object->service_id != 13) {
                 if (in_array($step, ['qha_time']))
                     $skip = false;
                 $params = OsParamsHelper::get_param('booking');
