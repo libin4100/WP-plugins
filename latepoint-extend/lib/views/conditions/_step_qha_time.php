@@ -2,7 +2,7 @@
     <div class="os-animated-parent os-items os-as-rows">
         <div class="os-animated-child os-item os-priced-item with-description" data-time-type="fastest">
             <div class="os-service-selector os-item-i os-animated-self" data-time-type="fastest">
-                <span class="os-item-img-w"></span>
+                <span class="os-item-img-w"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></span>
                 <span class="os-item-name-w">
                     <span class="os-item-name">Next available appointment</span>
                     <span class="os-item-desc"></span>
@@ -11,7 +11,7 @@
         </div>
         <div class="os-animated-child os-item os-priced-item with-description" data-time-type="future">
             <div class="os-service-selector os-item-i os-animated-self" data-time-type="future">
-                <span class="os-item-img-w"></span>
+                <span class="os-item-img-w"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                 <span class="os-item-name-w">
                     <span class="os-item-name">Preferred date/time</span>
                     <span class="os-item-desc"></span>
@@ -24,6 +24,16 @@
     <div id="time-type-css"></div>
     <script>
         jQuery(document).ready(function($) {
+            if ($('.latepoint-heading-w .os-heading-text-library[data-step-name="datepicker"]').length) {
+                let clone = $('.latepoint-heading-w .os-heading-text-library[data-step-name="datepicker"]').clone();
+                clone.attr('data-step-name', 'qha_time');
+                $('.latepoint-heading-w .os-heading-text-library[data-step-name="datepicker"]').after(clone);
+            }
+            if ($('.latepoint-step-desc .latepoint-step-desc-library[data-step-name="datepicker"]').length) {
+                let clone = $('.latepoint-step-desc .latepoint-step-desc-library[data-step-name="datepicker"]').clone();
+                clone.attr('data-step-name', 'qha_time');
+                $('.latepoint-step-desc .latepoint-step-desc-library[data-step-name="datepicker"]').after(clone);
+            }
             var date = new Date();
             var $timeType = $('.step-qha-time-w').find('[name="booking[qha_time]"]');
             var $timeTypeItems = $('.step-qha-time-w').find('.os-item');
@@ -52,4 +62,5 @@
             });
         });
     </script>
+    <style>.step-qha-time-w .step-qha-time-w i { font-size: 2.5em !important; }</style>
 </div>
