@@ -62,5 +62,5 @@
             });
         });
     </script>
-    <style>.step-qha-time-w .step-qha-time-w i { font-size: 2.5em !important; }</style>
+    <style>.step-qha-time-w .os-item-name-w i { font-size: 2.5em !important; color: #205681 !important }</style>
 </div>
