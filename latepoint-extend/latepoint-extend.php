@@ -2034,13 +2034,8 @@ EOT;
             } elseif (OsStepsHelper::$booking_object->service_id == 14 || ($restrictions['selected_service'] ?? false) == 14) {
                 $steps = [];
             } elseif (
-                (
-                    (isset($booking['agent_id']) && ($booking['agent_id'] == 8))
-                    || (isset($restrictions['selected_agent']) && ($restrictions['selected_agent'] == 8))
-                ) && (
-                    (isset($booking['service_id']) && ($booking['service_id'] != 13))
-                    || (isset($restrictions['selected_service']) && ($restrictions['selected_service'] != 13))
-                )
+                (isset($booking['service_id']) && ($booking['service_id'] != 13))
+                || (isset($restrictions['selected_service']) && ($restrictions['selected_service'] != 13))
             ) {
                 if ($index = array_search('datepicker', $steps)) {
                     array_splice($steps, $index, 1, ['qha_time', 'datepicker']);
