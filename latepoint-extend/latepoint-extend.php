@@ -2213,7 +2213,7 @@ EOT;
 
         protected function checkCertTest($cert)
         {
-            return $cert == '12345678';
+            return $cert == '123456';
         }
 
         public function onDeactivate()
