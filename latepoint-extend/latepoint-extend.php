@@ -1965,7 +1965,7 @@ EOT;
                         ]
                     ],
                     'ic' => [
-                        'show' => ['cf_pnWPrUIe', 'cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_zZbexFje'],
+                        'show' => ['cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_zZbexFje'],
                         'hide' => [
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',
