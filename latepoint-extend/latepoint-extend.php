@@ -62,6 +62,8 @@ if (!class_exists('LatePointExt')) :
             add_action('wp_ajax_check_certificate_aas', [$this, 'checkCertificateAAS']);
             add_action('wp_ajax_nopriv_check_certificate_fl', [$this, 'checkCertificateSessionFL']);
             add_action('wp_ajax_check_certificate_fl', [$this, 'checkCertificateFL']);
+            add_action('wp_ajax_nopriv_check_certificate_gotohw', [$this, 'checkCertificateSessionGotoHW']);
+            add_action('wp_ajax_check_certificate_gotohw', [$this, 'checkCertificateGotoHW']);
             add_action('latepoint_includes', [$this, 'includes']);
             add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
             add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
@@ -202,6 +204,32 @@ if (!class_exists('LatePointExt')) :
                     $msg = "We're sorry. The certificate number provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                 else
                     $msg = 'Certificate number does not match our records. Please try again.';
+
+                wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
+            }
+            wp_die();
+        }
+
+        public function checkCertificateSessionGotoHW()
+        {
+            if (!session_id()) {
+                session_start();
+            }
+            $this->checkCertificateGotoHW();
+        }
+
+        public function checkCertificateGotoHW()
+        {
+            if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
+            if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
+
+            $id = trim($_POST['id']);
+            if ($id && !$this->checkCertPartner($id, 'gothealthwallet')) {
+                $_SESSION['certCount'] += 1;
+                if ($_SESSION['certCount'] >= 3)
+                    $msg = "We're sorry. The employee ID provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                else
+                    $msg = 'Employee ID does not match our records. Please try again.';
 
                 wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
             }
@@ -1006,6 +1034,12 @@ EOT;
                         }
                         if ($bookingObject->agent_id == 11 && $k == 'cf_pnWPrUIe') {
                             if (!$this->checkCertPartner($custom_fields_data[$k] ?? '', 'fabricland')) {
+                                $msg = 'Certificate number does not match our records. Please try again.';
+                                $errors[] = ['type' => 'validation', 'message' => $msg];
+                            }
+                        }
+                        if ($bookingObject->agent_id == 13 && $k == 'cf_P56xPUO5') {
+                            if (!$this->checkCertPartner($custom_fields_data[$k] ?? '', 'gotohealthwallet')) {
                                 $msg = 'Certificate number does not match our records. Please try again.';
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
