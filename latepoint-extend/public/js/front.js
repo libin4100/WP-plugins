@@ -75,10 +75,8 @@ jQuery(function ($) {
         if ($('#booking_custom_fields_cf_wzbhg9eb').length && !$('#booking_custom_fields_cf_wzbhg9eb').parents('.os-col-12').is(':first-child')) {
             $('#booking_custom_fields_cf_wzbhg9eb').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
         }
-        if ($('#booking_custom_fields_cf_xlaxtiqb').length && !$('#booking_custom_fields_cf_xlaxtiqb').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_xlaxtiqb').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
-        }
         if ($('#booking_custom_fields_cf_p56xpuo5').length && !$('#booking_custom_fields_cf_p56xpuo5').parents('.os-col-12').is(':first-child')) {
+            $('#booking_custom_fields_cf_xlaxtiqb').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
             $('#booking_custom_fields_cf_p56xpuo5').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
         }
         if ($('#customer_custom_fields_cf_4zkibeey').length) {
