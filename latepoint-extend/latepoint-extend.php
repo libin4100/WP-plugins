@@ -1551,7 +1551,7 @@ EOT;
         {
             return (
                 (($booking->location_id == 1) && in_array($booking->agent_id, [3, 4]))
-                || in_array($booking->agent_id, [2, 6, 7, 8, 9, 10, 11])
+                || in_array($booking->agent_id, [2, 6, 7, 8, 9, 10, 11, 12])
             ) ? true : false;
         }
 
@@ -2113,7 +2113,7 @@ EOT;
                         ]
                     ],
                     'ic' => [
-                        'show' => ['cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_zZbexFje', 'cf_WFHtiGvf'],
+                        'show' => ['cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_zZbexFje'],
                         'hide' => [
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',
