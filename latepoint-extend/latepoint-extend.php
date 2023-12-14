@@ -146,7 +146,7 @@ if (!class_exists('LatePointExt')) :
             if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
 
             $id = trim($_POST['id']);
-            if ($id && !$this->checkCert($id)) {
+            if ($id && !$this->checkCert($id, OsStepsHelper::$booking_object->service_id)) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
                     $msg = "We're sorry. The certificate number provided does not match our records. Please contact Manitoba Blue Cross at <nobr>1-888-596-1032</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
@@ -1021,7 +1021,7 @@ EOT;
                             }
                         }
                         if ($bookingObject->agent_id == 6 && $k == 'cf_qOqKhbly') {
-                            if (!$this->checkCert($custom_fields_data[$k] ?? '')) {
+                            if (!$this->checkCert($custom_fields_data[$k] ?? '', $bookingObject->service_id)) {
                                 $msg = 'Certificate number does not match our records. Please try again.';
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
@@ -2392,14 +2392,13 @@ EOT;
             if ($check) return $check;
 
             if ($serviceId == 13) {
-                $row = $wpdb->get_row($wpdb->prepare("select * from {$wpdb->prefix}qhc_members where concat('a', certificate) = '%s'", 'a' . $cert));
+                $row = $wpdb->get_row($wpdb->prepare("select id from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
                 // only group 7245 can book
                 $check = ($row->group ?? false) == 7245;
             } else {
-                $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}qh_members where concat('a', certificate) = '%s'", 'a' . $cert));
+                $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
             }
             return $check;
-            return $this->checkCertTest($cert) ?: $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
         }
 
         protected function checkCertSB($cert)
