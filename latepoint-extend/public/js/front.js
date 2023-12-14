@@ -156,7 +156,8 @@ jQuery(function ($) {
             url: ajax_object.ajax_url,
             data: {
                 action: 'check_certificate',
-                id: $('#booking_custom_fields_cf_qoqkhbly').val()
+                id: $('#booking_custom_fields_cf_qoqkhbly').val(),
+                service_id: $('input[name="restrictions[selected_service]"').val()
             },
         }).done(function () {
             $('.latepoint-body #certificate-error').remove();

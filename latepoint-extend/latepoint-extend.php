@@ -146,7 +146,7 @@ if (!class_exists('LatePointExt')) :
             if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
 
             $id = trim($_POST['id']);
-            if ($id && !$this->checkCert($id, OsStepsHelper::$booking_object->service_id)) {
+            if ($id && !$this->checkCert($id, $_POST['service_id'] ?? null)) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
                     $msg = "We're sorry. The certificate number provided does not match our records. Please contact Manitoba Blue Cross at <nobr>1-888-596-1032</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
