@@ -1045,7 +1045,7 @@ EOT;
                             }
                         }
                         if ($bookingObject->agent_id == 9 && $k == 'cf_WzbhG9eB') {
-                            if (!$this->checkCertAAS($custom_fields_data[$k] ?? '')) {
+                            if (!$this->checkCertAAS($custom_fields_data[$k] ?? '',  $bookingObject->service_id)) {
                                 $msg = 'Certificate number does not match our records. Please try again.';
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
@@ -1172,7 +1172,10 @@ EOT;
                     break;
                 case $bookingObject->agent_id == 9:
                     //AAS
-                    $fields = $this->_fields('aas');
+                    if ($bookingObject->service_id == 13)
+                        $fields = $this->_fields('aasc');
+                    else
+                        $fields = $this->_fields('aas');
                     break;
                 case $bookingObject->agent_id == 10:
                     //Partners
@@ -2085,6 +2088,65 @@ EOT;
                             ],
                         ]
                     ],
+                    'aasc' => [
+                        'show' => ['cf_WzbhG9eB', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                            'cf_nxwjDAcZ',
+                        ],
+                        'add' => [
+                            'first_name' => [
+                                'label' => __('Client First Name', 'latepoint'),
+                                'placeholder' => __('Client First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Client Last Name', 'latepoint'),
+                                'placeholder' => __('Client Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                            'phone' => [
+                                'label' => __('Client Contact Number', 'latepoint'),
+                                'placeholder' => __('Client Contact Number', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'phone'
+                            ],
+                            'email' => [
+                                'label' => __('Client Email', 'latepoint'),
+                                'placeholder' => __('Client Email', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'email'
+                            ],
+                        ],
+                        'merge' => [
+                            'cf_x18jr0Vf' => [
+                                'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
+                            ],
+                            'cf_6A3SfgET' => [
+                                'label' => __('Where are you or the client currently located?', 'latepoint'),
+                            ],
+                        ]
+                    ],
                     'fabricland' => [
                         'show' => ['cf_pnWPrUIe', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
                         'hide' => [
@@ -2392,7 +2454,7 @@ EOT;
             if ($check) return $check;
 
             if ($serviceId == 13) {
-                $row = $wpdb->get_row($wpdb->prepare("select id from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
+                $row = $wpdb->get_row($wpdb->prepare("select * from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
                 // only group 7245 can book
                 $check = ($row->group ?? false) == 7245;
             } else {
@@ -2419,10 +2481,20 @@ EOT;
             return $this->checkCertTest($cert) ?: $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partners_members where concat('a', certificate) = '%s'", 'a' . $cert));
         }
 
-        protected function checkCertAAS($cert)
+        protected function checkCertAAS($cert, $serviceId = null)
         {
             global $wpdb;
-            return $this->checkCertTest($cert) ?: $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}aas_members where concat('a', certificate) = '%s'", 'a' . $cert));
+            $check = $this->checkCertTest($cert);
+            if ($check) return $check;
+
+            if ($serviceId == 13) {
+                $row = $wpdb->get_row($wpdb->prepare("select * from {$wpdb->prefix}aas_members where concat('a', certificate) = '%s'", 'a' . $cert));
+                // only group 7245 can book
+                $check = in_array(($row->group ?? false), ['11040001', '10320001']);
+            } else {
+                $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}aas_members where concat('a', certificate) = '%s'", 'a' . $cert));
+            }
+            return $check;
         }
 
         protected function checkCertPartner($cert, $partner)
