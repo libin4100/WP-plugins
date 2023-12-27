@@ -10,7 +10,7 @@
   </div>
   <?php
   echo OsFormHelper::hidden_field('booking[custom_fields][start_date3]', $booking->get_meta_by_key('start_date3', ''), [ 'class' => 'latepoint_start_date', 'skip_id' => true]);
-	echo OsFormHelper::hidden_field('booking[custom_fields][start_time3]', $$booking->get_meta_by_key('start_time3', ''), [ 'class' => 'latepoint_start_time', 'skip_id' => true]);
+	echo OsFormHelper::hidden_field('booking[custom_fields][start_time3]', $booking->get_meta_by_key('start_time3', ''), [ 'class' => 'latepoint_start_time', 'skip_id' => true]);
   ?>
   <script>
     jQuery(document).ready(function($) {
