@@ -1114,7 +1114,7 @@ EOT;
                         return;
                     }
                     break;
-                
+
                 case 'qha_time':
                     break;
 
@@ -1142,6 +1142,9 @@ EOT;
                         OsAuthHelper::authorize_customer($customer->id);
                         OsStepsHelper::$booking_object->customer_id = $customer->id;
                     }
+                    break;
+                case 'datepicker2':
+                case 'datepicker3':
                     break;
             }
         }
@@ -1284,11 +1287,17 @@ EOT;
                     $model->cname = $data['custom_fields']['first_name'] . ' ' . ($data['custom_fields']['last_name'] ?? '');
                     $model->pname = '';
                 }
-                if ($data['custom_fields']['email'] ?? false) {
-                    $model->custom_fields['email'] = $data['custom_fields']['email'];
-                }
-                if ($data['custom_fields']['phone'] ?? false) {
-                    $model->custom_fields['phone'] = $data['custom_fields']['phone'];
+                foreach ([
+                    'email',
+                    'phone',
+                    'start_date2',
+                    'start_time2',
+                    'start_date3',
+                    'start_time3',
+                ] as $key) {
+                    if ($data['custom_fields'][$key] ?? false) {
+                        $model->custom_fields[$key] = $data['custom_fields'][$key];
+                    }
                 }
                 $booking = OsParamsHelper::get_param('customer');
                 if ($booking['custom_fields']['cf_4zkIbeeY'] ?? false) {
@@ -1330,6 +1339,16 @@ EOT;
                 }
                 if (defined('WPLANG')) {
                     $model->save_meta_by_key('language', WPLANG);
+                }
+                foreach ([
+                    'start_date2',
+                    'start_time2',
+                    'start_date3',
+                    'start_time3'
+                ] as $key) {
+                    if ($model->custom_fields[$key] ?? false) {
+                        $model->save_meta_by_key($key, $model->custom_fields[$key]);
+                    }
                 }
                 if ($model->agents) {
                     $model->save_meta_by_key('extra_agents', $model->agents);
@@ -1650,6 +1669,18 @@ EOT;
                     'description' => '',
                 ];
             }
+            $steps['datepicker2'] = [
+                'title' => __('Select Date & Time', 'latepoint'),
+                'order_number' => 4,
+                'sub_title' => __('Date & Time Selection', 'latepoint'),
+                'description' => __('Click on a date to see a timeline of available slots, click on a green time slot to reserve it', 'latepoint')
+            ];
+            $steps['datepicker3'] = [
+                'title' => __('Select Date & Time', 'latepoint'),
+                'order_number' => 4,
+                'sub_title' => __('Date & Time Selection', 'latepoint'),
+                'description' => __('Click on a date to see a timeline of available slots, click on a green time slot to reserve it', 'latepoint')
+            ];
             return $steps;
         }
 
@@ -2377,11 +2408,18 @@ EOT;
                     array_splice($steps, $index, 1, ['qha_time', 'datepicker']);
                 }
             }
+            if (array_search('datepicker2', $steps) === false) {
+                if (array_search('datepicker', $steps) !== false) {
+                    $index = array_search('datepicker', $steps);
+                    array_splice($steps, $index + 1, 0, ['datepicker2', 'datepicker3']);
+                }
+            }
             return $steps;
         }
 
         public function beSkipped($skip, $step, $booking_object)
         {
+            $params = OsParamsHelper::get_param('booking');
             if ($booking_object->service_id == 13) {
                 if (in_array($step, ['datepicker', 'contact']))
                     $skip = true;
@@ -2394,12 +2432,15 @@ EOT;
             if ($booking_object->service_id != 13) {
                 if (in_array($step, ['qha_time']))
                     $skip = false;
-                $params = OsParamsHelper::get_param('booking');
                 if ((($params['qha_time'] ?? false) == 'fastest') && ($step == 'datepicker'))
                     $skip = true;
             }
             if ($booking_object->service_id == 14) {
                 if (!in_array($step, ['custom_fields_for_booking']))
+                    $skip = true;
+            }
+            if (isset($params['custom_fields']['skip_rest'])) {
+                if (in_array($step, ['datepicker', 'datepicker2', 'datepicker3']))
                     $skip = true;
             }
             return $skip;
