@@ -2460,7 +2460,7 @@ EOT;
                     $skip = true;
             }
             if (isset($params['custom_fields']['skip_rest'])) {
-                if (in_array($step, ['datepicker', 'datepicker2', 'datepicker3']))
+                if (in_array($step, ['datepicker2', 'datepicker3']))
                     $skip = true;
             }
             return $skip;
