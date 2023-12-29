@@ -992,7 +992,7 @@ EOT;
                     wp_send_json(array_merge(
                         ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
                         [
-                            'step_name'         => substr($stepName, 0, -1),
+                            'step_name'         => $stepName,
                             'show_next_btn'     => true,
                             'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
                             'is_first_step'     => OsStepsHelper::is_first_step($stepName),
