@@ -15,12 +15,13 @@
   <script>
     jQuery(document).ready(function($) {
       if (!$('.latepoint-footer a.skip-rest').length) {
-        $('.latepoint-footer').append('<a href="#" class="skip-rest latepoint-btn latepoint-btn-grey" style="margin: 0 auto">Skip</a>');
+        $('.latepoint-footer a.latepoint-next-btn').before('<a href="#" class="skip-rest latepoint-btn latepoint-btn-grey" style="margin: 0 auto">Skip</a>');
       }
 
       $('.latepoint-footer').on('click', 'a.skip-rest', function(e) {
         e.preventDefault();
         $('.latepoint-footer .latepoint-booking-params-w').append('<input type="hidden" name="booking[custom_fields][skip_rest]" value="1">');
+        $(this).remove();
         $('.latepoint-next-btn').click();
       });
     });

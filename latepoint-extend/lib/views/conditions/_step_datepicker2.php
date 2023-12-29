@@ -21,6 +21,7 @@
       $('.latepoint-footer').on('click', 'a.skip-rest', function(e) {
         e.preventDefault();
         $('.latepoint-footer .latepoint-booking-params-w').append('<input type="hidden" name="booking[custom_fields][skip_rest]" value="1">');
+        $(this).remove();
         $('.latepoint-next-btn').click();
       });
     });

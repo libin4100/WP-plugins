@@ -302,7 +302,7 @@ if (!class_exists('LatePointExt')) :
             if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
 
             $id = trim($_POST['id']);
-            if ($id && !$this->checkCertAAS($id)) {
+            if ($id && !$this->checkCertAAS($id, $_POST['service_id'] ?? null)) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
                     $msg = "We're sorry. The certificate number provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
@@ -726,7 +726,7 @@ EOT;
                     break;
                 case 'contact':
                     if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
-                        OsAuthHelper::logout_customer();
+                    OsAuthHelper::logout_customer();
                     if ($this->covid || $bookingObject->service_id == 10) {
                         $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
                         $values = json_decode($customFields, true);
@@ -735,7 +735,7 @@ EOT;
                                 if (($val['visibility'] ?? false) != 'public')
                                     $values[$id]['visibility'] = 'public';
                                 if ($val['label'] == 'Doctor Preference' || $val['label'] == "Reason for today's visit ( required )")
-                                    unset($values[$id]);
+                                unset($values[$id]);
                             }
                             OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                         }
@@ -745,7 +745,7 @@ EOT;
                     $_SESSION['certCount'] = 0;
 
                     if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
-                        OsAuthHelper::logout_customer();
+                    OsAuthHelper::logout_customer();
                     if (OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
                         $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
                         $fields = [];
@@ -776,7 +776,7 @@ EOT;
                     break;
                 case 'datepicker':
                     if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
-                        OsAuthHelper::logout_customer();
+                    OsAuthHelper::logout_customer();
                     if ($format == 'json' && $bookingObject->service_id == 10) {
                         $controller = new OsStepsController();
                         $controller->vars = $controller->vars_for_view;
@@ -992,7 +992,7 @@ EOT;
                     wp_send_json(array_merge(
                         ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
                         [
-                            'step_name'         => $stepName,
+                            'step_name'         => substr($stepName, 0, -1),
                             'show_next_btn'     => true,
                             'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
                             'is_first_step'     => OsStepsHelper::is_first_step($stepName),
