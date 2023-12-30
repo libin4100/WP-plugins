@@ -1,6 +1,6 @@
-<div class="step-datepicker-w latepoint-step-content" data-step-name="datepicker">
+<div class="step-datepicker-w latepoint-step-content" data-step-name="datepicker2">
   <div class="os-dates-w">
-    <?php OsBookingHelper::generate_monthly_calendar($calendar_start_date, ['total_attendies' => $booking->total_attendies, 'timeshift_minutes' => OsTimeHelper::get_timezone_shift_in_minutes(OsTimeHelper::get_timezone_name_from_session()),'service_id' => $booking->service_id, 'agent_id' => $booking->agent_id, 'location_id' => $booking->location_id, 'duration' => $booking->get_total_duration()]); ?>
+    <?php OsBookingHelper::generate_monthly_calendar($calendar_start_date, ['total_attendies' => $booking->total_attendies, 'timeshift_minutes' => OsTimeHelper::get_timezone_shift_in_minutes(OsTimeHelper::get_timezone_name_from_session()), 'service_id' => $booking->service_id, 'agent_id' => $booking->agent_id, 'location_id' => $booking->location_id, 'duration' => $booking->get_total_duration()]); ?>
   </div>
   <div class="time-selector-w">
     <div class="times-header"><?php _e('Pick Appointment Time For', 'latepoint'); ?> <span></span></div>
@@ -9,8 +9,8 @@
     </div>
   </div>
   <?php
-  echo OsFormHelper::hidden_field('booking[custom_fields][start_date2]', $booking->get_meta_by_key('start_date2', ''), [ 'class' => 'latepoint_start_date', 'skip_id' => true]);
-	echo OsFormHelper::hidden_field('booking[custom_fields][start_time2]', $booking->get_meta_by_key('start_time2', ''), [ 'class' => 'latepoint_start_time', 'skip_id' => true]);
+  echo OsFormHelper::hidden_field('booking[custom_fields][start_date2]', $booking->get_meta_by_key('start_date2', ''), ['class' => 'latepoint_start_date', 'skip_id' => true]);
+  echo OsFormHelper::hidden_field('booking[custom_fields][start_time2]', $booking->get_meta_by_key('start_time2', ''), ['class' => 'latepoint_start_time', 'skip_id' => true]);
   ?>
   <script>
     jQuery(document).ready(function($) {
@@ -24,12 +24,14 @@
         $(this).remove();
         $('.latepoint-next-btn').click();
       });
-      $('.latepoint-footer').on('click', 'a.latepoint-next-btn, a.latepoint-prev-btn', function(e) {
-        if ($('a.skip-rest').length) {
-          $('a.skip-rest').remove();
-        }
-        if ($('.hidden-skip-rest').length) {
-          $('.hidden-skip-rest').remove();
+      $('.latepoint-footer').on('click', 'a', function(e) {
+        if ($(this).hasClass('latepoint-next-btn') || $(this).hasClass('latepoint-prev-btn')) {
+          if ($('a.skip-rest').length) {
+            $('a.skip-rest').remove();
+          }
+          if ($('.hidden-skip-rest').length) {
+            $('.hidden-skip-rest').remove();
+          }
         }
       });
     });
