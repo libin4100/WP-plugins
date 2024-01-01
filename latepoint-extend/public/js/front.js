@@ -338,17 +338,6 @@ jQuery(function ($) {
             }
         });
     });
-
-    $('body').on('click', '.latepoint-footer a', function (e) {
-        if ($(this).hasClass('latepoint-next-btn') || $(this).hasClass('latepoint-prev-btn')) {
-            if ($('a.skip-rest').length) {
-                $('a.skip-rest').remove();
-            }
-            if ($('.hidden-skip-rest').length) {
-                $('.hidden-skip-rest').remove();
-            }
-        }
-    });
 });
 start_date = '';
 start_time = '';

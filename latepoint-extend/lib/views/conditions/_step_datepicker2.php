@@ -24,14 +24,22 @@
         $(this).remove();
         $('.latepoint-next-btn').click();
       });
-      $('.latepoint-footer').on('click', 'a', function(e) {
-        if ($(this).hasClass('latepoint-next-btn') || $(this).hasClass('latepoint-prev-btn')) {
-          if ($('a.skip-rest').length) {
-            $('a.skip-rest').remove();
-          }
-          if ($('.hidden-skip-rest').length) {
-            $('.hidden-skip-rest').remove();
-          }
+
+      $('.latepoint-footer').on('click', '.latepoint-next-btn', function(e) {
+        if ($('a.skip-rest').length) {
+          $('a.skip-rest').hide();
+        }
+        if ($('.hidden-skip-rest').length) {
+          $('.hidden-skip-rest').remove();
+        }
+      });
+
+      $('.latepoint-footer').on('click', '.latepoint-prev-btn', function(e) {
+        if ($('a.skip-rest').length) {
+          $('a.skip-rest').show();
+        }
+        if ($('.hidden-skip-rest').length) {
+          $('.hidden-skip-rest').remove();
         }
       });
     });

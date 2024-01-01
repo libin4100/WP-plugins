@@ -2452,7 +2452,7 @@ EOT;
             if ($booking_object->service_id != 13) {
                 if (in_array($step, ['qha_time']))
                     $skip = false;
-                if ((($params['qha_time'] ?? false) == 'fastest') && ($step == 'datepicker'))
+                if ((($params['qha_time'] ?? false) == 'fastest') && (in_array($step, ['datepicker', 'datepicker2', 'datepicker3'])))
                     $skip = true;
             }
             if ($booking_object->service_id == 14) {
