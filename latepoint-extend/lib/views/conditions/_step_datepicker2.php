@@ -20,13 +20,14 @@
 
       $('.latepoint-footer').on('click', 'a.skip-rest', function(e) {
         e.preventDefault();
-        $('.latepoint-footer .latepoint-booking-params-w').append('<input type="hidden" class="hidden-skip-rest" name="booking[custom_fields][skip_rest]" value="1">');
-        $('.latepoint-next-btn').click();
+        if (!$('.hidden-skip-rest').length)
+          $('.latepoint-footer .latepoint-booking-params-w').append('<input type="hidden" class="hidden-skip-rest" name="booking[custom_fields][skip_rest]" value="1">');
+        $('.latepoint-next-btn').removeClass('disabled').click();
       });
 
       $('.latepoint-next-btn').on('click', function(e) {
         if ($('a.skip-rest').length) {
-          if (['datepicker2', 'datepicker3'].includes($('.latepoint-footer .latepoint-booking-params-w .latepoint_current_step').val())) {
+          if (['datepicker', 'datepicker2'].includes($('.latepoint-footer .latepoint-booking-params-w .latepoint_current_step').val())) {
             $('a.skip-rest').show();
           } else {
             $('a.skip-rest').hide();
