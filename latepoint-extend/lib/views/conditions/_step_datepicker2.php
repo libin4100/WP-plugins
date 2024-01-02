@@ -15,7 +15,7 @@
   <script>
     jQuery(document).ready(function($) {
       if (!$('.latepoint-footer a.skip-rest').length) {
-        $('.latepoint-footer a.latepoint-next-btn').before('<a href="#" class="skip-rest latepoint-btn latepoint-btn-grey" style="margin: 0 auto">Skip</a>');
+        $('.latepoint-footer a.latepoint-next-btn').before('<a href="#" class="skip-rest latepoint-btn latepoint-btn-grey" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">Skip</a>');
       }
 
       $('.latepoint-footer').on('click', 'a.skip-rest', function(e) {
@@ -23,6 +23,7 @@
         if (!$('.hidden-skip-rest').length)
           $('.latepoint-footer .latepoint-booking-params-w').append('<input type="hidden" class="hidden-skip-rest" name="booking[custom_fields][skip_rest]" value="1">');
         $('.latepoint-next-btn').removeClass('disabled').click();
+        $('a.skip-rest').hide();
       });
 
       $('.latepoint-next-btn').on('click', function(e) {
@@ -40,7 +41,9 @@
 
       $('.latepoint-prev-btn').on('click', function(e) {
         if ($('a.skip-rest').length) {
-          if (['datepicker2', 'datepicker3'].includes($('.latepoint-footer .latepoint-booking-params-w .latepoint_current_step').val())) {
+          var prevStep = $(this).closest(".latepoint-form").find(".latepoint-step-content.is-hidden").last().data('step-name');
+          console.log(prevStep);
+          if (['datepicker2', 'datepicker3'].includes(prevStep)) {
             $('a.skip-rest').show();
           } else {
             $('a.skip-rest').hide();
