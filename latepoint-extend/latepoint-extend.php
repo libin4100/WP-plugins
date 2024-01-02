@@ -987,6 +987,7 @@ EOT;
                     $controller = new OsConditionsController();
                     $html = $controller->render($controller->get_view_uri('_step_' . $stepName), 'none', [
                         'booking' => $bookingObject,
+                        'params' => OsParamsHelper::get_param('booking'),
                         'current_step' => $stepName
                     ]);
                     wp_send_json(array_merge(

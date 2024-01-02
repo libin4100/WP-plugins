@@ -11,8 +11,8 @@
   <?php
   echo OsFormHelper::hidden_field('booking[start_date]', $booking->start_date, ['skip_id' => true]);
   echo OsFormHelper::hidden_field('booking[start_time]', $booking->start_time, ['skip_id' => true]);
-  echo OsFormHelper::hidden_field('booking[custom_fields][start_date2]', $booking->get_meta_by_key('start_date2', ''), ['skip_id' => true]);
-  echo OsFormHelper::hidden_field('booking[custom_fields][start_time2]', $booking->get_meta_by_key('start_time2', ''), ['skip_id' => true]);
+  echo OsFormHelper::hidden_field('booking[custom_fields][start_date2]', $params['custom_fields']['start_date2'] ?? '', ['skip_id' => true]);
+  echo OsFormHelper::hidden_field('booking[custom_fields][start_time2]', $params['custom_fields']['start_time2'] ?? '', ['skip_id' => true]);
   echo OsFormHelper::hidden_field('booking[custom_fields][start_date3]', $booking->get_meta_by_key('start_date3', ''), [ 'class' => 'latepoint_start_date', 'skip_id' => true]);
 	echo OsFormHelper::hidden_field('booking[custom_fields][start_time3]', $booking->get_meta_by_key('start_time3', ''), [ 'class' => 'latepoint_start_time', 'skip_id' => true]);
   ?>
