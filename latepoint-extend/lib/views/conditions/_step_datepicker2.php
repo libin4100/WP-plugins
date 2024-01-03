@@ -24,6 +24,8 @@
         e.preventDefault();
         if (!$('.hidden-skip-rest').length)
           $('.latepoint-footer .latepoint-booking-params-w').append('<input type="hidden" class="hidden-skip-rest" name="booking[custom_fields][skip_rest]" value="1">');
+        $('.latepoint_start_date').val('');
+        $('.latepoint_start_time').val('');
         $('.latepoint-next-btn').removeClass('disabled').click();
         $('a.skip-rest').hide();
       });
