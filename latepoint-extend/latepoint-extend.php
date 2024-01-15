@@ -62,6 +62,8 @@ if (!class_exists('LatePointExt')) :
             add_action('wp_ajax_check_certificate_aas', [$this, 'checkCertificateAAS']);
             add_action('wp_ajax_nopriv_check_certificate_fl', [$this, 'checkCertificateSessionFL']);
             add_action('wp_ajax_check_certificate_fl', [$this, 'checkCertificateFL']);
+            add_action('wp_ajax_nopriv_check_certificate_imc', [$this, 'checkCertificateSessionImc']);
+            add_action('wp_ajax_check_certificate_imc', [$this, 'checkCertificateImc']);
             add_action('wp_ajax_nopriv_check_certificate_gotohw', [$this, 'checkCertificateSessionGotoHW']);
             add_action('wp_ajax_check_certificate_gotohw', [$this, 'checkCertificateGotoHW']);
             add_action('latepoint_includes', [$this, 'includes']);
@@ -199,6 +201,32 @@ if (!class_exists('LatePointExt')) :
 
             $id = trim($_POST['id']);
             if ($id && !$this->checkCertPartner($id, 'fabricland')) {
+                $_SESSION['certCount'] += 1;
+                if ($_SESSION['certCount'] >= 3)
+                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                else
+                    $msg = 'Certificate number does not match our records. Please try again.';
+
+                wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
+            }
+            wp_die();
+        }
+
+        public function checkCertificateSessionImc()
+        {
+            if (!session_id()) {
+                session_start();
+            }
+            $this->checkCertificateImc();
+        }
+
+        public function checkCertificateImc()
+        {
+            if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
+            if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
+
+            $id = trim($_POST['id']);
+            if ($id && !$this->checkCertPartner($id, 'imperial_capital')) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
                     $msg = "We're sorry. The certificate number provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
@@ -1221,11 +1249,18 @@ EOT;
                         $fields = $this->_fields('ic');
                     break;
                 case $bookingObject->agent_id == 13:
-                    //Partners
+                    //Goto Health Wallet
                     if ($bookingObject->service_id == 13)
                         $fields = $this->_fields('gc');
                     else
                         $fields = $this->_fields('gotohealthwallet');
+                    break;
+                case $bookingObject->agent_id == 14:
+                    //Imperial Capital
+                    if ($bookingObject->service_id == 13)
+                        $fields = $this->_fields('imcc');
+                    else
+                        $fields = $this->_fields('imc');
                     break;
                 case in_array($bookingObject->service_id, [2, 3]):
                     $this->_fields('located');
@@ -2288,6 +2323,95 @@ EOT;
                             ],
                         ]
                     ],
+                    'imc' => [
+                        'show' => ['cf_W0iZRLtG', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                        ],
+                        'add' => [
+                            'first_name' => [
+                                'label' => __('First Name', 'latepoint'),
+                                'placeholder' => __('First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Last Name', 'latepoint'),
+                                'placeholder' => __('Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                        ]
+                    ],
+                    'imcc' => [
+                        'show' => ['cf_W0iZRLtG', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                            'cf_nxwjDAcZ',
+                        ],
+                        'add' => [
+                            'first_name' => [
+                                'label' => __('Client First Name', 'latepoint'),
+                                'placeholder' => __('Client First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Client Last Name', 'latepoint'),
+                                'placeholder' => __('Client Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                            'phone' => [
+                                'label' => __('Client Contact Number', 'latepoint'),
+                                'placeholder' => __('Client Contact Number', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'phone'
+                            ],
+                            'email' => [
+                                'label' => __('Client Email', 'latepoint'),
+                                'placeholder' => __('Client Email', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'email'
+                            ],
+                        ],
+                        'merge' => [
+                            'cf_x18jr0Vf' => [
+                                'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
+                            ],
+                            'cf_6A3SfgET' => [
+                                'label' => __('Where are you or the client currently located?', 'latepoint'),
+                            ],
+                        ]
+                    ],
                     'ic' => [
                         'show' => ['cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_zZbexFje'],
                         'hide' => [
@@ -2562,12 +2686,13 @@ EOT;
         protected function checkCertPartner($cert, $partner)
         {
             global $wpdb;
-            return $this->checkCertTest($cert) ?: $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
+            return $this->checkCertTest($cert, $partner) ?: $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
         }
 
-        protected function checkCertTest($cert)
+        protected function checkCertTest($cert, $partner = null)
         {
-            return $cert == '123456';
+            return ($cert == '123456')
+                || (($partner == 'imperial_capital') && ($cert == '1234567890'));
         }
 
         public function onDeactivate()
