@@ -58,7 +58,8 @@ jQuery(function ($) {
             $('.latepoint-step-desc-library[data-step-name!="services"][data-step-name!="confirmation"] .latepoint-desc-title').text('');
         }
         if ($('#booking_custom_fields_cf_qoqkhbly').length && !$('#booking_custom_fields_cf_qoqkhbly').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_qoqkhbly').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
+            $('#booking_custom_fields_cf_qoqkhbly').val($('#mbc-cert-hidden').val());
+            $('#booking_custom_fields_cf_qoqkhbly').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row').hide();
         }
         if ($('#booking_custom_fields_cf_pnwpruie').length && !$('#booking_custom_fields_cf_pnwpruie').parents('.os-col-12').is(':first-child')) {
             $('#booking_custom_fields_cf_pnwpruie').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
@@ -380,15 +381,26 @@ jQuery(function ($) {
         });
     });
 
+    $('body').on('blur', '.mbc-cert', function () {
+        if ($(this).val().length) {
+            $(this).siblings('.check-mbc-cert').trigger('click');
+        }
+    });
+    $('body').on('keypress', '.mbc-cert', function (e) {
+        if (e.which == 13) {
+            $(this).siblings('.check-mbc-cert').trigger('click');
+        }
+    })
     $('body').on('click', '.check-mbc-cert', function () {
         $(this).addClass('os-loading');
         var pform = $(this).closest('.form');
+        var cert = pform.find('.mbc-cert').val();
         $.ajax({
             method: "POST",
             url: ajax_object.ajax_url,
             data: {
                 action: 'mbc_certificate',
-                id: pform.find('input.mbc-cert').val(),
+                id: cert
             },
         }).done(function (msg) {
             pform.siblings('.mbc-popup').removeClass('hidden');
@@ -396,6 +408,9 @@ jQuery(function ($) {
                 pform.siblings('.mbc-popup').find('.care').removeClass('hidden');
             }
             pform.hide();
+            if(!$('#mbc-cert-hidden').length)
+                $('body').append('<input type="hidden" id="mbc-cert-hidden" name="mbc_cert" value="">');
+            $('#mbc-cert-hidden').val(cert);
         }).always(function () {
             pform.find('.os-loading').removeClass('os-loading');
         }).fail(function (xhr) {
@@ -413,12 +428,15 @@ jQuery(function ($) {
     });
 
     document.addEventListener('custombox:overlay:close', function() {
-        $('.mbc-wrapper .mbc-popup').addClass('hidden');
-        $('.mbc-wrapper .mbc-popup .care').addClass('hidden');
-        $('.mbc-wrapper .mbc-cert').val('');
-        $('.mbc-wrapper .os-loading').removeClass('os-loading');
-        $('.mbc-wrapper .form').show();
-        $('.mbc-wrapper .form').find('#certificate-error').remove();
+        if (!$('.custombox-open').length) {
+            $('.mbc-wrapper .mbc-popup').addClass('hidden');
+            $('.mbc-wrapper .mbc-popup .care').addClass('hidden');
+            $('.mbc-wrapper .mbc-cert').val('');
+            $('.mbc-wrapper .os-loading').removeClass('os-loading');
+            $('.mbc-wrapper .form').show();
+            $('.mbc-wrapper .form').find('#certificate-error').remove();
+            $('#mbc-cert-hidden').remove();
+        }
     })
 });
 start_date = '';
