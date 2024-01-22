@@ -391,9 +391,9 @@ jQuery(function ($) {
                 id: pform.find('input.mbc-cert').val(),
             },
         }).done(function (msg) {
-            pform.siblings('.mbc-popup').show();
-            if (msg.care) {
-                pform.siblings('.mbc-popup').find('.care').show();
+            pform.siblings('.mbc-popup').removeClass('hidden');
+            if (msg.data.care) {
+                pform.siblings('.mbc-popup').find('.care').removeClass('hidden');
             }
             pform.hide();
         }).always(function () {
@@ -413,7 +413,8 @@ jQuery(function ($) {
     });
 
     document.addEventListener('custombox:overlay:close', function() {
-        $('.mbc-wrapper .hidden').hide();
+        $('.mbc-wrapper .mbc-popup').addClass('hidden');
+        $('.mbc-wrapper .mbc-popup .care').addClass('hidden');
         $('.mbc-wrapper .mbc-cert').val('');
         $('.mbc-wrapper .os-loading').removeClass('os-loading');
         $('.mbc-wrapper .form').show();
