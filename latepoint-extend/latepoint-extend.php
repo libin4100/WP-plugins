@@ -66,6 +66,8 @@ if (!class_exists('LatePointExt')) :
             add_action('wp_ajax_check_certificate_imc', [$this, 'checkCertificateImc']);
             add_action('wp_ajax_nopriv_check_certificate_gotohw', [$this, 'checkCertificateSessionGotoHW']);
             add_action('wp_ajax_check_certificate_gotohw', [$this, 'checkCertificateGotoHW']);
+            add_action('wp_ajax_nopriv_mbc_certificate', [$this, 'mbcCert']);
+            add_action('wp_ajax_mbc_certificate', [$this, 'mbcCert']);
             add_action('latepoint_includes', [$this, 'includes']);
             add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
             add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
@@ -132,6 +134,22 @@ if (!class_exists('LatePointExt')) :
                     }
                     break;
             }
+        }
+
+        public function mbcCert()
+        {
+            if (!session_id()) {
+                session_start();
+            }
+            $id = trim($_POST['id']);
+            $care = $this->checkCert($id, 13);
+            if ($care) {
+                $_SESSION['certCount'] = 0;
+                wp_send_json_success(['care' => 1, 'count' => $_SESSION['certCount']], 200);
+            } else {
+                $this->checkCertificate();
+            }
+            wp_die();
         }
 
         public function checkCertificateSession()
@@ -229,7 +247,7 @@ if (!class_exists('LatePointExt')) :
             if ($id && !$this->checkCertPartner($id, 'imperial_capital')) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
-                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Imperial Capital Limited at <nobr>437-290-5842</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                 else
                     $msg = 'Certificate number does not match our records. Please try again.';
 
@@ -2606,9 +2624,10 @@ EOT;
             if (!in_array($file['type'], $allowedMimes)) {
                 wp_send_json(array('status' => 'error', 'message' => __('File type not allowed', 'latepoint')));
             }
-            //check file size, max size is 10MB
-            if ($file['size'] > 10485760) {
-                wp_send_json(array('status' => 'error', 'message' => __('File size too big', 'latepoint')));
+            //check file size, max size is 5MB
+            $maxFileSize = 5 * 1024 * 1024;
+            if ($file['size'] > $maxFileSize) {
+                wp_send_json(array('status' => 'error', 'message' => __('File size up to 5MB allowed', 'latepoint')));
             }
 
             if ($r = wp_upload_bits($saveName, null, file_get_contents($file_tmp))) {

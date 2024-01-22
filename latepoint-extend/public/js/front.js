@@ -121,6 +121,9 @@ jQuery(function ($) {
     $('body').on('mouseover', '.latepoint-body .sb-help', function () {
         $('.latepoint-summary-w').append('<img class="sb-image" src="/wp-content/uploads/2022/11/tempsnip.png" />');
     });
+    $('body').on('mouseover', '.latepoint-body .ic-help', function () {
+        $('.latepoint-summary-w').append('<img class="ic-image" src="/wp-content/uploads/2024/01/imperial-cert.jpg" />');
+    });
     $('body').on('mouseover', '.latepoint-body .fabricland-help', function () {
         if (!$('.latepoint-body .fabricland-image').length) {
             if ($('.latepoint-summary-w .os-summary-line:visible').length)
@@ -144,8 +147,17 @@ jQuery(function ($) {
         else
             $('.latepoint-body .step-custom-fields-for-booking-w').append('<img class="sb-image" src="/wp-content/uploads/2022/11/tempsnip.png" />');
     });
+    $('body').on('click', '.latepoint-body .ic-help', function () {
+        if ($('.latepoint-body .ic-image').length)
+            $('.latepoint-body .ic-image').remove();
+        else
+            $('.latepoint-body .step-custom-fields-for-booking-w').append('<img class="ic-image" src="/wp-content/uploads/2024/01/imperial-cert.jpg" />');
+    });
     $('body').on('mouseout', '.latepoint-body .sb-help', function () {
         $('.latepoint-summary-w .sb-image').remove();
+    });
+    $('body').on('mouseout', '.latepoint-body .ic-help', function () {
+        $('.latepoint-summary-w .ic-image').remove();
     });
     $('body').on('click', '.latepoint-btn', function () {
         if ($('.latepoint-body .mbc-image').length) $('.latepoint-body .mbc-image').remove();
@@ -364,6 +376,40 @@ jQuery(function ($) {
                 if (!$('.latepoint-body #certificate-error').length)
                     $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
                 $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
+            }
+        });
+    });
+
+    $('body').on('click', '#mbc-check-cert', function () {
+        $(this).addClass('os-loading');
+        $.ajax({
+            method: "POST",
+            url: ajax_object.ajax_url,
+            data: {
+                action: 'mbc_certificate',
+                id: $('#mbc-cert').val()
+            },
+        }).done(function () {
+            $('#mbc-popup').show();
+            if (xhr.responseJSON.data.care) {
+                $('#mbc-popup .care').show();
+            }
+            $(this).parents('form').hide();
+            $('.latepoint-body #certificate-error').remove();
+        }).always(function () {
+            $(this).removeClass('os-loading');
+        }).fail(function (xhr) {
+            if (xhr.status == 404) {
+                var pform = $(this).parents('form');
+                if (xhr.responseJSON.data.count >= 3) {
+                    $(this).addClass('disabled');
+                    pform.empty();
+                    pform.find('input').prop('disabled', true);
+                }
+
+                if (!pform.find('#certificate-error').length)
+                    pform.prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
+                pform.find('#certificate-error').html(xhr.responseJSON.data.message);
             }
         });
     });
