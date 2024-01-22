@@ -382,6 +382,7 @@ jQuery(function ($) {
 
     $('body').on('click', '.check-mbc-cert', function () {
         $(this).addClass('os-loading');
+        var pform = $(this).parents('.form');
         $.ajax({
             method: "POST",
             url: ajax_object.ajax_url,
@@ -390,17 +391,15 @@ jQuery(function ($) {
                 id: $(this).parents('form').find('input.mbc-cert').val(),
             },
         }).done(function (xhr) {
-            var pform = $(this).parents('form');
-            pform.silblings('.mbc-popup').show();
+            pform.siblings('.mbc-popup').show();
             if (xhr.responseJSON.data.care) {
-                pform.silblings('.mbc-popup').find('.care').show();
+                pform.siblings('.mbc-popup').find('.care').show();
             }
             pform.hide();
         }).always(function () {
             $(this).removeClass('os-loading');
         }).fail(function (xhr) {
             if (xhr.status == 404) {
-                var pform = $(this).parents('form');
                 if (xhr.responseJSON.data.count >= 3) {
                     $(this).addClass('disabled');
                     pform.empty();
