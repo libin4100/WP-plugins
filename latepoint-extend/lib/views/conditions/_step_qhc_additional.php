@@ -13,6 +13,7 @@
                         <input type="file" name="booking_file" value="" class="os-form-control" style="display:none" id="additional_file_upload">
                     </div>
                 </label>
+                <h6 style="margin-top: 10px; color:#8e97b3">If the file you need to attach is more than 5 MB, please email it to <a href="mailto:telemedicine@enhancedcare.ca">telemedicine@enhancedcare.ca</a> and add Care Navigation in the subject line.</h6>
             </div>
             <div class="latepoint-loading" style="display: none;">
                 <div class="lds-dual-ring"></div>
