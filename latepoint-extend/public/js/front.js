@@ -382,7 +382,7 @@ jQuery(function ($) {
 
     $('body').on('click', '.check-mbc-cert', function () {
         $(this).addClass('os-loading');
-        var pform = $(this).closet('.form');
+        var pform = $(this).closest('.form');
         $.ajax({
             method: "POST",
             url: ajax_object.ajax_url,
