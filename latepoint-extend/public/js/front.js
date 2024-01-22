@@ -380,7 +380,7 @@ jQuery(function ($) {
         });
     });
 
-    $('body').on('click', '#mbc-check-cert', function () {
+    $('body').on('click', '#check-mbc-cert', function () {
         $(this).addClass('os-loading');
         $.ajax({
             method: "POST",
@@ -395,7 +395,6 @@ jQuery(function ($) {
                 $('#mbc-popup .care').show();
             }
             $(this).parents('form').hide();
-            $('.latepoint-body #certificate-error').remove();
         }).always(function () {
             $(this).removeClass('os-loading');
         }).fail(function (xhr) {
