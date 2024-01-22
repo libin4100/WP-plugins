@@ -389,7 +389,7 @@ jQuery(function ($) {
                 action: 'mbc_certificate',
                 id: $('#mbc-cert').val()
             },
-        }).done(function () {
+        }).done(function (xhr) {
             $('#mbc-popup').show();
             if (xhr.responseJSON.data.care) {
                 $('#mbc-popup .care').show();

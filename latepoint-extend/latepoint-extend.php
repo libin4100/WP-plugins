@@ -145,7 +145,7 @@ if (!class_exists('LatePointExt')) :
             $care = $this->checkCert($id, 13);
             if ($care) {
                 $_SESSION['certCount'] = 0;
-                wp_send_json_success(['care' => 1, 'count' => $_SESSION['certCount']], 200);
+                wp_send_json_success(['care' => 1], 200);
             } else {
                 $this->checkCertificate();
             }
