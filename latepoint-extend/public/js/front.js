@@ -380,21 +380,22 @@ jQuery(function ($) {
         });
     });
 
-    $('body').on('click', '#check-mbc-cert', function () {
+    $('body').on('click', '.check-mbc-cert', function () {
         $(this).addClass('os-loading');
         $.ajax({
             method: "POST",
             url: ajax_object.ajax_url,
             data: {
                 action: 'mbc_certificate',
-                id: $('#mbc-cert').val()
+                id: $(this).parents('form').find('input.mbc-cert').val(),
             },
         }).done(function (xhr) {
-            $('#mbc-popup').show();
+            var pform = $(this).parents('form');
+            pform.silblings('.mbc-popup').show();
             if (xhr.responseJSON.data.care) {
-                $('#mbc-popup .care').show();
+                pform.silblings('.mbc-popup').find('.care').show();
             }
-            $(this).parents('form').hide();
+            pform.hide();
         }).always(function () {
             $(this).removeClass('os-loading');
         }).fail(function (xhr) {
