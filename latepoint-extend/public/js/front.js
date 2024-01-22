@@ -382,7 +382,7 @@ jQuery(function ($) {
 
     $('body').on('click', '.check-mbc-cert', function () {
         $(this).addClass('os-loading');
-        var pform = $(this).parents('.form');
+        var pform = $(this).closet('.form');
         $.ajax({
             method: "POST",
             url: ajax_object.ajax_url,
@@ -397,13 +397,12 @@ jQuery(function ($) {
             }
             pform.hide();
         }).always(function () {
-            $(this).removeClass('os-loading');
+            pform.find('.os-loading').removeClass('os-loading');
         }).fail(function (xhr) {
             if (xhr.status == 404) {
                 if (xhr.responseJSON.data.count >= 3) {
                     $(this).addClass('disabled');
-                    pform.empty();
-                    pform.find('input').prop('disabled', true);
+                    pform.find('input').val('').prop('disabled', true);
                 }
 
                 if (!pform.find('#certificate-error').length)
@@ -412,6 +411,14 @@ jQuery(function ($) {
             }
         });
     });
+
+    document.addEventListener('custombox:overlay:close', function() {
+        $('.mbc-wrapper .hidden').hide();
+        $('.mbc-wrapper .mbc-cert').val('');
+        $('.mbc-wrapper .os-loading').removeClass('os-loading');
+        $('.mbc-wrapper .form').show();
+        $('.mbc-wrapper .form').find('#certificate-error').remove();
+    })
 });
 start_date = '';
 start_time = '';
