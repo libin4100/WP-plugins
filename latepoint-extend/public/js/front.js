@@ -388,11 +388,11 @@ jQuery(function ($) {
             url: ajax_object.ajax_url,
             data: {
                 action: 'mbc_certificate',
-                id: $(this).parents('form').find('input.mbc-cert').val(),
+                id: pform.find('input.mbc-cert').val(),
             },
-        }).done(function (xhr) {
+        }).done(function (msg) {
             pform.siblings('.mbc-popup').show();
-            if (xhr.responseJSON.data.care) {
+            if (msg.care) {
                 pform.siblings('.mbc-popup').find('.care').show();
             }
             pform.hide();

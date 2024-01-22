@@ -142,6 +142,9 @@ if (!class_exists('LatePointExt')) :
                 session_start();
             }
             $id = trim($_POST['id']);
+            if (!$id) {
+                wp_send_json_error(['message' => 'Certificate number is required.'], 404);
+            }
             $care = $this->checkCert($id, 13);
             if ($care) {
                 $_SESSION['certCount'] = 0;
