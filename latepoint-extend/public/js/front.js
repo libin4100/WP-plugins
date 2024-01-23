@@ -107,17 +107,17 @@ jQuery(function ($) {
         return $('.latepoint-form').submit();
     });
 
-    $('body').on('mouseover', '.latepoint-body .mbc-help', function () {
-        $('.latepoint-summary-w').append('<img class="mbc-image" src="/wp-content/uploads/2022/04/mbc-2.png" />');
+    $('body').on('mouseover', '.mbc-help', function () {
+        $(this).closest('p').after('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
     });
-    $('body').on('click', '.latepoint-body .mbc-help', function () {
-        if ($('.latepoint-body .mbc-image').length)
-            $('.latepoint-body .mbc-image').remove();
+    $('body').on('click', '.mbc-help', function () {
+        if ($('.mbc-image').length)
+            $('.mbc-image').remove();
         else
-            $('.latepoint-body .step-custom-fields-for-booking-w').append('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
+            $(this).closest('p').after('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
     });
-    $('body').on('mouseout', '.latepoint-body .mbc-help', function () {
-        $('.latepoint-summary-w .mbc-image').remove();
+    $('body').on('mouseout', '.mbc-help', function () {
+        $(this).closest('p').after('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
     });
     $('body').on('mouseover', '.latepoint-body .sb-help', function () {
         $('.latepoint-summary-w').append('<img class="sb-image" src="/wp-content/uploads/2022/11/tempsnip.png" />');
@@ -392,7 +392,7 @@ jQuery(function ($) {
         }
     })
     $('body').on('click', '.check-mbc-cert', function () {
-        $(this).addClass('os-loading');
+        $(this).addClass('os-loading').prop('disabled', true);
         var pform = $(this).closest('.form');
         var cert = pform.find('.mbc-cert').val();
         $.ajax({
@@ -415,7 +415,7 @@ jQuery(function ($) {
 
             $('#mbc-cert-hidden').val(cert);
         }).always(function () {
-            pform.find('.os-loading').removeClass('os-loading');
+            pform.find('.os-loading').removeClass('os-loading').prop('disabled', false);
         }).fail(function (xhr) {
             if (xhr.status == 404) {
                 if (xhr.responseJSON.data.count >= 3) {
