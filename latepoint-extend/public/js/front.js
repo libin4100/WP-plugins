@@ -403,8 +403,9 @@ jQuery(function ($) {
                 id: cert
             },
         }).done(function (msg) {
+            pform.siblings('.mbc-popup').removeClass('hidden');
             if (msg && msg.data && msg.data.care) {
-                pform.siblings('.mbc-popup').removeClass('hidden');
+                pform.siblings('.mbc-popup').find('.care').removeClass('hidden');
             } else {
                 pform.siblings('.mbc-popup').find('a').first().click();
             }
