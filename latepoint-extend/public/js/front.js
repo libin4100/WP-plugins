@@ -108,7 +108,8 @@ jQuery(function ($) {
     });
 
     $('body').on('mouseover', '.mbc-help', function () {
-        $(this).closest('p').after('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
+        if (!$('.mbc-image').length)
+            $(this).closest('p').after('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
     });
     $('body').on('click', '.mbc-help', function () {
         if ($('.mbc-image').length)
@@ -117,7 +118,7 @@ jQuery(function ($) {
             $(this).closest('p').after('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
     });
     $('body').on('mouseout', '.mbc-help', function () {
-        $(this).closest('p').after('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
+        $('.mbc-image').remove();
     });
     $('body').on('mouseover', '.latepoint-body .sb-help', function () {
         $('.latepoint-summary-w').append('<img class="sb-image" src="/wp-content/uploads/2022/11/tempsnip.png" />');
