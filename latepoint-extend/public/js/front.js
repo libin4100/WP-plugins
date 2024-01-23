@@ -117,9 +117,6 @@ jQuery(function ($) {
         else
             $(this).closest('p').after('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
     });
-    $('body').on('mouseout', '.mbc-help', function () {
-        $('.mbc-image').remove();
-    });
     $('body').on('mouseover', '.latepoint-body .sb-help', function () {
         $('.latepoint-summary-w').append('<img class="sb-image" src="/wp-content/uploads/2022/11/tempsnip.png" />');
     });
