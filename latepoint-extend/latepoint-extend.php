@@ -23,7 +23,7 @@ if (!class_exists('LatePointExt')) :
      */
     final class LatePointExt
     {
-        public $version = '1.3.14';
+        public $version = '1.3.15';
         public $dbVersion = '1.0.0';
         public $addonName = 'latepoint-extend';
 
