@@ -592,7 +592,7 @@ jQuery(function($) {
 </script>
 EOT;
             }
-            if (in_array($bookingObject->agent_id, [11, 14]) && ($bookingObject->location_id != 14)) {
+            if (in_array($bookingObject->agent_id, [11]) && ($bookingObject->location_id != 14)) {
                 $location = $bookingObject->location->name ?? '';
                 echo <<<EOT
 <script>
@@ -625,7 +625,7 @@ jQuery(function($) {
 EOT;
             }
             if (
-                (in_array($bookingObject->agent_id, [2, 7, 9, 10]) && !in_array($bookingObject->location_id, [14]))
+                (in_array($bookingObject->agent_id, [2, 7, 9, 10, 14]) && !in_array($bookingObject->location_id, [14]))
                 || ($bookingObject->agent_id == 8 && !in_array($bookingObject->location_id, [4, 14]))
             ) {
                 $location = $bookingObject->location->name ?? '';
@@ -1633,14 +1633,14 @@ EOT;
                 ($booking->service_id == 10)
                 || $this->acorn
                 || $this->covid
-                || ($this->others && (!in_array($booking->agent_id, [6, 8, 11, 14])
+                || ($this->others && (!in_array($booking->agent_id, [6, 8, 11])
                     || (($booking->agent_id == 8) && !in_array($ploc, ['Quebec', 'New Brunswick']))
                     || (($booking->agent_id == 11) && !in_array($ploc, ['Quebec']))
                     || (($booking->agent_id == 14) && !in_array($ploc, ['Quebec']))
                 ))
                 || $this->diff = (
-                    (in_array($booking->agent_id, [2, 7, 9, 10]) && (stripos($loc, $ploc) === false))
-                    || (in_array($booking->agent_id, [11, 14]) && !$this->others && !in_array($ploc, ['Quebec']) && (stripos($loc, $ploc) === false))
+                    (in_array($booking->agent_id, [2, 7, 9, 10, 14]) && (stripos($loc, $ploc) === false))
+                    || (in_array($booking->agent_id, [11]) && !$this->others && !in_array($ploc, ['Quebec']) && (stripos($loc, $ploc) === false))
                     || (in_array($booking->agent_id, [8]) && !$this->others && (stripos($loc, $ploc) === false))
                 )
             ) {
