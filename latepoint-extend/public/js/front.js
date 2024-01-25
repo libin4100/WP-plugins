@@ -401,13 +401,12 @@ jQuery(function ($) {
                 id: cert
             },
         }).done(function (msg) {
-            pform.siblings('.mbc-popup').removeClass('hidden');
+            Custombox.modal.close()
             if (msg && msg.data && msg.data.care) {
-                pform.siblings('.mbc-popup').find('.care').removeClass('hidden');
+                $('.mbc-popup').first().find('a').first().click();
             } else {
-                pform.siblings('.mbc-popup').find('a').first().click();
+                $('.with-care').first().find('a').first().click();
             }
-            pform.hide();
             if(!$('#mbc-cert-hidden').length)
                 $('body').append('<input type="hidden" id="mbc-cert-hidden" name="mbc_cert" value="">');
 
@@ -437,6 +436,7 @@ jQuery(function ($) {
             $('.mbc-wrapper .form').show();
             $('.mbc-wrapper .form').find('#certificate-error').remove();
             $('#mbc-cert-hidden').remove();
+            $('.mbc-image').remove();
         }
     })
 });
