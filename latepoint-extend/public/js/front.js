@@ -403,9 +403,9 @@ jQuery(function ($) {
         }).done(function (msg) {
             Custombox.modal.close()
             if (msg && msg.data && msg.data.care) {
-                $('.mbc-popup').first().find('a').first().click();
-            } else {
                 $('.with-care').first().find('a').first().click();
+            } else {
+                $('.mbc-popup').first().find('a').first().click();
             }
             if(!$('#mbc-cert-hidden').length)
                 $('body').append('<input type="hidden" id="mbc-cert-hidden" name="mbc_cert" value="">');
