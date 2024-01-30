@@ -2721,6 +2721,7 @@ EOT;
         protected function checkCertTest($cert, $partner = null)
         {
             return ($cert == '123456')
+                || (($partner == 'fabricland') && ($cert == 'FRIENDSANDFAMILY'))
                 || (($partner == 'imperial_capital') && ($cert == '1234567890'));
         }
 
