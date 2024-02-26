@@ -2704,8 +2704,7 @@ EOT;
 
             if ($serviceId == 13) {
                 $row = $wpdb->get_row($wpdb->prepare("select * from {$wpdb->prefix}aas_members where concat('a', certificate) = '%s'", 'a' . $cert));
-                // only group 7245 can book
-                $check = in_array(($row->group ?? false), ['11040001', '10320001']);
+                $check = in_array(($row->group ?? false), ['11040001', '10320001', '11020001', '11020000']);
             } else {
                 $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}aas_members where concat('a', certificate) = '%s'", 'a' . $cert));
             }
