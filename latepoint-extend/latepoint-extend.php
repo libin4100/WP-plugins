@@ -1779,6 +1779,7 @@ EOT;
                     $customFields = $cfBooking->value;
             } else {
                 $customFields = OsSettingsHelper::$loaded_values['custom_fields_for_booking'];
+                $cfCustomer = new OsSettingsModel();
                 $cfCustomer->value = OsSettingsHelper::$loaded_values['custom_fields_for_customer'];
             }
 
