@@ -379,11 +379,6 @@ jQuery(function ($) {
         });
     });
 
-    $('body').on('blur', '.mbc-cert', function () {
-        if ($(this).val().length) {
-            $(this).siblings('.check-mbc-cert').trigger('click');
-        }
-    });
     $('body').on('keypress', '.mbc-cert', function (e) {
         if (e.which == 13) {
             $(this).siblings('.check-mbc-cert').trigger('click');
