@@ -2871,7 +2871,7 @@ EOT;
             } else {
                 $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
             }
-            return $this->checkCertTest($cert, $partner) ?: $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
+            return $check;
         }
 
         protected function checkCertTest($cert, $partner = null)
