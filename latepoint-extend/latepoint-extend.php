@@ -639,7 +639,7 @@ jQuery(function($) {
 </script>
 EOT;
             }
-            if (in_array($bookingObject->agent_id, [11]) && ($bookingObject->location_id != 14)) {
+            if (in_array($bookingObject->agent_id, [11, 15]) && ($bookingObject->location_id != 14)) {
                 $location = $bookingObject->location->name ?? '';
                 echo <<<EOT
 <script>
@@ -706,7 +706,7 @@ EOT;
 <script>
 jQuery(function($) {
     var aid = {$bookingObject->agent_id};
-    var alist = [2, 6, 7, 8, 9, 10, 11, 12, 14];
+    var alist = [2, 6, 7, 8, 9, 10, 11, 12, 14, 15];
     $('body').on('DOMSubtreeModified', '.latepoint-booking-form-element', function() {
         showhide();
     });
@@ -1693,14 +1693,13 @@ EOT;
                 ($booking->service_id == 10)
                 || $this->acorn
                 || $this->covid
-                || ($this->others && (!in_array($booking->agent_id, [6, 8, 11])
+                || ($this->others && (!in_array($booking->agent_id, [6, 8, 11, 15])
                     || (($booking->agent_id == 8) && !in_array($ploc, ['Quebec', 'New Brunswick']))
-                    || (($booking->agent_id == 11) && !in_array($ploc, ['Quebec']))
-                    || (($booking->agent_id == 14) && !in_array($ploc, ['Quebec']))
+                    || (in_array($booking->agent_id, [11, 14, 15]) && !in_array($ploc, ['Quebec']))
                 ))
                 || $this->diff = (
                     (in_array($booking->agent_id, [2, 7, 9, 10, 14]) && (stripos($loc, $ploc) === false))
-                    || (in_array($booking->agent_id, [11]) && !$this->others && !in_array($ploc, ['Quebec']) && (stripos($loc, $ploc) === false))
+                    || (in_array($booking->agent_id, [11, 15]) && !$this->others && !in_array($ploc, ['Quebec']) && (stripos($loc, $ploc) === false))
                     || (in_array($booking->agent_id, [8]) && !$this->others && (stripos($loc, $ploc) === false))
                 )
             ) {
@@ -1720,7 +1719,7 @@ EOT;
         {
             return (
                 (($booking->location_id == 1) && in_array($booking->agent_id, [3, 4]))
-                || in_array($booking->agent_id, [2, 6, 7, 8, 9, 10, 11, 12, 14])
+                || in_array($booking->agent_id, [2, 6, 7, 8, 9, 10, 11, 12, 14, 15])
             ) ? true : false;
         }
 
