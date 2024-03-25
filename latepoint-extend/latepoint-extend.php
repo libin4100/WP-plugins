@@ -171,7 +171,7 @@ if (!class_exists('LatePointExt')) :
                 $_SESSION['certCount'] = 0;
                 wp_send_json_success(['care' => 1], 200);
             } else {
-                $this->checkCertPartner($id, 'cb_providers');
+                $this->checkCertificateCBP();
             }
             wp_die();
         }
