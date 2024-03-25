@@ -2561,7 +2561,7 @@ EOT;
                         ]
                     ],
                     'cbp' => [
-                        'show' => ['cf_4wVF2U9Y', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'show' => ['cf_6A3SfgET', 'cf_sBJs0cqR'],
                         'hide' => [
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',
@@ -2591,7 +2591,7 @@ EOT;
                         ]
                     ],
                     'cbpc' => [
-                        'show' => ['cf_4wVF2U9Y', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'show' => ['cf_6A3SfgET', 'cf_sBJs0cqR'],
                         'hide' => [
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',
