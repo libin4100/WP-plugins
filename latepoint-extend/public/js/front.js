@@ -83,6 +83,9 @@ jQuery(function ($) {
             $('#booking_custom_fields_cf_xlaxtiqb').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
             $('#booking_custom_fields_cf_p56xpuo5').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
         }
+        if ($('#booking_custom_fields_cf_4wvf2u9y').length && !$('#booking_custom_fields_cf_4wvf2u9y').parents('.os-col-12').is(':first-child')) {
+            $('#booking_custom_fields_cf_4wvf2u9y').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
+        }
         if ($('#customer_custom_fields_cf_4zkibeey').length) {
             if ($('#customer_custom_fields_cf_4zkibeey').val() == 'Other') {
                 $('#customer_custom_fields_cf_nvbyvyyw').parents('.os-col-12').show()
@@ -388,11 +391,14 @@ jQuery(function ($) {
         $(this).addClass('os-loading').prop('disabled', true);
         var pform = $(this).closest('.form');
         var cert = pform.find('.mbc-cert').val();
+        var action = 'mbc_certificate';
+        if (pform.find('.mbc-cert').data('action'))
+            action = pform.find('.mbc-cert').data('action');
         $.ajax({
             method: "POST",
             url: ajax_object.ajax_url,
             data: {
-                action: 'mbc_certificate',
+                action: action,
                 id: cert
             },
         }).done(function (msg) {

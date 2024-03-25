@@ -23,7 +23,7 @@ if (!class_exists('LatePointExt')) :
      */
     final class LatePointExt
     {
-        public $version = '1.3.15';
+        public $version = '1.3.16';
         public $dbVersion = '1.0.0';
         public $addonName = 'latepoint-extend';
 
@@ -68,6 +68,8 @@ if (!class_exists('LatePointExt')) :
             add_action('wp_ajax_check_certificate_gotohw', [$this, 'checkCertificateGotoHW']);
             add_action('wp_ajax_nopriv_mbc_certificate', [$this, 'mbcCert']);
             add_action('wp_ajax_mbc_certificate', [$this, 'mbcCert']);
+            add_action('wp_ajax_nopriv_cbp_certificate', [$this, 'cbpCert']);
+            add_action('wp_ajax_cbp_certificate', [$this, 'cbpCert']);
             add_action('latepoint_includes', [$this, 'includes']);
             add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
             add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
@@ -151,6 +153,25 @@ if (!class_exists('LatePointExt')) :
                 wp_send_json_success(['care' => 1], 200);
             } else {
                 $this->checkCertificate();
+            }
+            wp_die();
+        }
+
+        public function cbpCert()
+        {
+            if (!session_id()) {
+                session_start();
+            }
+            $id = trim($_POST['id']);
+            if (!$id) {
+                wp_send_json_error(['message' => 'Certificate number is required.'], 404);
+            }
+            $care = $this->checkCertPartner($id, 'cb_providers', 13);
+            if ($care) {
+                $_SESSION['certCount'] = 0;
+                wp_send_json_success(['care' => 1], 200);
+            } else {
+                $this->checkCertPartner($id, 'cb_providers');
             }
             wp_die();
         }
@@ -279,6 +300,32 @@ if (!class_exists('LatePointExt')) :
                     $msg = "We're sorry. The employee ID provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                 else
                     $msg = 'Employee ID does not match our records. Please try again.';
+
+                wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
+            }
+            wp_die();
+        }
+
+        public function checkCertificateSessionCBP()
+        {
+            if (!session_id()) {
+                session_start();
+            }
+            $this->checkCertificateCBP();
+        }
+
+        public function checkCertificateCBP()
+        {
+            if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
+            if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
+
+            $id = trim($_POST['id']);
+            if ($id && !$this->checkCertPartner($id, 'cb_providers')) {
+                $_SESSION['certCount'] += 1;
+                if ($_SESSION['certCount'] >= 3)
+                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                else
+                    $msg = 'Certificate number does not match our records. Please try again.';
 
                 wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
             }
@@ -1138,6 +1185,12 @@ EOT;
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
                         }
+                        if ($bookingObject->agent_id == 15 && $k == 'cf_4wVF2U9Y') {
+                            if (!$this->checkCertPartner($custom_fields_data[$k] ?? '', 'cb_providers')) {
+                                $msg = 'Certificate number does not match our records. Please try again.';
+                                $errors[] = ['type' => 'validation', 'message' => $msg];
+                            }
+                        }
                         if ($this->returningExtra($bookingObject) && in_array($k, ['cf_WFHtiGvf'])) {
                             if (($custom_fields_data['cf_x18jr0Vf'] ?? '') == 'Yes' || $bookingObject->agent_id == 2) {
                                 if (!($custom_fields_data[$k] ?? '')) {
@@ -1288,6 +1341,13 @@ EOT;
                         $fields = $this->_fields('imcc');
                     else
                         $fields = $this->_fields('imc');
+                    break;
+                case $bookingObject->agent_id == 15:
+                    //CB Providers
+                    if ($bookingObject->service_id == 13)
+                        $fields = $this->_fields('cbpc');
+                    else
+                        $fields = $this->_fields('cbp');
                     break;
                 case in_array($bookingObject->service_id, [2, 3]):
                     $this->_fields('located');
@@ -2500,6 +2560,95 @@ EOT;
                             ],
                         ]
                     ],
+                    'cbp' => [
+                        'show' => ['cf_4wVF2U9Y', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                        ],
+                        'add' => [
+                            'first_name' => [
+                                'label' => __('First Name', 'latepoint'),
+                                'placeholder' => __('First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Last Name', 'latepoint'),
+                                'placeholder' => __('Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                        ]
+                    ],
+                    'cbpc' => [
+                        'show' => ['cf_4wVF2U9Y', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                            'cf_nxwjDAcZ',
+                        ],
+                        'add' => [
+                            'first_name' => [
+                                'label' => __('Client First Name', 'latepoint'),
+                                'placeholder' => __('Client First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Client Last Name', 'latepoint'),
+                                'placeholder' => __('Client Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                            'phone' => [
+                                'label' => __('Client Contact Number', 'latepoint'),
+                                'placeholder' => __('Client Contact Number', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'phone'
+                            ],
+                            'email' => [
+                                'label' => __('Client Email', 'latepoint'),
+                                'placeholder' => __('Client Email', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'email'
+                            ],
+                        ],
+                        'merge' => [
+                            'cf_x18jr0Vf' => [
+                                'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
+                            ],
+                            'cf_6A3SfgET' => [
+                                'label' => __('Where are you or the client currently located?', 'latepoint'),
+                            ],
+                        ]
+                    ],
                     //'located' => ['show' => ['cf_6A3SfgET', 'cf_YXtUB2Jc']],
                     'located' => ['show' => ['cf_6A3SfgET']],
                     'locatedOther' => ['show' => ['cf_6A3SfgET']],
@@ -2712,9 +2861,16 @@ EOT;
             return $check;
         }
 
-        protected function checkCertPartner($cert, $partner)
+        protected function checkCertPartner($cert, $partner, $serviceId = null)
         {
             global $wpdb;
+            $check = $this->checkCertTest($cert, $partner);
+            if ($check) return $check;
+
+            if ($serviceId == 13) {
+            } else {
+                $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
+            }
             return $this->checkCertTest($cert, $partner) ?: $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
         }
 
@@ -2722,7 +2878,8 @@ EOT;
         {
             return ($cert == '123456')
                 || (($partner == 'fabricland') && ($cert == 'FABRICFRIENDS'))
-                || (($partner == 'imperial_capital') && ($cert == '1234567890'));
+                || (($partner == 'imperial_capital') && ($cert == '1234567890'))
+                || (($partner == 'cb_providers') && ($cert == '1234567890'));
         }
 
         public function onDeactivate()
