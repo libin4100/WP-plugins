@@ -323,7 +323,7 @@ if (!class_exists('LatePointExt')) :
             if ($id && !$this->checkCertPartner($id, 'cb_providers')) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
-                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-855-944-9166</nobr> for assistance.";
+                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact CB Providers at <nobr>1-855-944-9166</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                 else
                     $msg = 'Certificate number does not match our records. Please try again.';
 
