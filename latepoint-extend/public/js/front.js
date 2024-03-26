@@ -121,6 +121,16 @@ jQuery(function ($) {
         else
             $(this).closest('p').after('<img class="mbc-image" src="/wp-content/uploads/2022/03/mbc-1.png" />');
     });
+    $('body').on('mouseover', '.cbp-help', function () {
+        if (!$('.cbp-image').length)
+            $(this).closest('p').after('<img class="cbp-image" src="/wp-content/uploads/2024/03/Print_BenefitCard.jpg" />');
+    });
+    $('body').on('click', '.cbp-help', function () {
+        if ($('.cbp-image').length)
+            $('.cbp-image').remove();
+        else
+            $(this).closest('p').after('<img class="cbp-image" src="/wp-content/uploads/2024/03/Print_BenefitCard.jpg" />');
+    });
     $('body').on('mouseover', '.latepoint-body .sb-help', function () {
         $('.latepoint-summary-w').append('<img class="sb-image" src="/wp-content/uploads/2022/11/tempsnip.png" />');
     });
