@@ -25,9 +25,43 @@
             'Family medicine',
             'Other'
         ];
+        if ($booking->service_id)
+            $list = [
+                "Addiction and substance care",
+                "Alcohol use",
+                "Anger",
+                "Anxiety",
+                "Child and elder care",
+                "Chronic disease management",
+                "Depression",
+                "Diabetes",
+                "Family care information",
+                "Financial and legal assistance",
+                "Financial goal planning",
+                "Gambling",
+                "Health and wellness information",
+                "Health and Wellness planning Primary care or family physician",
+                "Heart disease",
+                "High blood pressure",
+                "High cholesterol",
+                "iCBT programs and tools Mental health support",
+                "Individual coaching/counselling session",
+                "Individualized health risk assessment",
+                "Life transitions",
+                "Medical navigation and support",
+                "Nutritional and diet ",
+                "Physical wellness, energy and resilience",
+                "Relationship",
+                "Social support services",
+                "Specialist care",
+                "Stress",
+                "Tobacoo use",
+                "Weight management",
+                "Others - please specify",
+            ];
 
         foreach ($list as $i => $custom_field) {
-            $id = 'qhc_service_' . ($custom_field == 'Other' ? 'other' : $i);
+            $id = 'qhc_service_' . (stripos($custom_field, 'other') !== false ? 'other' : '');
             echo OsFormHelper::checkbox_field('booking[qhc][services][' . $custom_field . ']', $custom_field, 'on', ($booking->get_meta_by_key($custom_field, 'off') == 'on'), ['id' => $id], ['class' => 'os-col-12']);
             if ($custom_field == 'Other') {
                 echo OsFormHelper::text_field('booking[qhc][services][other_detail]', 'Please specify', $booking->get_meta_by_key('other_detail', ''), ['class' => 'os-form-control', 'placeholder' => 'Please specify', 'id' => 'other_detail'], array('class' => 'os-col-12'));

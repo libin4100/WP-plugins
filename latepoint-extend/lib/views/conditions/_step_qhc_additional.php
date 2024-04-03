@@ -1,13 +1,20 @@
 <div class="step-qhc-service-w latepoint-step-content" data-step-name="qhc_additional">
     <div class="os-row">
         <?php
-        echo OsFormHelper::text_field('booking[qhc][additional_concern]', 'Please tell us your concern that require care navigation support?', $booking->get_meta_by_key('additinal_concern', ''), ['class' => 'os-form-control', 'placeholder' => 'Please tell us your concern that require care navigation support?'], array('class' => 'os-col-12'));
+        if ($booking->service_id == 15) {
+            $concern = 'Please tell us about your concern that requires employee assistance program support';
+            $file = 'Please upload all the relevent documents for our Employee Assistance Program staff to review';
+        } else {
+            $concern = 'Please tell us your concern that require care navigation support?';
+            $file = 'Please upload all the relevent documents for our care navigator to review (i.e. consult notes, imaging reports, blood work, etc.)';
+        }
+        echo OsFormHelper::text_field('booking[qhc][additional_concern]', $concern, $booking->get_meta_by_key('additinal_concern', ''), ['class' => 'os-form-control', 'placeholder' => 'Please tell us your concern that require care navigation support?'], array('class' => 'os-col-12'));
         echo OsFormHelper::text_field('booking[qhc][additional_waittime]', 'What is your current wait time for the services you need?', $booking->get_meta_by_key('additional_waittime', ''), ['class' => 'os-form-control', 'placeholder' => 'What is your current wait time for the services you need?'], array('class' => 'os-col-12'));
         ?>
         <div class="os-col-12 os-col-sm-12">
             <div class="os-form-group os-form-group-transparent">
                 <label for="additional_file_upload">
-                    Please upload all the relevent documents for our care navigator to review (i.e. consult notes, imaging reports, blood work, etc.)
+                    <?= $file ?>
                     <div class="btn btn-block latepoint-btn latepoint-btn-secondary">
                         <strong>Add Files</strong>
                         <input type="file" name="booking_file" value="" class="os-form-control" style="display:none" id="additional_file_upload">

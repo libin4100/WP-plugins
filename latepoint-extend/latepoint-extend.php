@@ -167,9 +167,10 @@ if (!class_exists('LatePointExt')) :
                 wp_send_json_error(['message' => 'Certificate number is required.'], 404);
             }
             $care = $this->checkCertPartner($id, 'cb_providers', 13);
-            if ($care) {
+            $eap = $this->checkCertPartner($id, 'cb_providers', 15);
+            if ($care || $eap) {
                 $_SESSION['certCount'] = 0;
-                wp_send_json_success(['care' => 1], 200);
+                wp_send_json_success(['care' => $care, 'eap' => $eap], 200);
             } else {
                 $this->checkCertificateCBP();
             }
@@ -1024,7 +1025,7 @@ EOT;
 
                     //Steps for QHA Care Navigation
                 case 'qhc_service':
-                    if ($bookingObject->service_id == 13) {
+                    if (in_array($bookingObject->service_id, [13, 15])) {
                         $controller = new OsConditionsController();
                         $html = $controller->render($controller->get_view_uri('_step_qhc_service'), 'none', [
                             'booking' => $bookingObject,
@@ -1248,10 +1249,40 @@ EOT;
                     break;
 
                 case 'qhc_service':
+                    if ($bookingObject->service_id == 15) {
+                        $_err = true;
+                        $booking = OsParamsHelper::get_param('booking');
+                        if (!isset($booking['qhc']['services']) || !is_array($booking['qhc']['services'])) {
+                        } else {
+                            foreach ($booking['qhc']['services'] as $field => $val) {
+                                if (strtolower($val) == 'on') {
+                                    $_err = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if ($_err) {
+                            remove_all_actions('latepoint_process_step');
+                            wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['You need to select at least one service.']));
+                            return;
+                        }
+                    }
                     break;
                 case 'qhc_contact':
                     break;
                 case 'qhc_additional':
+                    if ($bookingObject->service_id == 15) {
+                        $booking = OsParamsHelper::get_param('booking');
+                        if (
+                            !isset($booking['qhc']['additional_file'])
+                            || !is_array($booking['qhc']['additional_file'])
+                            || empty(array_filter($booking['qhc']['additional_file']))
+                        ) {
+                            remove_all_actions('latepoint_process_step');
+                            wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['You need to upload at least one file.']));
+                            return;
+                        }
+                    }
                     $booking = OsParamsHelper::get_param('booking');
                     $qhc = $booking['custom_fields'];
                     $customer_params = [
@@ -1346,6 +1377,8 @@ EOT;
                     //CB Providers
                     if ($bookingObject->service_id == 13)
                         $fields = $this->_fields('cbpc');
+                    elseif ($bookingObject->service_id == 15)
+                        $fields = $this->_fields('cbpe');
                     else
                         $fields = $this->_fields('cbp');
                     break;
@@ -2648,6 +2681,75 @@ EOT;
                             ],
                         ]
                     ],
+                    'cbpe' => [
+                        'show' => ['cf_4wVF2U9Y', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                            'cf_nxwjDAcZ',
+                        ],
+                        'add' => [
+                            'emergency' => [
+                                'label' => __('Are you experiencing a life-threatening emergency or require immediate medical attention?', 'latepoint'),
+                                'placeholder' => __('---Please Select---', 'latepoint'),
+                                'type' => 'select',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => "Yes\nNo",
+                                'required' => 'on',
+                                'id' => 'emergency',
+                            ],
+                            'first_name' => [
+                                'label' => __('Client First Name', 'latepoint'),
+                                'placeholder' => __('Client First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Client Last Name', 'latepoint'),
+                                'placeholder' => __('Client Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                            'phone' => [
+                                'label' => __('Client Contact Number', 'latepoint'),
+                                'placeholder' => __('Client Contact Number', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'phone'
+                            ],
+                            'email' => [
+                                'label' => __('Client Email', 'latepoint'),
+                                'placeholder' => __('Client Email', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'email'
+                            ],
+                        ],
+                        'merge' => [
+                            'cf_x18jr0Vf' => [
+                                'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
+                            ],
+                            'cf_6A3SfgET' => [
+                                'label' => __('Where are you or the client currently located?', 'latepoint'),
+                            ],
+                        ]
+                    ],
                     //'located' => ['show' => ['cf_6A3SfgET', 'cf_YXtUB2Jc']],
                     'located' => ['show' => ['cf_6A3SfgET']],
                     'locatedOther' => ['show' => ['cf_6A3SfgET']],
@@ -2716,7 +2818,12 @@ EOT;
         {
             $restrictions = OsParamsHelper::get_param('restrictions');
             $booking = OsParamsHelper::get_param('booking');
-            if (OsStepsHelper::$booking_object->service_id == 13 || ($restrictions['selected_service'] ?? false) == 13) {
+            if (
+                OsStepsHelper::$booking_object->service_id == 13
+                || ($restrictions['selected_service'] ?? false) == 13
+                || OsStepsHelper::$booking_object->service_id == 15
+                || ($restrictions['selected_service'] ?? false) == 15
+            ) {
                 if ($index = array_search('datepicker', $steps)) {
                     array_splice($steps, $index, 2, ['qhc_service', 'qhc_contact', 'qhc_additional']);
                 }
@@ -2742,7 +2849,7 @@ EOT;
         public function beSkipped($skip, $step, $booking_object)
         {
             $params = OsParamsHelper::get_param('booking');
-            if ($booking_object->service_id == 13) {
+            if (in_array($booking_object->service_id, [13, 15])) {
                 if (in_array($step, ['datepicker', 'contact']))
                     $skip = true;
                 if (in_array($step, ['qhc_service', 'qhc_contact', 'qhc_additional']))
@@ -2866,8 +2973,18 @@ EOT;
             $check = $this->checkCertTest($cert, $partner);
             if ($check) return $check;
 
-            if ($serviceId == 13) {
-                $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
+            if ($serviceId) {
+                switch ($partner) {
+                    case 'cb_providers':
+                        $row = $wpdb->get_row($wpdb->prepare("select * from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
+                        if ($serviceId == 13)
+                            $check = stripos($row->service, 'navigation') !== false;
+                        elseif ($serviceId == 15)
+                            $check = stripos($row->service, 'eap2') !== false;
+                        break;
+                    default:
+                        $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
+                }
             } else {
                 $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
             }
