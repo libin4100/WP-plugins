@@ -467,7 +467,7 @@ jQuery(function($) {
 </script>
 EOT;
             }
-            if (OsStepsHelper::$booking_object->service_id == 13) {
+            if (in_array(OsStepsHelper::$booking_object->service_id, [13, 15])) {
                 echo <<<EOT
 <script>
 jQuery(function($) {
@@ -1004,7 +1004,7 @@ EOT;
                     break;
                     //Steps for QHA appointment request
                 case 'qha_time':
-                    if ($bookingObject->service_id != 13) {
+                    if (!in_array($bookingObject->service_id, [13, 15])) {
                         $controller = new OsConditionsController();
                         $html = $controller->render($controller->get_view_uri('_step_qha_time'), 'none', [
                             'booking' => $bookingObject,
@@ -1719,7 +1719,7 @@ EOT;
         {
             $ploc = $booking->get_meta_by_key('cf_6A3SfgET', '');
             $loc = $booking->location ? $booking->location->name : '';
-            if ($booking->service_id == 13) {
+            if (in_array($booking->service_id, [13, 15])) {
                 return false;
             }
             if (
@@ -1818,7 +1818,7 @@ EOT;
                     'description' => __('Thank you for choosing Gotodoctor as your Virtual Healthcare provider. Please proceed to make payment and check your email for further instructions. *If this is an emergency, go to the nearest hospital or call 911.*<br /><strong>DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</strong>', 'latepoint-extand-master'),
                 ];
             }
-            if (OsStepsHelper::$booking_object->service_id == 13) {
+            if (in_array(OsStepsHelper::$booking_object->service_id, [13, 15])) {
                 $steps['qhc_service'] = [
                     'title' => __('Services Required', 'latepoint-extand-master'),
                     'order_number' => 4,
@@ -2830,8 +2830,8 @@ EOT;
             } elseif (OsStepsHelper::$booking_object->service_id == 14 || ($restrictions['selected_service'] ?? false) == 14) {
                 $steps = [];
             } elseif (
-                (isset($booking['service_id']) && ($booking['service_id'] != 13))
-                || (isset($restrictions['selected_service']) && ($restrictions['selected_service'] != 13))
+                (isset($booking['service_id']) && !in_array($booking['service_id'], [13, 15]))
+                || (isset($restrictions['selected_service']) && !in_array($restrictions['selected_service'], [13, 15]))
             ) {
                 if ($index = array_search('datepicker', $steps)) {
                     array_splice($steps, $index, 1, ['qha_time', 'datepicker']);
@@ -2857,8 +2857,7 @@ EOT;
             } else {
                 if (in_array($step, ['qhc_service', 'qhc_contact', 'qhc_additional']))
                     $skip = true;
-            }
-            if ($booking_object->service_id != 13) {
+
                 if (in_array($step, ['qha_time']))
                     $skip = false;
                 if ((($params['qha_time'] ?? false) == 'fastest') && (in_array($step, ['datepicker', 'datepicker2', 'datepicker3'])))
