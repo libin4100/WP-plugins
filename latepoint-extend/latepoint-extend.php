@@ -1479,6 +1479,7 @@ EOT;
                 foreach ([
                     'email',
                     'phone',
+                    'emergency',
                     'start_date2',
                     'start_time2',
                     'start_date3',
