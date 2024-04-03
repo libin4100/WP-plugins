@@ -25,7 +25,7 @@
             'Family medicine',
             'Other'
         ];
-        if ($booking->service_id)
+        if ($booking->service_id == 15)
             $list = [
                 "Addiction and substance care",
                 "Alcohol use",
@@ -61,9 +61,9 @@
             ];
 
         foreach ($list as $i => $custom_field) {
-            $id = 'qhc_service_' . (stripos($custom_field, 'other') !== false ? 'other' : '');
+            $id = 'qhc_service_' . (stripos($custom_field, 'other') !== false ? 'other' : $i);
             echo OsFormHelper::checkbox_field('booking[qhc][services][' . $custom_field . ']', $custom_field, 'on', ($booking->get_meta_by_key($custom_field, 'off') == 'on'), ['id' => $id], ['class' => 'os-col-12']);
-            if ($custom_field == 'Other') {
+            if ($id == 'qhc_service_other') {
                 echo OsFormHelper::text_field('booking[qhc][services][other_detail]', 'Please specify', $booking->get_meta_by_key('other_detail', ''), ['class' => 'os-form-control', 'placeholder' => 'Please specify', 'id' => 'other_detail'], array('class' => 'os-col-12'));
             }
         }

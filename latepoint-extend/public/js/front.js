@@ -439,6 +439,15 @@ jQuery(function ($) {
         });
     });
 
+    $('body').on('change', '#booking_custom_fields_emergency', function () {
+        if ($(this).val() == 'Yes') {
+            $('.latepoint-footer .latepoint-btn').addClass('disabled');
+            $('.latepoint-body').empty().prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
+            $('.latepoint-body #certificate-error').html('The GotoDoctor Employee Support Program is not intended for emergencies or those requiring immediate medical attention. If this is an emergency or you are in need of rapid medical intervention, please call 911 or visit the nearest hospital.');
+        }
+            
+    });
+
     document.addEventListener('custombox:overlay:close', function() {
         if (!$('.custombox-open').length) {
             $('.mbc-wrapper .mbc-popup').addClass('hidden');
