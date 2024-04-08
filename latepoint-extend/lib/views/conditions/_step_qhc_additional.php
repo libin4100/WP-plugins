@@ -4,11 +4,13 @@
         if ($booking->service_id == 15) {
             $concern = 'Please tell us about your concern that requires employee assistance program support';
             $file = 'Please upload all the relevent documents for our Employee Assistance Program staff to review';
+            $service = 'Employee Assistance Program';
         } else {
             $concern = 'Please tell us your concern that require care navigation support?';
             $file = 'Please upload all the relevent documents for our care navigator to review (i.e. consult notes, imaging reports, blood work, etc.)';
+            $service = 'Care Navigation';
         }
-        echo OsFormHelper::text_field('booking[qhc][additional_concern]', $concern, $booking->get_meta_by_key('additinal_concern', ''), ['class' => 'os-form-control', 'placeholder' => 'Please tell us your concern that require care navigation support?'], array('class' => 'os-col-12'));
+        echo OsFormHelper::text_field('booking[qhc][additional_concern]', $concern, $booking->get_meta_by_key('additinal_concern', ''), ['class' => 'os-form-control', 'placeholder' => $concern], array('class' => 'os-col-12'));
         echo OsFormHelper::text_field('booking[qhc][additional_waittime]', 'What is your current wait time for the services you need?', $booking->get_meta_by_key('additional_waittime', ''), ['class' => 'os-form-control', 'placeholder' => 'What is your current wait time for the services you need?'], array('class' => 'os-col-12'));
         ?>
         <div class="os-col-12 os-col-sm-12">
@@ -20,7 +22,7 @@
                         <input type="file" name="booking_file" value="" class="os-form-control" style="display:none" id="additional_file_upload">
                     </div>
                 </label>
-                <h6 style="margin-top: 10px; color:#8e97b3">If the file you need to attach is more than 5 MB, please email it to <a href="mailto:telemedicine@enhancedcare.ca">telemedicine@enhancedcare.ca</a> and add Care Navigation in the subject line.</h6>
+                <h6 style="margin-top: 10px; color:#8e97b3">If the file you need to attach is more than 5 MB, please email it to <a href="mailto:telemedicine@enhancedcare.ca">telemedicine@enhancedcare.ca</a> and add <?= $service ?> in the subject line.</h6>
             </div>
             <div class="latepoint-loading" style="display: none;">
                 <div class="lds-dual-ring"></div>
