@@ -1151,12 +1151,15 @@ EOT;
                                 $errors[] = ['type' => 'validation', 'message' => 'You do not pass the screening and cannot proceed with the booking.'];
                             }
                         }
+                        /*
+                        MBC care navigation no need to check certificate
                         if ($bookingObject->agent_id == 6 && $k == 'cf_qOqKhbly') {
                             if (!$this->checkCert($custom_fields_data[$k] ?? '', $bookingObject->service_id)) {
                                 $msg = 'Certificate number does not match our records. Please try again.';
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
                         }
+                        */
                         if ($bookingObject->agent_id == 7 && $k == 'cf_Vin78Day') {
                             if (!$this->checkCertSB($custom_fields_data[$k] ?? '')) {
                                 $msg = 'Certificate number does not match our records. Please try again.';
