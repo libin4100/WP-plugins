@@ -1287,6 +1287,7 @@ EOT;
                 case 'qhc_contact':
                     break;
                 case 'qhc_additional':
+                    /*
                     if ($bookingObject->service_id == 15) {
                         $booking = OsParamsHelper::get_param('booking');
                         if (
@@ -1299,6 +1300,7 @@ EOT;
                             return;
                         }
                     }
+                    */
                     $booking = OsParamsHelper::get_param('booking');
                     $qhc = $booking['custom_fields'];
                     $customer_params = [
