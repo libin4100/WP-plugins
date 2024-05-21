@@ -105,6 +105,8 @@ if (!class_exists('OsConditionsController')) :
                             $condition['id'] = $this->_genId($conditions);
                         }
 
+                        $this->updateHistorySettings($condition);
+
                         $conditions[$condition['id']] = $condition;
 
                         if (OsSettingsHelper::save_setting_by_name('latepoint-location_switch', json_encode($conditions))) {
@@ -255,6 +257,8 @@ if (!class_exists('OsConditionsController')) :
             if (isset($this->params['id']) && !empty($this->params['id'])) {
                 $conditions = $this->getLocationSettings();
                 if (isset($conditions[$this->params['id']])) {
+                    $this->updateHistorySettings($conditions[$this->params['id']], 'delete');
+
                     unset($conditions[$this->params['id']]);
 
                     if (OsSettingsHelper::save_setting_by_name('latepoint-location_switch', json_encode($conditions))) {
@@ -350,6 +354,40 @@ if (!class_exists('OsConditionsController')) :
         {
             $conditions = [];
             $setting = OsSettingsHelper::get_settings_value('latepoint-location_switch', false);
+            if ($setting) {
+                $conditions = json_decode($setting, true);
+            }
+            return $conditions;
+        }
+
+        public function updateHistorySettings($condition, $action = null)
+        {
+            $histories = $this->getHistorySettings();
+            foreach ($histories as $id => $history) {
+                foreach ($history as $time => $h) {
+                    if ($h['action'] == 'delete' && $time < date('Y-m-d H:i:s', strtotime('-1 month'))) {
+                        unset($histories[$id]);
+                    }
+                }
+            }
+
+            $time = date('Y-m-d H:i:s');
+            if (!$action) {
+                if (isset($histories[$condition['id']])) {
+                    $action = 'update';
+                } else {
+                    $action = 'create';
+                }
+            }
+            $histories[$condition['id']][$time] = array_merge($histories[$condition['id']], ['action' => $action]);
+
+            OsSettingsHelper::save_setting_by_name('latepoint-location_histories', json_encode($histories));
+        }
+
+        public function getHistorySettings()
+        {
+            $conditions = [];
+            $setting = OsSettingsHelper::get_settings_value('latepoint-location_histories', false);
             if ($setting) {
                 $conditions = json_decode($setting, true);
             }
