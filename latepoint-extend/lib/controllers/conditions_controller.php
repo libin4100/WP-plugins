@@ -379,6 +379,7 @@ if (!class_exists('OsConditionsController')) :
                     $action = 'create';
                 }
             }
+            !isset($histories[$condition['id']]) && $histories[$condition['id']] = [];
             $histories[$condition['id']][$time] = array_merge($histories[$condition['id']], ['action' => $action]);
 
             OsSettingsHelper::save_setting_by_name('latepoint-location_histories', json_encode($histories));
