@@ -595,15 +595,6 @@ jQuery(function($) {
 });
 </script>
 EOT;
-                    $str = <<<EOT
-        if($('.os-summary-value-location').length 
-            && $('.os-summary-value-location').text().includes('Ontario') 
-            && $('#customer_custom_fields_cf_7lkik5fd').length 
-            && !$('#customer_custom_fields_cf_7lkik5fd option[value="Pediatrician"]').length
-        ) {
-            $('#customer_custom_fields_cf_7lkik5fd').append('<option value="Pediatrician">Pediatrician</option>');
-        }
-EOT;
                 }
             }
             $lid = intval($bookingObject->location_id ?? 0);
