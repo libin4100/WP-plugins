@@ -70,6 +70,8 @@ if (!class_exists('LatePointExt')) :
             add_action('wp_ajax_mbc_certificate', [$this, 'mbcCert']);
             add_action('wp_ajax_nopriv_cbp_certificate', [$this, 'cbpCert']);
             add_action('wp_ajax_cbp_certificate', [$this, 'cbpCert']);
+            add_action('wp_ajax_nopriv_check_certificate_seb', [$this, 'sebCert']);
+            add_action('wp_ajax_check_certificate_seb', [$this, 'sebCert']);
             add_action('latepoint_includes', [$this, 'includes']);
             add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
             add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
@@ -173,6 +175,26 @@ if (!class_exists('LatePointExt')) :
                 wp_send_json_success(['care' => $care, 'eap' => $eap], 200);
             } else {
                 $this->checkCertificateCBP();
+            }
+            wp_die();
+        }
+
+        public function sebCert()
+        {
+            if (!session_id()) {
+                session_start();
+            }
+            $id = trim($_POST['id']);
+            if (!$id) {
+                wp_send_json_error(['message' => 'Certificate number is required.'], 404);
+            }
+            $care = $this->checkCertPartner($id, 'seb', 13);
+            $eap = $this->checkCertPartner($id, 'seb', 15);
+            if ($care || $eap) {
+                $_SESSION['certCount'] = 0;
+                wp_send_json_success(['care' => $care, 'eap' => $eap], 200);
+            } else {
+                $this->checkCertPartner($id, 'seb');
             }
             wp_die();
         }
