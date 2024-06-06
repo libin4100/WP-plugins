@@ -615,6 +615,8 @@ jQuery(function($) {
             $('#customer_custom_fields_cf_rglgzjat').val($('#customer_phone').val()).parent('div.os-form-group').addClass('has-value');
         });
     }, 500);
+    $('.latepoint-w .latepoint-booking-form-element .latepoint-progress ul li[data-step-name="datepicker2"]').attr('style', 'display: none !important');
+    $('.latepoint-w .latepoint-booking-form-element .latepoint-progress ul li[data-step-name="datepicker3"]').attr('style', 'display: none !important');
 });
 </script>
 EOT;
@@ -1181,22 +1183,18 @@ EOT;
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
                         }
-                        if ($bookingObject->agent_id == 13 && $k == 'cf_P56xPUO5') {
-                            if (!$this->checkCertPartner($custom_fields_data[$k] ?? '', 'gotohealthwallet')) {
-                                $msg = 'Certificate number does not match our records. Please try again.';
-                                $errors[] = ['type' => 'validation', 'message' => $msg];
-                            }
-                        }
-                        if ($bookingObject->agent_id == 14 && $k == 'cf_W0iZRLtG') {
-                            if (!$this->checkCertPartner($custom_fields_data[$k] ?? '', 'imperial_capital')) {
-                                $msg = 'Certificate number does not match our records. Please try again.';
-                                $errors[] = ['type' => 'validation', 'message' => $msg];
-                            }
-                        }
-                        if ($bookingObject->agent_id == 15 && $k == 'cf_4wVF2U9Y') {
-                            if (!$this->checkCertPartner($custom_fields_data[$k] ?? '', 'cb_providers')) {
-                                $msg = 'Certificate number does not match our records. Please try again.';
-                                $errors[] = ['type' => 'validation', 'message' => $msg];
+                        $lists = [
+                            'gotohealthwallet' => ['agent_id' => 13, 'field' => 'cf_P56xPUO5'],
+                            'imperial_capital' => ['agent_id' => 14, 'field' => 'cf_W0iZRLtG'],
+                            'cb_providers' => ['agent_id' => 15, 'field' => 'cf_4wVF2U9Y'],
+                            'seb' => ['agent_id' => 16, 'field' => 'cf_aku1T075'],
+                        ];
+                        foreach ($lists as $key => $list) {
+                            if ($bookingObject->agent_id == $list['agent_id'] && $k == $list['field']) {
+                                if (!$this->checkCertPartner($custom_fields_data[$k] ?? '', $key, $bookingObject->service_id)) {
+                                    $msg = 'Certificate number does not match our records. Please try again.';
+                                    $errors[] = ['type' => 'validation', 'message' => $msg];
+                                }
                             }
                         }
                         if ($this->returningExtra($bookingObject) && in_array($k, ['cf_WFHtiGvf'])) {
@@ -1390,6 +1388,13 @@ EOT;
                         $fields = $this->_fields('cbpe');
                     else
                         $fields = $this->_fields('cbp');
+                    break;
+                case $bookingObject->agent_id == 16:
+                    //SEB
+                    if ($bookingObject->service_id == 13)
+                        $fields = $this->_fields('sebc');
+                    else
+                        $fields = $this->_fields('seb');
                     break;
                 case in_array($bookingObject->service_id, [2, 3]):
                     $this->_fields('located');
@@ -1622,7 +1627,7 @@ EOT;
                 if (defined('WPLANG')) $body['lang'] = WPLANG;
                 $sms = wp_remote_post($db . 'api/gtd/sms', ['method' => 'POST', 'body' => $body]);
             }
-            if ($this->covid || $this->others || $this->acorn || $booking->service_id == 10) {
+            if ($this->covid || $this->others || $this->acorn || $booking->service_id == 10) 
                 if ($this->others && ($booking->agent_id == 8) && $booking->get_meta_by_key('cf_6A3SfgET') == 'Quebec')
                     return;
             */
@@ -2710,6 +2715,95 @@ EOT;
                                 'required' => 'on',
                                 'id' => 'emergency',
                             ],
+                            'first_name' => [
+                                'label' => __('Client First Name', 'latepoint'),
+                                'placeholder' => __('Client First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Client Last Name', 'latepoint'),
+                                'placeholder' => __('Client Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                            'phone' => [
+                                'label' => __('Client Contact Number', 'latepoint'),
+                                'placeholder' => __('Client Contact Number', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'phone'
+                            ],
+                            'email' => [
+                                'label' => __('Client Email', 'latepoint'),
+                                'placeholder' => __('Client Email', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'email'
+                            ],
+                        ],
+                        'merge' => [
+                            'cf_x18jr0Vf' => [
+                                'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
+                            ],
+                            'cf_6A3SfgET' => [
+                                'label' => __('Where are you or the client currently located?', 'latepoint'),
+                            ],
+                        ]
+                    ],
+                    'seb' => [
+                        'show' => ['cf_aku1T075', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                        ],
+                        'add' => [
+                            'first_name' => [
+                                'label' => __('First Name', 'latepoint'),
+                                'placeholder' => __('First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Last Name', 'latepoint'),
+                                'placeholder' => __('Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                        ]
+                    ],
+                    'sebc' => [
+                        'show' => ['cf_aku1T075', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                            'cf_nxwjDAcZ',
+                        ],
+                        'add' => [
                             'first_name' => [
                                 'label' => __('Client First Name', 'latepoint'),
                                 'placeholder' => __('Client First Name', 'latepoint'),

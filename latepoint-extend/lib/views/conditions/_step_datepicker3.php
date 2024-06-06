@@ -17,3 +17,11 @@
 	echo OsFormHelper::hidden_field('booking[custom_fields][start_time3]', $booking->get_meta_by_key('start_time3', ''), [ 'class' => 'latepoint_start_time', 'skip_id' => true]);
   ?>
 </div>
+<script>
+  jQuery(document).ready(function($) {
+      sday = $('div[data-step-name="datepicker3"] div.os-day[data-date="<?= $booking->start_date ?>"]');
+      remove_booked(sday, '<?= $booking->start_time ?>');
+      sday = $('div[data-step-name="datepicker3"] div.os-day[data-date="<?= $params['custom_fields']['start_date2'] ?? '' ?>"]');
+      remove_booked(sday, '<?= $params['custom_fields']['start_time2'] ?? '' ?>');
+  });
+</script>
