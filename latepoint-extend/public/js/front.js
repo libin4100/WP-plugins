@@ -87,6 +87,10 @@ jQuery(function ($) {
             $('#booking_custom_fields_cf_4wvf2u9y').val($('#mbc-cert-hidden').val());
             $('#booking_custom_fields_cf_4wvf2u9y').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row').hide();
         }
+        if ($('#booking_custom_fields_cf_aku1t075').length && !$('#booking_custom_fields_cf_aku1t075').parents('.os-col-12').is(':first-child')) {
+            $('#booking_custom_fields_cf_aku1t075').val($('#mbc-cert-hidden').val());
+            $('#booking_custom_fields_cf_aku1t075').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row').hide();
+        }
         if ($('#customer_custom_fields_cf_4zkibeey').length) {
             if ($('#customer_custom_fields_cf_4zkibeey').val() == 'Other') {
                 $('#customer_custom_fields_cf_nvbyvyyw').parents('.os-col-12').show()
