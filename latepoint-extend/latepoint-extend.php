@@ -200,7 +200,7 @@ if (!class_exists('LatePointExt')) :
                 if (!$this->checkCertPartner($id, 'seb')) {
                     $_SESSION['certCount'] += 1;
                     if ($_SESSION['certCount'] >= 3)
-                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact CB Providers at <nobr>1-855-944-9166</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Smart Employee Benefits at <nobr>1-xxx-xxx-xxxx</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     else
                         $msg = 'Certificate number does not match our records. Please try again.';
 
@@ -1887,9 +1887,9 @@ EOT;
                 ];
             } else {
                 $steps['qha_time'] = [
-                    'title' => __('Appointment Request:', 'latepoint-extand-master'),
+                    'title' => '',
                     'order_number' => 4,
-                    'sub_title' => __('Appointment Request:', 'latepoint-extand-master'),
+                    'sub_title' => '',
                     'description' => '',
                 ];
             }
@@ -2966,18 +2966,12 @@ EOT;
                 }
             } elseif (OsStepsHelper::$booking_object->service_id == 14 || ($restrictions['selected_service'] ?? false) == 14) {
                 $steps = [];
-            } elseif (
-                (isset($booking['service_id']) && !in_array($booking['service_id'], [13, 15]))
-                || (isset($restrictions['selected_service']) && !in_array($restrictions['selected_service'], [13, 15]))
-            ) {
-                if ($index = array_search('datepicker', $steps)) {
-                    array_splice($steps, $index, 1, ['qha_time', 'datepicker']);
-                }
             }
             if (array_search('datepicker2', $steps) === false) {
                 if (array_search('datepicker', $steps) !== false) {
                     $index = array_search('datepicker', $steps);
                     array_splice($steps, $index + 1, 0, ['datepicker2', 'datepicker3']);
+                    array_splice($steps, $index, 1, ['qha_time', 'datepicker']);
                 }
             }
             return $steps;
