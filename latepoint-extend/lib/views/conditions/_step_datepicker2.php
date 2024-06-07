@@ -60,19 +60,19 @@
 
       sday = $('div[data-step-name="datepicker2"] div.os-day[data-date="<?= $booking->start_date ?>"]');
       remove_booked(sday, '<?= $booking->start_time ?>');
+    });
 
-      function remove_booked(obj, start_time) {
-        if (obj.length) {
-          minutes = obj.data('available-minutes');
-          if (minutes) {
-            minutes = minutes.split(',');
-            minutes = minutes.filter(function(value, index, arr) {
-              return value != start_time;
-            });
-            obj.data('available-minutes', minutes.join(','));
-          }
+    function remove_booked(obj, start_time) {
+      if (obj.length) {
+        minutes = obj.data('available-minutes');
+        if (minutes) {
+          minutes = minutes.split(',');
+          minutes = minutes.filter(function(value, index, arr) {
+            return value != start_time;
+          });
+          obj.data('available-minutes', minutes.join(','));
         }
       }
-    });
+    }
   </script>
 </div>
