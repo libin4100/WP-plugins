@@ -648,6 +648,7 @@ jQuery(function($) {
             $('#customer_custom_fields_cf_rglgzjat').val($('#customer_phone').val()).parent('div.os-form-group').addClass('has-value');
         });
     }, 500);
+    $('.latepoint-w .latepoint-booking-form-element .latepoint-progress ul li[data-step-name="qha-time"]').attr('style', 'display: none !important');
     $('.latepoint-w .latepoint-booking-form-element .latepoint-progress ul li[data-step-name="datepicker2"]').attr('style', 'display: none !important');
     $('.latepoint-w .latepoint-booking-form-element .latepoint-progress ul li[data-step-name="datepicker3"]').attr('style', 'display: none !important');
 });
