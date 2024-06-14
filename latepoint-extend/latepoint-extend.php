@@ -3042,7 +3042,7 @@ EOT;
                     $skip = true;
             }
             if ($booking_object->service_id == 16) {
-                $skip = in_array($step, ['pharmacy', 'qhc_additional']);
+                $skip = !in_array($step, ['pharmacy', 'qhc_additional']);
             }
             return $skip;
         }
