@@ -6,9 +6,9 @@
         echo OsFormHelper::text_field('booking[qhc][pharmacy_phone]', 'Pharmacy Phone', $booking->get_meta_by_key('pharmacy_phone', ''), ['class' => 'os-form-control', 'placeholder' => 'Pharmacy Phone'], array('class' => 'os-col-12'));
         echo OsFormHelper::text_field('booking[qhc][pharmacy_fax]', 'Pharmacy Fax', $booking->get_meta_by_key('pharmacy_fax', ''), ['class' => 'os-form-control', 'placeholder' => 'Pharmacy Fax'], array('class' => 'os-col-12'));
         echo OsFormHelper::text_field('booking[qhc][pharmacy_email]', 'Pharmacy Email', $booking->get_meta_by_key('pharmacy_email', ''), ['class' => 'os-form-control', 'placeholder' => 'Pharmacy Email'], array('class' => 'os-col-12'));
-        echo OsFormHelper::text_field('booking[qhc][your_name]', 'Your Name', $booking->get_meta_by_key('your_name', ''), ['class' => 'os-form-control', 'placeholder' => 'Your Name'], array('class' => 'os-col-12'));
-        echo OsFormHelper::text_field('booking[qhc][your_phone]', 'Number to contact (if different from above)', $booking->get_meta_by_key('your_phone', ''), ['class' => 'os-form-control', 'placeholder' => 'Number to contact (if different from above)'], array('class' => 'os-col-12'));
-        echo OsFormHelper::text_field('booking[qhc][your_email]', 'Email to contact (if different from above)', $booking->get_meta_by_key('your_email', ''), ['class' => 'os-form-control', 'placeholder' => 'Email to contact (if different from above)'], array('class' => 'os-col-12'));
+        echo OsFormHelper::text_field('booking[custom_fields][first_name]', 'Your Name', $booking->get_meta_by_key('first_name', ''), ['class' => 'os-form-control', 'placeholder' => 'Your Name'], array('class' => 'os-col-12'));
+        echo OsFormHelper::text_field('booking[custom_fields][phone]', 'Number to contact (if different from above)', $booking->get_meta_by_key('phone', ''), ['class' => 'os-form-control', 'placeholder' => 'Number to contact (if different from above)'], array('class' => 'os-col-12'));
+        echo OsFormHelper::text_field('booking[custom_fields][email]', 'Email to contact (if different from above)', $booking->get_meta_by_key('email', ''), ['class' => 'os-form-control', 'placeholder' => 'Email to contact (if different from above)'], array('class' => 'os-col-12'));
     ?>
     </div>
 </div>

@@ -1121,21 +1121,10 @@ EOT;
                     break;
                 case 'pharmacy':
                     $controller = new OsConditionsController();
-                    $html = $controller->render($controller->get_view_uri('_step_pharmacy'), 'none', [
+                    echo $controller->render($controller->get_view_uri('_step_pharmacy'), 'none', [
                         'booking' => $bookingObject,
                         'current_step' => $stepName
                     ]);
-                    wp_send_json(array_merge(
-                        ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
-                        [
-                            'step_name'         => $stepName,
-                            'show_next_btn'     => true,
-                            'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
-                            'is_first_step'     => OsStepsHelper::is_first_step($stepName),
-                            'is_last_step'      => OsStepsHelper::is_last_step($stepName),
-                            'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
-                        ]
-                    ));
                     break;
                 case 'datepicker2':
                 case 'datepicker3':
@@ -1344,11 +1333,16 @@ EOT;
                     */
                     $booking = OsParamsHelper::get_param('booking');
                     $qhc = $booking['custom_fields'];
+                    if (isset($qhc['first_name']) && !isset($qhc['last_name'])) {
+                        $arr = explode(' ', $qhc['first_name']);
+                        $qhc['last_name'] = (count($arr) > 1) ? array_pop($arr) : '';
+                        $qhc['first_name'] = implode(' ', $arr);
+                    }
                     $customer_params = [
                         'first_name' => $qhc['first_name'],
                         'last_name' => $qhc['last_name'],
-                        'email' => $qhc['email'],
-                        'phone' => $qhc['phone'],
+                        'email' => $qhc['email'] ?: $qhc['pharmacy_email'] ?? '',
+                        'phone' => $qhc['phone'] ?: $qhc['pharmacy_phone'] ?? '',
                     ];
                     $customer = new OsCustomerModel();
                     $check = $customer->where(['email' => $customer_params['email']])->get_results_as_models();
@@ -1858,6 +1852,9 @@ EOT;
                 if ($button->referer && $button->referer == wp_get_referer()) {
                     $rules['confirmation'] = true;
                 }
+            }
+            if ($step == 'pharmacy') {
+                $rules['pharmacy'] = true;
             }
             return $rules;
         }
@@ -3011,7 +3008,8 @@ EOT;
                 OsStepsHelper::$booking_object->service_id == 16
                 || ($restrictions['selected_service'] ?? false) == 16
             ) {
-                $steps = ['pharmacy', 'qhc_additional'];
+                $steps = ['pharmacy', 'qhc_additional', 'locations', 'locations', 'locations', 'locations', 'locations', 'locations', 'confirmation'];
+                remove_all_actions('latepoint_step_names_in_order');
             }
             return $steps;
         }
@@ -3042,7 +3040,7 @@ EOT;
                     $skip = true;
             }
             if ($booking_object->service_id == 16) {
-                $skip = !in_array($step, ['pharmacy', 'qhc_additional']);
+                $skip = !in_array($step, ['pharmacy', 'qhc_additional', 'confirmation']);
             }
             return $skip;
         }
