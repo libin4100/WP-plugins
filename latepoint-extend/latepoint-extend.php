@@ -1341,8 +1341,8 @@ EOT;
                     $customer_params = [
                         'first_name' => $qhc['first_name'],
                         'last_name' => $qhc['last_name'],
-                        'email' => $qhc['email'] ?: $qhc['pharmacy_email'] ?? '',
-                        'phone' => $qhc['phone'] ?: $qhc['pharmacy_phone'] ?? '',
+                        'email' => $qhc['email'] ?: $booking['qhc']['pharmacy_email'] ?? '',
+                        'phone' => $qhc['phone'] ?: $booking['qhc']['pharmacy_phone'] ?? '',
                     ];
                     $customer = new OsCustomerModel();
                     $check = $customer->where(['email' => $customer_params['email']])->get_results_as_models();
@@ -1457,6 +1457,14 @@ EOT;
             }
             if (($bookingObject->service_id != 13) && $this->isReturning()) {
                 $this->_fields('returningOnly');
+            }
+            if ($bookingObject->service_id == 16) {
+                $customFields = OsSettingsHelper::$loaded_values['custom_fields_for_booking'];
+                $values = is_array($customFields) ? $customFields : json_decode($customFields, true);
+                foreach ($values as $id => $val) {
+                    $values[$id]['visibility'] = 'hidden';
+                }
+                OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
             }
         }
 
