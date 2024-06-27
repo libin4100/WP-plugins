@@ -49,7 +49,7 @@ final class WPPass {
 
         $labelEmail  = 'pw-email-' . ( empty( $post->ID ) ? rand() : $post->ID );
         $label  = 'pwbox-' . ( empty( $post->ID ) ? rand() : $post->ID );
-        $output = '<form action="' . esc_url( site_url( 'wp-login.php?action=custom_pass', 'login_post' ) ) . '" class="post-password-form" method="post" style="margin-top:50px; text-align:center;">';
+        $output = '<form action="' . esc_url( site_url( 'secure-login.php?action=custom_pass', 'login_post' ) ) . '" class="post-password-form" method="post" style="margin-top:50px; text-align:center;">';
         if($post->post_password == 'emailonly') {
             $output .= '<p>' . __( 'This page is protected, strictly private and confidential. Please enter your email to access this page:' ) . '</p>';
         } else {
