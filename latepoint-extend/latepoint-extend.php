@@ -1152,6 +1152,24 @@ EOT;
                         'current_step' => $stepName
                     ]);
                     break;
+                case 'pharmacy_additional':
+                    $controller = new OsConditionsController();
+                    $html = $controller->render($controller->get_view_uri('_step_pharmacy_additional'), 'none', [
+                        'booking' => $bookingObject,
+                        'current_step' => $stepName
+                    ]);
+                    wp_send_json(array_merge(
+                        ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                        [
+                            'step_name'         => $stepName,
+                            'show_next_btn'     => true,
+                            'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
+                            'is_first_step'     => OsStepsHelper::is_first_step($stepName),
+                            'is_last_step'      => OsStepsHelper::is_last_step($stepName),
+                            'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                        ]
+                    ));
+                    break;
                 case 'datepicker2':
                 case 'datepicker3':
                     $controller = new OsConditionsController();
@@ -1343,6 +1361,7 @@ EOT;
                 case 'qhc_contact':
                     break;
                 case 'qhc_additional':
+                case 'pharmacy_additional':
                     /*
                     if ($bookingObject->service_id == 15) {
                         $booking = OsParamsHelper::get_param('booking');
@@ -1950,10 +1969,10 @@ EOT;
                     'sub_title' => __('Pharmacy Information', 'latepoint-extand-master'),
                     'description' => '',
                 ];
-                $steps['qhc_additional'] = [
-                    'title' => __('Additional Information', 'latepoint-extand-master'),
+                $steps['pharmacy_additional'] = [
+                    'title' => __('Info Request', 'latepoint-extand-master'),
                     'order_number' => 2,
-                    'sub_title' => __('Additional Information', 'latepoint-extand-master'),
+                    'sub_title' => __('Info Request', 'latepoint-extand-master'),
                     'description' => '',
                 ];
             } else {
@@ -3049,7 +3068,7 @@ EOT;
                 OsStepsHelper::$booking_object->service_id == 16
                 || ($restrictions['selected_service'] ?? false) == 16
             ) {
-                $steps = ['pharmacy', 'qhc_additional', 'locations', 'locations', 'locations', 'locations', 'locations', 'locations', 'confirmation'];
+                $steps = ['pharmacy', 'pharmacy_additional', 'locations', 'locations', 'locations', 'locations', 'locations', 'locations', 'confirmation'];
                 remove_all_actions('latepoint_step_names_in_order');
             }
             return $steps;
@@ -3081,7 +3100,7 @@ EOT;
                     $skip = true;
             }
             if ($booking_object->service_id == 16) {
-                $skip = !in_array($step, ['pharmacy', 'qhc_additional', 'confirmation']);
+                $skip = !in_array($step, ['pharmacy', 'pharmacy_additional', 'confirmation']);
             }
             return $skip;
         }

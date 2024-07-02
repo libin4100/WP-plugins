@@ -475,7 +475,11 @@ jQuery(function ($) {
             if (msg && msg.data && msg.data.care) {
                 $('.with-care').first().find('a').first().click();
             } else {
-                $('.mbc-popup').first().find('a').first().click();
+                if ($('.mbc-popup').first().find('a').length) {
+                    $('.mbc-popup').first().find('a').first().click();
+                } else if ($('.mbc-popup').first().find('div.latepoint-book-button').length) {
+                    $('.mbc-popup').first().find('div.latepoint-book-button').first().click();
+                }
             }
             if(!$('#mbc-cert-hidden').length)
                 $('body').append('<input type="hidden" id="mbc-cert-hidden" name="mbc_cert" value="">');
