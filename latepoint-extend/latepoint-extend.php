@@ -72,6 +72,8 @@ if (!class_exists('LatePointExt')) :
             add_action('wp_ajax_cbp_certificate', [$this, 'cbpCert']);
             add_action('wp_ajax_nopriv_check_certificate_seb', [$this, 'sebCert']);
             add_action('wp_ajax_check_certificate_seb', [$this, 'sebCert']);
+            add_action('wp_ajax_nopriv_check_certificate_drug', [$this, 'drugCert']);
+            add_action('wp_ajax_check_certificate_drug', [$this, 'drugCert']);
             add_action('latepoint_includes', [$this, 'includes']);
             add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
             add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
@@ -206,6 +208,30 @@ if (!class_exists('LatePointExt')) :
 
                     wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
                 }
+            }
+            wp_die();
+        }
+
+        public function drugCert()
+        {
+            if (!session_id()) {
+                session_start();
+            }
+            $id = trim($_POST['id']);
+            if (!$id) {
+                wp_send_json_error(['message' => 'Certificate number is required.'], 404);
+            }
+            if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
+            if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
+
+            if (!$this->checkCertPartner($id, 'drug')) {
+                $_SESSION['certCount'] += 1;
+                if ($_SESSION['certCount'] >= 3)
+                    $msg = "We're sorry. The password provided does not match our records.";
+                else
+                    $msg = 'Password does not match our records. Please try again.';
+
+                wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
             }
             wp_die();
         }
@@ -1465,6 +1491,13 @@ EOT;
                     $values[$id]['visibility'] = 'hidden';
                 }
                 OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
+
+                $customFields = OsSettingsHelper::$loaded_values['custom_fields_for_customer'];
+                $values = is_array($customFields) ? $customFields : json_decode($customFields, true);
+                foreach ($values as $id => $val) {
+                    $values[$id]['visibility'] = 'hidden';
+                }
+                OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
             }
         }
 
@@ -1788,7 +1821,7 @@ EOT;
         {
             $ploc = $booking->get_meta_by_key('cf_6A3SfgET', '');
             $loc = $booking->location ? $booking->location->name : '';
-            if (in_array($booking->service_id, [13, 15])) {
+            if (in_array($booking->service_id, [13, 15, 16])) {
                 return false;
             }
             if (

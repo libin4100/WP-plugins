@@ -424,6 +424,33 @@ jQuery(function ($) {
         });
     });
 
+    $('body').on('blur', '#booking_qhc_pharmacy_password', function () {
+        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
+        $.ajax({
+            method: "POST",
+            url: ajax_object.ajax_url,
+            data: {
+                action: 'check_certificate_drug',
+                id: $('#booking_qhc_pharmacy_password').val()
+            },
+        }).done(function () {
+            $('.latepoint-body #certificate-error').remove();
+        }).always(function () {
+            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
+        }).fail(function (xhr) {
+            if (xhr.status == 404) {
+                if (xhr.responseJSON.data.count >= 3) {
+                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
+                    $('.latepoint-body').empty();
+                }
+
+                if (!$('.latepoint-body #certificate-error').length)
+                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
+                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
+            }
+        });
+    });
+
     $('body').on('keypress', '.mbc-cert', function (e) {
         if (e.which == 13) {
             $(this).siblings('.check-mbc-cert').trigger('click');
