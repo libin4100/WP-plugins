@@ -13,7 +13,7 @@
         echo OsFormHelper::select_field('booking[qhc][requested_by]', 'Requested by', $options, $booking->get_meta_by_key('requested_by', ''), ['class' => 'os-form-control', 'placeholder' => 'Requested by'], array('class' => 'os-col-12'));
         ?>
         <div class="os-col-12">
-            <div class="os-form-group os-form-group-transparent os-form-textfield-group">
+            <div class="os-form-group os-form-group-transparent os-form-select-group">
                 <label for="booking_qhc_response_by">Would like a response by (please note that we try to respond as soon as possible. Based on the volume and nature of the request, it can take up to 5 business days.)</label>
                 <input type="date" placeholder="Would like a response by (please note that we try to respond as soon as possible. Based on the volume and nature of the request, it can take up to 5 business days.)" name="booking[qhc][response_by]" value="" class="os-form-control os-form-control" id="booking_qhc_response_by">
             </div>
