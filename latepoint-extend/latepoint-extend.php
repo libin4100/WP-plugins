@@ -1967,13 +1967,13 @@ EOT;
                     'title' => __('Pharmacy Information', 'latepoint-extand-master'),
                     'order_number' => 1,
                     'sub_title' => __('Pharmacy Information', 'latepoint-extand-master'),
-                    'description' => '',
+                    'description' => __('Drug and support request', 'latepoint-extand-master'),
                 ];
                 $steps['pharmacy_additional'] = [
                     'title' => __('Info Request', 'latepoint-extand-master'),
                     'order_number' => 2,
                     'sub_title' => __('Info Request', 'latepoint-extand-master'),
-                    'description' => '',
+                    'description' => __('Drug and support request', 'latepoint-extand-master'),
                 ];
             } else {
                 $steps['qha_time'] = [
