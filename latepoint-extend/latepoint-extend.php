@@ -1492,6 +1492,11 @@ EOT;
                     else
                         $fields = $this->_fields('seb');
                     break;
+                case $bookingObject->agent_id == 17:
+                    //Orthopedic Care Navigation
+                    if ($bookingObject->service_id == 13)
+                        $fields = $this->_fields('ocare');
+                    break;
                 case in_array($bookingObject->service_id, [2, 3]):
                     $this->_fields('located');
                     break;
