@@ -684,7 +684,7 @@ EOT;
                 echo <<<EOT
 <script>
 jQuery(function($) {
-    $('.os-summary-value-location').closest('.os-summary-line').hide().addClass('should-hide');
+    $('.os-summary-value-location').closest('.os-summary-line').hide().addClass('should-hide hide');
     ele = $('.latepoint-booking-form-element');
     function sprice() {
         if(latepoint_location_id == 4) {
@@ -693,7 +693,7 @@ jQuery(function($) {
                 $('.latepoint-priced-component').val(66);
                 latepoint_update_summary_field(ele, 'price', '$66');
 
-                $('.os-summary-line.should-hide').show();
+                $('.os-summary-line.should-hide').removeClass('hide').show();
             } else {
                 $('.os-priced-item').attr('data-item-price', 0);
                 $('.latepoint-priced-component').val(0);
