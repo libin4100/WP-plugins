@@ -1723,6 +1723,7 @@ jQuery(function($) {
     $('.latepoint-body .confirmation-app-info ul li:first-child + li').remove();
     $('.latepoint-body .confirmation-app-info h5').text('Submitted Information');
     $('.latepoint-body .confirmation-customer-info h5').text('Customer Information');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. We are reviewing your request and will contact you within the next 5 business days.<br />*If this is an emergency, please go to the nearest hospital or call 911.*');
 });
 </script>
 EOT;
@@ -1977,7 +1978,6 @@ EOT;
                     'description' => '',
                 ];
             } elseif (in_array(OsStepsHelper::$booking_object->service_id, [16])) {
-                $step = [];
                 $steps['pharmacy'] = [
                     'title' => __('Pharmacy Information', 'latepoint-extand-master'),
                     'order_number' => 1,
@@ -1990,7 +1990,6 @@ EOT;
                     'sub_title' => __('Information Request', 'latepoint-extand-master'),
                     'description' => __('Drug and support request', 'latepoint-extand-master'),
                 ];
-                $steps['confirmation']['description'] = __('Thank you for choosing Gotodoctor.ca. We are reviewing your request and will contact you within the next 5 business days.<br />*If this is an emergency, please go to the nearest hospital or call 911.*', 'latepoint-extand-master');
             } else {
                 $steps['qha_time'] = [
                     'title' => '',
