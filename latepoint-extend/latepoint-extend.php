@@ -1492,11 +1492,6 @@ EOT;
                     else
                         $fields = $this->_fields('seb');
                     break;
-                case $bookingObject->agent_id == 17:
-                    //Orthopedic Care Navigation
-                    if ($bookingObject->service_id == 13)
-                        $fields = $this->_fields('ocare');
-                    break;
                 case in_array($bookingObject->service_id, [2, 3]):
                     $this->_fields('located');
                     break;
@@ -2682,7 +2677,7 @@ EOT;
                         ]
                     ],
                     'ic' => [
-                        'show' => ['cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_zZbexFje'],
+                        'show' => ['cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_zZbexFje', 'cf_DQ70wnRG'],
                         'hide' => [
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',
@@ -2738,56 +2733,6 @@ EOT;
                             'cf_6A3SfgET' => [
                                 'label' => __('Where are you or the client currently located?', 'latepoint'),
                             ],
-                        ]
-                    ],
-                    'ocare' => [
-                        'show' => ['cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_DQ70wnRG'],
-                        'hide' => ['cf_hbCNgimu', 'cf_zDS7LUjv', 'cf_H7MIk6Kt', 'cf_nxwjDAcZ'],
-                        'add' => [
-                            'first_name' => [
-                                'label' => __('Client First Name', 'latepoint'),
-                                'placeholder' => __('Client First Name', 'latepoint'),
-                                'type' => 'text',
-                                'width' => 'os-col-12',
-                                'visibility' => 'public',
-                                'options' => '',
-                                'required' => 'on',
-                                'id' => 'first_name'
-                            ],
-                            'last_name' => [
-                                'label' => __('Client Last Name', 'latepoint'),
-                                'placeholder' => __('Client Last Name', 'latepoint'),
-                                'type' => 'text',
-                                'width' => 'os-col-12',
-                                'visibility' => 'public',
-                                'options' => '',
-                                'required' => 'on',
-                                'id' => 'last_name'
-                            ],
-                            'phone' => [
-                                'label' => __('Client Contact Number', 'latepoint'),
-                                'placeholder' => __('Client Contact Number', 'latepoint'),
-                                'type' => 'text',
-                                'width' => 'os-col-12',
-                                'visibility' => 'public',
-                                'options' => '',
-                                'required' => 'on',
-                                'id' => 'phone'
-                            ],
-                            'email' => [
-                                'label' => __('Client Email', 'latepoint'),
-                                'placeholder' => __('Client Email', 'latepoint'),
-                                'type' => 'text',
-                                'width' => 'os-col-12',
-                                'visibility' => 'public',
-                                'options' => '',
-                                'required' => 'on',
-                                'id' => 'email'
-                            ],
-                        ],
-                        'merge' => [
-                            'cf_x18jr0Vf' => ['label' => __('Have you or client used GotoDoctor before?', 'latepoint')],
-                            'cf_6A3SfgET' => ['label' => __('Where are you or the client currently located?', 'latepoint')],
                         ]
                     ],
                     'cbp' => [
