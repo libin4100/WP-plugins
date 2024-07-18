@@ -1716,6 +1716,16 @@ jQuery(function($) {
 });
 </script>
 EOT;
+            if ($booking->service_id == 16)
+                echo <<<EOT
+<script>
+jQuery(function($) {
+    $('.latepoint-body .confirmation-app-info ul li:first-child + li').remove();
+    $('.latepoint-body .confirmation-app-info h5').text('Submitted Information');
+    $('.latepoint-body .confirmation-customer-info h5').text('Customer Information');
+});
+</script>
+EOT;
         }
 
         public function confirmationInfoAfter($booking)
@@ -1975,11 +1985,12 @@ EOT;
                     'description' => __('Drug and support request', 'latepoint-extand-master'),
                 ];
                 $steps['pharmacy_additional'] = [
-                    'title' => __('Info Request', 'latepoint-extand-master'),
+                    'title' => __('Information Request', 'latepoint-extand-master'),
                     'order_number' => 2,
-                    'sub_title' => __('Info Request', 'latepoint-extand-master'),
+                    'sub_title' => __('Information Request', 'latepoint-extand-master'),
                     'description' => __('Drug and support request', 'latepoint-extand-master'),
                 ];
+                $steps['confirmation']['description'] = __('Thank you for choosing Gotodoctor.ca. We are reviewing your request and will contact you within the next 5 business days.<br />*If this is an emergency, please go to the nearest hospital or call 911.*', 'latepoint-extand-master');
             } else {
                 $steps['qha_time'] = [
                     'title' => '',
