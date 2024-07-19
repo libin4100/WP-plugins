@@ -1344,9 +1344,9 @@ EOT;
                     break;
 
                 case 'qhc_service':
+                    $booking = OsParamsHelper::get_param('booking');
                     if ($bookingObject->service_id == 15) {
                         $_err = true;
-                        $booking = OsParamsHelper::get_param('booking');
                         if (!isset($booking['qhc']['services']) || !is_array($booking['qhc']['services'])) {
                         } else {
                             foreach ($booking['qhc']['services'] as $field => $val) {
@@ -1359,6 +1359,16 @@ EOT;
                         if ($_err) {
                             remove_all_actions('latepoint_process_step');
                             wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['You need to select at least one service.']));
+                            return;
+                        }
+                    }
+
+                    // Orthopedic surgery
+                    if (($booking['qhc']['services']['Orthopedic surgery'] ?? false) == 'on') {
+                        $select = trim($booking['custom_fields']['cf_DQ70wnRG'] ?? '');
+                        if (!$select) {
+                            remove_all_actions('latepoint_process_step');
+                            wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['Please select the service of orthopedic surgery.']));
                             return;
                         }
                     }

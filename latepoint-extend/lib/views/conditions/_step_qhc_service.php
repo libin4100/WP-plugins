@@ -83,6 +83,21 @@
                     $otherDetail.find('input').prop('required', false);
                 }
             });
+
+
+            $('body').on('change', 'input.os-form-checkbox[name="booking[qhc][services][Orthopedic surgery]"]', function() {
+                if (
+                    $(this).is(':checked') &&
+                    !$(this).closest('.os-form-group').find('.custom-orthopedic').length &&
+                    $('#booking_custom_fields_cf_dq70wnrg').length
+                ) {
+                    cl = $('#booking_custom_fields_cf_dq70wnrg').closest('.os-form-group').clone();
+                    cl.addClass('custom-orthopedic').find('label').remove();
+                    $(this).closest('.os-form-group').append(cl);
+                } else {
+                    $(this).closest('.os-form-group').find('.custom-orthopedic').remove();
+                }
+            });
         });
     </script>
 </div>
