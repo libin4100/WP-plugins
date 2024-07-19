@@ -92,7 +92,7 @@
                     $('#booking_custom_fields_cf_dq70wnrg').length
                 ) {
                     cl = $('#booking_custom_fields_cf_dq70wnrg').closest('.os-form-group').clone();
-                    cl.addClass('custom-orthopedic').find('label').remove();
+                    cl.addClass('custom-orthopedic');
                     $(this).closest('.os-form-group').append(cl);
                 } else {
                     $(this).closest('.os-form-group').find('.custom-orthopedic').remove();
