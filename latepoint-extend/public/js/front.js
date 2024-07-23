@@ -90,6 +90,9 @@ jQuery(function ($) {
         if ($('#booking_custom_fields_cf_aku1t075').length && !$('#booking_custom_fields_cf_aku1t075').parents('.os-col-12').is(':first-child')) {
             $('#booking_custom_fields_cf_aku1t075').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row');
         }
+        if ($('#booking_custom_fields_cf_qblbyjs8').length && !$('#booking_custom_fields_cf_qblbyjs8').parents('.os-col-12').is(':first-child')) {
+            $('#booking_custom_fields_cf_qblbyjs8').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row');
+        }
         if ($('#customer_custom_fields_cf_4zkibeey').length) {
             if ($('#customer_custom_fields_cf_4zkibeey').val() == 'Other') {
                 $('#customer_custom_fields_cf_nvbyvyyw').parents('.os-col-12').show()
@@ -349,6 +352,34 @@ jQuery(function ($) {
             data: {
                 action: 'check_certificate_aas',
                 id: $('#booking_custom_fields_cf_wzbhg9eb').val(),
+                service_id: $('input[name="restrictions[selected_service]"').val()
+            },
+        }).done(function () {
+            $('.latepoint-body #certificate-error').remove();
+        }).always(function () {
+            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
+        }).fail(function (xhr) {
+            if (xhr.status == 404) {
+                if (xhr.responseJSON.data.count >= 3) {
+                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
+                    $('.latepoint-body').empty();
+                }
+
+                if (!$('.latepoint-body #certificate-error').length)
+                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
+                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
+            }
+        });
+    });
+
+    $('body').on('blur', '#booking_custom_fields_cf_qblbyjs8', function () {
+        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
+        $.ajax({
+            method: "POST",
+            url: ajax_object.ajax_url,
+            data: {
+                action: 'check_certificate_ub',
+                id: $('#booking_custom_fields_cf_qblbyjs8').val(),
                 service_id: $('input[name="restrictions[selected_service]"').val()
             },
         }).done(function () {
