@@ -1438,10 +1438,9 @@ EOT;
                     }
                     $customer->set_data($customer_params);
                     $customer->save();
-                    if ($customer->id ?? false) {
-                        OsAuthHelper::authorize_customer($customer->id);
-                        OsStepsHelper::$booking_object->customer_id = $customer->id;
-                    }
+                    $cid = intval($customer->id ?? 0);
+                    OsAuthHelper::authorize_customer($cid);
+                    OsStepsHelper::$booking_object->customer_id = $cid;
                     break;
                 case 'datepicker2':
                 case 'datepicker3':
