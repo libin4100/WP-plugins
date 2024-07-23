@@ -1428,13 +1428,20 @@ EOT;
                     $customer_params = [
                         'first_name' => $qhc['first_name'],
                         'last_name' => $qhc['last_name'],
-                        'email' => $qhc['email'] ?: $booking['qhc']['pharmacy_email'] ?? 'no-email@example.com',
+                        'email' => $qhc['email'] ?: $booking['qhc']['pharmacy_email'] ?? '',
                         'phone' => $qhc['phone'] ?: $booking['qhc']['pharmacy_phone'] ?? '',
                     ];
                     $customer = new OsCustomerModel();
                     $check = $customer->where(['email' => $customer_params['email']])->get_results_as_models();
                     if ($check) {
                         $customer = $check[0];
+                    } else {
+                        remove_all_actions('latepoint_model_validate');
+                    }
+                    if (!$customer_params['email']) {
+                        add_filter('latepoint_customer_model_validations', function ($validations) {
+                            unset($validations['email']);
+                        });
                     }
                     $customer->set_data($customer_params);
                     $customer->save();
