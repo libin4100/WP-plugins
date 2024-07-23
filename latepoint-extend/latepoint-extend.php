@@ -253,9 +253,9 @@ if (!class_exists('LatePointExt')) :
             if (!$this->checkCertPartner($id, 'union_benefits')) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
-                    $msg = "We're sorry. The password provided does not match our records.";
+                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                 else
-                    $msg = 'Password does not match our records. Please try again.';
+                    $msg = 'Certificate number does not match our records. Please try again.';
 
                 wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
             }
