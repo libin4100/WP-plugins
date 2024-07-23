@@ -1428,7 +1428,7 @@ EOT;
                     $customer_params = [
                         'first_name' => $qhc['first_name'],
                         'last_name' => $qhc['last_name'],
-                        'email' => $qhc['email'] ?: $booking['qhc']['pharmacy_email'] ?? '',
+                        'email' => $qhc['email'] ?: $booking['qhc']['pharmacy_email'] ?? 'no-email@example.com',
                         'phone' => $qhc['phone'] ?: $booking['qhc']['pharmacy_phone'] ?? '',
                     ];
                     $customer = new OsCustomerModel();
@@ -1438,9 +1438,10 @@ EOT;
                     }
                     $customer->set_data($customer_params);
                     $customer->save();
-                    $cid = intval($customer->id ?? 0);
-                    OsAuthHelper::authorize_customer($cid);
-                    OsStepsHelper::$booking_object->customer_id = $cid;
+                    if ($customer->id ?? false) {
+                        OsAuthHelper::authorize_customer($customer->id);
+                        OsStepsHelper::$booking_object->customer_id = $customer->id;
+                    }
                     break;
                 case 'datepicker2':
                 case 'datepicker3':
