@@ -3037,7 +3037,7 @@ EOT;
                         ]
                     ],
                     'ub' => [
-                        'show' => ['cf_qblbyjs8', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'show' => ['cf_QBLBYjS8', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
                         'hide' => [
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',
@@ -3067,7 +3067,7 @@ EOT;
                         ]
                     ],
                     'ubc' => [
-                        'show' => ['cf_qblbyjs8', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                        'show' => ['cf_QBLBYjS8', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
                         'hide' => [
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',
