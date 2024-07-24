@@ -59,6 +59,7 @@
                 "Weight management",
                 "Others - please specify",
             ];
+        if ($booking->agent_id == 18) array_unshift($list, 'Second opinion');
 
         foreach ($list as $i => $custom_field) {
             $id = 'qhc_service_' . (stripos($custom_field, 'other') !== false ? 'other' : $i);
