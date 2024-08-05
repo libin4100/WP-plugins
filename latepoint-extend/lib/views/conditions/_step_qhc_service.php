@@ -59,7 +59,7 @@
                 "Weight management",
                 "Others - please specify",
             ];
-        if ($booking->agent_id == 18) array_unshift($list, 'Second opinion');
+        if ($booking->agent_id == 18) array_unshift($list, 'Medical second opinion');
 
         foreach ($list as $i => $custom_field) {
             $id = 'qhc_service_' . (stripos($custom_field, 'other') !== false ? 'other' : $i);
