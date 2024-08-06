@@ -1642,6 +1642,7 @@ EOT;
                     'start_time2',
                     'start_date3',
                     'start_time3',
+                    'group',
                 ] as $key) {
                     if ($data['custom_fields'][$key] ?? false) {
                         $model->custom_fields[$key] = $data['custom_fields'][$key];
@@ -3039,7 +3040,7 @@ EOT;
                         ]
                     ],
                     'ub' => [
-                        'show' => ['cf_QBLBYjS8', 'cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_9XN2dYxe'],
+                        'show' => ['cf_QBLBYjS8', 'cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_dREtrHWr', 'cf_Yf3KvptS'],
                         'hide' => [
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',

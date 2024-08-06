@@ -91,6 +91,7 @@ jQuery(function ($) {
             $('#booking_custom_fields_cf_aku1t075').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row');
         }
         if ($('#booking_custom_fields_cf_qblbyjs8').length && !$('#booking_custom_fields_cf_qblbyjs8').parents('.os-col-12').is(':first-child')) {
+            $('#booking_custom_fields_cf_qblbyjs8').after('<input type="hidden" name="booking[custom_fields][group]" value="' + $('#groups').val() + '">');
             $('#booking_custom_fields_cf_qblbyjs8').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row');
         }
         if ($('#customer_custom_fields_cf_4zkibeey').length) {
