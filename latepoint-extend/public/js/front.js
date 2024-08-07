@@ -109,9 +109,9 @@ jQuery(function ($) {
             }
         }
         if ($('#customer_custom_fields_cf_yf3kvpts').length) {
-            if ($(this).closest('div').find('p').length) {
+            if ($(this).parents('div.os-form-group').find('p').length) {
             } else {
-                $(this).closest('div').append('<p>Please indicate here if you would request the visit not to be submitted to OHIP</p>');
+                $(this).parents('div.os-form-group').prepend('<p>Please indicate here if you would request the visit not to be submitted to OHIP</p>');
             }
         }
     }, 100);
