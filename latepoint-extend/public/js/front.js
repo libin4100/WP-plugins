@@ -108,7 +108,7 @@ jQuery(function ($) {
                 $('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').hide()
             }
         }
-        if ($('customer_custom_fields_cf_yf3kvpts').length) {
+        if ($('#customer_custom_fields_cf_yf3kvpts').length) {
             if ($(this).closest('div').find('p').length) {
             } else {
                 $(this).closest('div').append('<p>Please indicate here if you would request the visit not to be submitted to OHIP</p>');
