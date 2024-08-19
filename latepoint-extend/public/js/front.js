@@ -114,6 +114,9 @@ jQuery(function ($) {
                 $('#customer_custom_fields_cf_yf3kvpts').parents('div.os-form-group').prepend('<p>Please indicate here if you would request the visit not to be submitted to OHIP</p>');
             }
         }
+        if ($('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').length && $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').is(':visible')) {
+            $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').hide();
+        }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function () {

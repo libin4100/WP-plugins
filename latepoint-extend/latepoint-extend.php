@@ -23,7 +23,7 @@ if (!class_exists('LatePointExt')) :
      */
     final class LatePointExt
     {
-        public $version = '1.4.0';
+        public $version = '1.4.2';
         public $dbVersion = '1.0.0';
         public $addonName = 'latepoint-extend';
 
@@ -715,9 +715,10 @@ jQuery(function($) {
     function sprice() {
         if(latepoint_location_id == 4) {
             if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && !['Quebec', 'New Brunswick'].includes($('#booking_custom_fields_cf_6a3sfget').val())) {
-                $('.os-priced-item').attr('data-item-price', 66);
-                $('.latepoint-priced-component').val(66);
-                latepoint_update_summary_field(ele, 'price', '$66');
+                var price = ($('#booking_custom_fields_cf_6a3sfget').val() == 'Ontario') ? 105 : 66;
+                $('.os-priced-item').attr('data-item-price', price);
+                $('.latepoint-priced-component').val(price);
+                latepoint_update_summary_field(ele, 'price', '$' + price);
 
                 $('.os-summary-line.should-hide').removeClass('hide').show();
             } else {
@@ -752,9 +753,10 @@ jQuery(function($) {
             && !['Quebec'].includes(cLoc)
             && !hlocation.includes(cLoc)
         ) {
-            $('.os-priced-item').attr('data-item-price', 66);
-            $('.latepoint-priced-component').val(66);
-            latepoint_update_summary_field(ele, 'price', '$66');
+            var price = (cLoc == 'Ontario') ? 105 : 66;
+            $('.os-priced-item').attr('data-item-price', price);
+            $('.latepoint-priced-component').val(price);
+            latepoint_update_summary_field(ele, 'price', '$' + price);
         } else {
             $('.os-priced-item').attr('data-item-price', 0);
             $('.latepoint-priced-component').val(0);
@@ -781,9 +783,10 @@ jQuery(function($) {
     ele = $('.latepoint-booking-form-element');
     function sprice() {
             if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && !hlocation.includes($('#booking_custom_fields_cf_6a3sfget').val())) {
-                $('.os-priced-item').attr('data-item-price', 66);
-                $('.latepoint-priced-component').val(66);
-                latepoint_update_summary_field(ele, 'price', '$66');
+                var price = ($('#booking_custom_fields_cf_6a3sfget').val() == 'Ontario') ? 105 : 66;
+                $('.os-priced-item').attr('data-item-price', price);
+                $('.latepoint-priced-component').val(price);
+                latepoint_update_summary_field(ele, 'price', '$' + price);
             } else {
                 $('.os-priced-item').attr('data-item-price', 0);
                 $('.latepoint-priced-component').val(0);
@@ -1420,10 +1423,18 @@ EOT;
                         $qhc['last_name'] = (count($arr) > 1) ? array_pop($arr) : '';
                         $qhc['first_name'] = implode(' ', $arr);
                     }
+                    $email = $qhc['email'] ?: $booking['qhc']['pharmacy_email'] ?? '';
+                    if ($email) {
+                        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            remove_all_actions('latepoint_process_step');
+                            wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['Email is not valid.']));
+                            return;
+                        }
+                    }
                     $customer_params = [
                         'first_name' => $qhc['first_name'],
                         'last_name' => $qhc['last_name'],
-                        'email' => $qhc['email'] ?: $booking['qhc']['pharmacy_email'] ?? '',
+                        'email' => $email,
                         'phone' => $qhc['phone'] ?: $booking['qhc']['pharmacy_phone'] ?? '',
                     ];
                     $customer = new OsCustomerModel();
@@ -1874,6 +1885,7 @@ EOT;
                 if ($merge) {
                     $extra = array_merge($extra, $merge);
                 }
+                $amount = $booking->get_meta_by_key('cf_6A3SfgET', '') == 'Ontario' ? 105 : $this->amount;
                 $data = [
                     'method' => 'POST',
                     'body' => [
@@ -1882,7 +1894,7 @@ EOT;
                         'first_name' => $booking->get_meta_by_key('cf_hbCNgimu', ''),
                         'message' => $booking->get_meta_by_key('cf_H7MIk6Kt', null),
                         'invoice_type' => $invoiceType,
-                        'amount' => ($booking->service && ($booking->service->charge_amount > 0)) ? $booking->service->charge_amount : $this->amount,
+                        'amount' => ($booking->service && ($booking->service->charge_amount > 0)) ? $booking->service->charge_amount : $amount,
                         'currency' => 'cad',
                         'referral' => 'latepoint_' . ($booking->id ?: ''),
                         'return_url' => $returnUrl,
