@@ -39,6 +39,7 @@ if (!class_exists('LatePointExt')) :
 
         public function __construct()
         {
+            $this->version = filemtime(__DIR__ . '/public/js/front.js');
             $this->defines();
             $this->hooks();
         }
