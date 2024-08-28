@@ -44,9 +44,7 @@ if (!class_exists('LatePointExt')) :
             $this->hooks();
         }
 
-        public function defines()
-        {
-        }
+        public function defines() {}
 
         public function hooks()
         {
@@ -205,7 +203,7 @@ if (!class_exists('LatePointExt')) :
                 if (!$this->checkCertPartner($id, 'seb')) {
                     $_SESSION['certCount'] += 1;
                     if ($_SESSION['certCount'] >= 3)
-                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Smart Employee Benefits at <nobr>1-xxx-xxx-xxxx</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                        $msg = "We're sorry. The certificate number provided does not match our records. Please contact Smart Employee Benefits at <nobr>1-xxx-xxx-xxxx</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     else
                         $msg = 'Certificate number does not match our records. Please try again.';
 
@@ -924,7 +922,7 @@ EOT;
                     break;
                 case 'contact':
                     if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
-                    OsAuthHelper::logout_customer();
+                        OsAuthHelper::logout_customer();
                     if ($this->covid || $bookingObject->service_id == 10) {
                         $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
                         $values = json_decode($customFields, true);
@@ -933,7 +931,7 @@ EOT;
                                 if (($val['visibility'] ?? false) != 'public')
                                     $values[$id]['visibility'] = 'public';
                                 if ($val['label'] == 'Doctor Preference' || $val['label'] == "Reason for today's visit ( required )")
-                                unset($values[$id]);
+                                    unset($values[$id]);
                             }
                             OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                         }
@@ -943,7 +941,7 @@ EOT;
                     $_SESSION['certCount'] = 0;
 
                     if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
-                    OsAuthHelper::logout_customer();
+                        OsAuthHelper::logout_customer();
                     if (OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
                         $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
                         $fields = [];
@@ -974,7 +972,7 @@ EOT;
                     break;
                 case 'datepicker':
                     if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
-                    OsAuthHelper::logout_customer();
+                        OsAuthHelper::logout_customer();
                     if ($format == 'json' && $bookingObject->service_id == 10) {
                         $controller = new OsStepsController();
                         $controller->vars = $controller->vars_for_view;
@@ -1646,16 +1644,18 @@ EOT;
                     $model->cname = $data['custom_fields']['first_name'] . ' ' . ($data['custom_fields']['last_name'] ?? '');
                     $model->pname = '';
                 }
-                foreach ([
-                    'email',
-                    'phone',
-                    'emergency',
-                    'start_date2',
-                    'start_time2',
-                    'start_date3',
-                    'start_time3',
-                    'group',
-                ] as $key) {
+                foreach (
+                    [
+                        'email',
+                        'phone',
+                        'emergency',
+                        'start_date2',
+                        'start_time2',
+                        'start_date3',
+                        'start_time3',
+                        'group',
+                    ] as $key
+                ) {
                     if ($data['custom_fields'][$key] ?? false) {
                         $model->custom_fields[$key] = $data['custom_fields'][$key];
                     }
@@ -1701,12 +1701,14 @@ EOT;
                 if (defined('WPLANG')) {
                     $model->save_meta_by_key('language', WPLANG);
                 }
-                foreach ([
-                    'start_date2',
-                    'start_time2',
-                    'start_date3',
-                    'start_time3'
-                ] as $key) {
+                foreach (
+                    [
+                        'start_date2',
+                        'start_time2',
+                        'start_date3',
+                        'start_time3'
+                    ] as $key
+                ) {
                     if ($model->custom_fields[$key] ?? false) {
                         $model->save_meta_by_key($key, $model->custom_fields[$key]);
                     }
@@ -2121,6 +2123,11 @@ EOT;
                                 'required' => 'on',
                                 'id' => 'last_name'
                             ],
+                        ],
+                        'merge' => [
+                            'cf_x18jr0Vf' => [
+                                'label' => __('Has the patient used or registered with GotoDoctor or Enhanced Care Clinic before?', 'latepoint'),
+                            ],
                         ]
                     ],
                     'mbcc' => [
@@ -2175,7 +2182,7 @@ EOT;
                         ],
                         'merge' => [
                             'cf_x18jr0Vf' => [
-                                'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
+                                'label' => __('Has the patient used or registered with GotoDoctor or Enhanced Care Clinic before?', 'latepoint'),
                             ],
                             'cf_6A3SfgET' => [
                                 'label' => __('Where are you or the client currently located?', 'latepoint'),
@@ -3393,9 +3400,7 @@ EOT;
                 || (($partner == 'cb_providers') && ($cert == '1234567890'));
         }
 
-        public function onDeactivate()
-        {
-        }
+        public function onDeactivate() {}
 
         public function onActivate()
         {
