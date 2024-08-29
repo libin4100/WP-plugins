@@ -737,7 +737,7 @@ jQuery(function($) {
 </script>
 EOT;
             }
-            if (in_array($bookingObject->agent_id, [11, 15, 16, 18]) && ($bookingObject->location_id != 14)) {
+            if (in_array($bookingObject->agent_id, [11, 15, 16]) && ($bookingObject->location_id != 14)) {
                 $location = $bookingObject->location->name ?? '';
                 echo <<<EOT
 <script>
@@ -1925,13 +1925,13 @@ EOT;
                 ($booking->service_id == 10)
                 || $this->acorn
                 || $this->covid
-                || ($this->others && (!in_array($booking->agent_id, [6, 8, 11, 15, 16, 18])
+                || ($this->others && (!in_array($booking->agent_id, [6, 8, 11, 15, 16])
                     || (($booking->agent_id == 8) && !in_array($ploc, ['Quebec', 'New Brunswick']))
-                    || (in_array($booking->agent_id, [11, 14, 15, 16, 18]) && !in_array($ploc, ['Quebec']))
+                    || (in_array($booking->agent_id, [11, 14, 15, 16]) && !in_array($ploc, ['Quebec']))
                 ))
                 || $this->diff = (
                     (in_array($booking->agent_id, [2, 7, 9, 10, 14]) && (stripos($loc, $ploc) === false))
-                    || (in_array($booking->agent_id, [11, 15, 16, 18]) && !$this->others && !in_array($ploc, ['Quebec']) && (stripos($loc, $ploc) === false))
+                    || (in_array($booking->agent_id, [11, 15, 16]) && !$this->others && !in_array($ploc, ['Quebec']) && (stripos($loc, $ploc) === false))
                     || (in_array($booking->agent_id, [8]) && !$this->others && (stripos($loc, $ploc) === false))
                 )
             ) {
