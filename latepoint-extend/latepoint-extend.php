@@ -507,7 +507,7 @@ if (!class_exists('LatePointExt')) :
             if ($this->covid || $this->others || $this->acorn || $booking->service_id == 10) {
                 OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
             }
-            if ($booking->agent_id == 6) {
+            if (in_array($booking->agent_id, [6, 18])) {
                 OsSettingsHelper::$loaded_values['notifications_email'] = 'off';
             }
             if (!in_array($booking->type_id, [5, 11])) {
@@ -2001,7 +2001,7 @@ EOT;
         {
             $bookingObject = OsStepsHelper::get_booking_object();
             unset($values['customer']);
-            if ($bookingObject && (($bookingObject->agent_id ?? null) == 6) && (($bookingObject->location_id ?? null) == 4))
+            if ($bookingObject && (in_array($bookingObject->agent_id ?? null, [6, 18])) && (($bookingObject->location_id ?? null) == 4))
                 unset($values['location']);
 
             if ($values['time'] ?? false)
