@@ -578,6 +578,17 @@ jQuery(function($) {
 EOT;
             }
             if (in_array(OsStepsHelper::$booking_object->service_id, [13])) {
+                switch (OsStepsHelper::$booking_object->agent_id) {
+                    case '11':
+                        $desc = 'Thank you for your Gotodoctor Specialist Access Navigation Service request.';
+                        break;
+                    case '18':
+                        $desc = 'Thank you for your Gotodoctor Health System Navigator & Second Opinion request.';
+                        break;
+                    default:
+                        $desc = 'Thank you for your Gotodoctor Employee Assistance Program request.';
+                }
+                $desc .= ' You will hear back from us within the next business day. Contact us if you have any questions. Call 911 or visit the nearest hospital for any emergencies.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*';
                 echo <<<EOT
 <script>
 jQuery(function($) {
@@ -585,7 +596,7 @@ jQuery(function($) {
     $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Client Details');
     $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Request submitted');
-    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for your Gotodoctor Employee Assistance Program request. You will hear back from us within the next business day. Contact us if you have any questions. Call 911 or visit the nearest hospital for any emergencies.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('{$desc}');
 });
 </script>
 EOT;
