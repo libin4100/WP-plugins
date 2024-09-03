@@ -1935,7 +1935,7 @@ EOT;
                 if ($merge) {
                     $extra = array_merge($extra, $merge);
                 }
-                $amount = $booking->get_meta_by_key('cf_6A3SfgET', '') == 'Ontario' ? 105 : $this->amount;
+                $amount = $booking->location_id == 12 ? 60 : ($booking->get_meta_by_key('cf_6A3SfgET', '') == 'Ontario' ? 105 : $this->amount);
                 $data = [
                     'method' => 'POST',
                     'body' => [
