@@ -821,7 +821,7 @@ jQuery(function($) {
     ele = $('.latepoint-booking-form-element');
     function sprice() {
             if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && !hlocation.includes($('#booking_custom_fields_cf_6a3sfget').val())) {
-                var price = hlid == 12 ? 60 :($('#booking_custom_fields_cf_6a3sfget').val() == 'Ontario') ? 105 : 66;
+                var price = ($('#booking_custom_fields_cf_6a3sfget').val() == 'Ontario') ? (hlid == 12 ? 60 : 105) : 66;
                 $('.os-priced-item').attr('data-item-price', price);
                 $('.latepoint-priced-component').val(price);
                 latepoint_update_summary_field(ele, 'price', '$' + price);
