@@ -816,7 +816,7 @@ EOT;
             ) {
                 $location = $bookingObject->location->name ?? '';
                 $other = in_array($bookingObject->location_id, [4]) ? true : false;
-                $biz = in_array($bookingObject->location_id, [12]) ? true : false;
+                $biz = in_array($bookingObject->location_id, [12]) ? 1 : 0;
                 $onPrice = $other ? 210 : 105;
                 $price = $other ? 120 : ($biz ? 60 : 66);
                 echo <<<EOT
