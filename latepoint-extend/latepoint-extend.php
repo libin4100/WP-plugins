@@ -1949,7 +1949,7 @@ EOT;
                         'first_name' => $booking->get_meta_by_key('cf_hbCNgimu', ''),
                         'message' => $booking->get_meta_by_key('cf_H7MIk6Kt', null),
                         'invoice_type' => $invoiceType,
-                        'amount' => ($booking->service && ($booking->service->charge_amount > 0)) ? $booking->service->charge_amount : $amount,
+                        'amount' => $amount,
                         'currency' => 'cad',
                         'referral' => 'latepoint_' . ($booking->id ?: ''),
                         'return_url' => $returnUrl,
