@@ -751,7 +751,7 @@ jQuery(function($) {
     function sprice() {
         if(latepoint_location_id == 4) {
             if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && !['Quebec', 'New Brunswick'].includes($('#booking_custom_fields_cf_6a3sfget').val())) {
-                var price = ($('#booking_custom_fields_cf_6a3sfget').val() == 'Ontario') ? 105 : 66;
+                var price = ($('#booking_custom_fields_cf_6a3sfget').val() == 'Ontario') ? 210 : 120;
                 $('.os-priced-item').attr('data-item-price', price);
                 $('.latepoint-priced-component').val(price);
                 latepoint_update_summary_field(ele, 'price', '$' + price);
