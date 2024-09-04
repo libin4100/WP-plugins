@@ -776,6 +776,9 @@ EOT;
             }
             if (in_array($bookingObject->agent_id, [11, 15, 16]) && ($bookingObject->location_id != 14)) {
                 $location = $bookingObject->location->name ?? '';
+                $other = in_array($bookingObject->location_id, [4]) ? true : false;
+                $onPrice = $other ? 210 : 105;
+                $price = $other ? 120 : 66;
                 echo <<<EOT
 <script>
 jQuery(function($) {
@@ -789,7 +792,7 @@ jQuery(function($) {
             && !['Quebec'].includes(cLoc)
             && !hlocation.includes(cLoc)
         ) {
-            var price = (cLoc == 'Ontario') ? 105 : 66;
+            var price = (cLoc == 'Ontario') ? {$onPrice} : {$price};
             $('.os-priced-item').attr('data-item-price', price);
             $('.latepoint-priced-component').val(price);
             latepoint_update_summary_field(ele, 'price', '$' + price);
@@ -808,23 +811,22 @@ jQuery(function($) {
 EOT;
             }
             if (
-                (in_array($bookingObject->agent_id, [2, 7, 9, 10, 14]) && !in_array($bookingObject->location_id, [4, 14]))
+                (in_array($bookingObject->agent_id, [2, 7, 9, 10, 14]) && !in_array($bookingObject->location_id, [14]))
                 || ($bookingObject->agent_id == 8 && !in_array($bookingObject->location_id, [4, 14]))
             ) {
                 $location = $bookingObject->location->name ?? '';
-                $lid = $bookingObject->location_id;
-                $price = 66;
-                if ($lid == 12) $price = 60;
-                $hlid = $lid == 12 ? 1 : 0;
+                $other = in_array($bookingObject->location_id, [4]) ? true : false;
+                $biz = in_array($bookingObject->location_id, [12]) ? true : false;
+                $onPrice = $other ? 210 : 105;
+                $price = $other ? 120 : ($biz ? 60 : 66);
                 echo <<<EOT
 <script>
 jQuery(function($) {
     hlocation = '{$location}';
-    hlid = {$hlid};
     ele = $('.latepoint-booking-form-element');
     function sprice() {
             if($('#booking_custom_fields_cf_6a3sfget').length && $('#booking_custom_fields_cf_6a3sfget').val() && !hlocation.includes($('#booking_custom_fields_cf_6a3sfget').val())) {
-                var price = ($('#booking_custom_fields_cf_6a3sfget').val() == 'Ontario') && !hlid ? 105 : {$price};
+                var price = ($('#booking_custom_fields_cf_6a3sfget').val() == 'Ontario') && !{$biz} ? {$onPrice} : {$price};
                 $('.os-priced-item').attr('data-item-price', price);
                 $('.latepoint-priced-component').val(price);
                 latepoint_update_summary_field(ele, 'price', '$' + price);
@@ -1935,7 +1937,10 @@ EOT;
                 if ($merge) {
                     $extra = array_merge($extra, $merge);
                 }
-                $amount = $booking->location_id == 12 ? 60 : ($booking->get_meta_by_key('cf_6A3SfgET', '') == 'Ontario' ? 105 : $this->amount);
+                $other = in_array($booking->location_id, [4]) ? true : false;
+                $onPrice = $other ? 210 : 105;
+                $price = $other ? 120 : 66;
+                $amount = $booking->location_id == 12 ? 60 : ($booking->get_meta_by_key('cf_6A3SfgET', '') == 'Ontario' ? $onPrice : $price);
                 $data = [
                     'method' => 'POST',
                     'body' => [
