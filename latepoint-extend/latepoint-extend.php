@@ -77,6 +77,8 @@ if (!class_exists('LatePointExt')) :
             add_action('wp_ajax_check_certificate_ub', [$this, 'unionBenefitsCert']);
             add_action('wp_ajax_nopriv_check_certificate_lg', [$this, 'leslieGroupCert']);
             add_action('wp_ajax_check_certificate_lg', [$this, 'leslieGroupCert']);
+            add_action('wp_ajax_nopriv_check_certificate_by', [$this, 'certBy']);
+            add_action('wp_ajax_check_certificate_by', [$this, 'certBy']);
             add_action('latepoint_includes', [$this, 'includes']);
             add_action('latepoint_load_step', [$this, 'loadStep'], 5, 3);
             add_action('latepoint_process_step', [$this, 'processStep'], 5, 2);
@@ -263,6 +265,29 @@ if (!class_exists('LatePointExt')) :
             wp_die();
         }
 
+        public function certBy()
+        {
+            if (!session_id()) {
+                session_start();
+            }
+            $id = trim($_POST['id'] ?? '');
+            $by = trim($_POST['by'] ?? '');
+            if (!$id) {
+                wp_send_json_error(['message' => 'Certificate number is required.'], 404);
+            }
+            if (!$by) {
+                wp_send_json_error(['message' => 'Partner is required.'], 404);
+            }
+            switch ($by) {
+                case 'vpi':
+                    $this->vpiCert($id);
+                    break;
+                default:
+                    wp_send_json_error(['message' => 'Partner not found.'], 404);
+            }
+            wp_die();
+        }
+
         public function leslieGroupCert()
         {
             if (!session_id()) {
@@ -276,6 +301,23 @@ if (!class_exists('LatePointExt')) :
             if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
 
             if (!$this->checkCertPartner($id, 'leslie_group')) {
+                $_SESSION['certCount'] += 1;
+                if ($_SESSION['certCount'] >= 3)
+                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                else
+                    $msg = 'Certificate number does not match our records. Please try again.';
+
+                wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
+            }
+            wp_die();
+        }
+
+        public function vpiCert()
+        {
+            if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
+            if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
+
+            if (!$this->checkCertPartner($id, 'vpi')) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
                     $msg = "We're sorry. The certificate number provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
@@ -1347,6 +1389,7 @@ EOT;
                             'seb' => ['agent_id' => 16, 'field' => 'cf_aku1T075'],
                             'union_benefits' => ['agent_id' => 18, 'field' => 'cf_qblbyjs8'],
                             'leslie_group' => ['agent_id' => 19, 'field' => 'cf_AYVpjhpP'],
+                            'vpi' => ['agent_id' => 20, 'field' => 'cf_9OaDIkYh'],
                         ];
                         foreach ($lists as $key => $list) {
                             if ($bookingObject->agent_id == $list['agent_id'] && $k == $list['field']) {
@@ -1596,6 +1639,10 @@ EOT;
                 case $bookingObject->agent_id == 19:
                     // Leslie Group
                     $fields = $this->_fields('lg');
+                    break;
+                case $bookingObject->agent_id == 20:
+                    // VPI
+                    $fields = $this->_fields('vpi');
                     break;
                 case in_array($bookingObject->service_id, [2, 3]):
                     $this->_fields('located');
@@ -3202,6 +3249,36 @@ EOT;
                     ],
                     'lg' => [
                         'show' => ['cf_AYVpjhpP', 'cf_6A3SfgET', 'cf_dREtrHWr', 'cf_Yf3KvptS'],
+                        'hide' => [
+                            'cf_hbCNgimu',
+                            'cf_zDS7LUjv',
+                            'cf_H7MIk6Kt',
+                        ],
+                        'add' => [
+                            'first_name' => [
+                                'label' => __('First Name', 'latepoint'),
+                                'placeholder' => __('First Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'first_name'
+                            ],
+                            'last_name' => [
+                                'label' => __('Last Name', 'latepoint'),
+                                'placeholder' => __('Last Name', 'latepoint'),
+                                'type' => 'text',
+                                'width' => 'os-col-12',
+                                'visibility' => 'public',
+                                'options' => '',
+                                'required' => 'on',
+                                'id' => 'last_name'
+                            ],
+                        ]
+                    ],
+                    'vpi' => [
+                        'show' => ['cf_9OaDIkYh', 'cf_6A3SfgET', 'cf_dREtrHWr', 'cf_Yf3KvptS'],
                         'hide' => [
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',
