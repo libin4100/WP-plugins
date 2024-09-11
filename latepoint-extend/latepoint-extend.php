@@ -639,6 +639,7 @@ jQuery(function($) {
     $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Request submitted');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('{$desc}');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-content').append('<br><br><strong>Submit your request and get a FREE consultation first</strong><br>Payment required only after you would like to proceed');
 });
 </script>
 EOT;
