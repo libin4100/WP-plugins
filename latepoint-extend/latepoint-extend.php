@@ -312,7 +312,7 @@ if (!class_exists('LatePointExt')) :
             wp_die();
         }
 
-        public function vpiCert()
+        public function vpiCert($id)
         {
             if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
             if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
