@@ -1516,7 +1516,7 @@ EOT;
                         $qhc['last_name'] = (count($arr) > 1) ? array_pop($arr) : '';
                         $qhc['first_name'] = implode(' ', $arr);
                     }
-                    $email = $qhc['email'] ?: $booking['qhc']['pharmacy_email'] ?? '';
+                    $email = trim($qhc['email'] ?: $booking['qhc']['pharmacy_email'] ?? '');
                     if ($email) {
                         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                             remove_all_actions('latepoint_process_step');
