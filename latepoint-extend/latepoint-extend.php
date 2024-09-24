@@ -3254,7 +3254,7 @@ EOT;
                         ]
                     ],
                     'lg' => [
-                        'show' => ['cf_AYVpjhpP', 'cf_6A3SfgET', 'cf_dREtrHWr', 'cf_Yf3KvptS'],
+                        'show' => ['cf_AYVpjhpP', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
                         'hide' => [
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',
@@ -3284,7 +3284,7 @@ EOT;
                         ]
                     ],
                     'vpi' => [
-                        'show' => ['cf_9OaDIkYh', 'cf_6A3SfgET', 'cf_dREtrHWr', 'cf_Yf3KvptS'],
+                        'show' => ['cf_9OaDIkYh', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
                         'hide' => [
                             'cf_hbCNgimu',
                             'cf_zDS7LUjv',
