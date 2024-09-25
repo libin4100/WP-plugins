@@ -1663,6 +1663,9 @@ EOT;
             if ($this->returningExtra($bookingObject)) {
                 $this->_fields('returning');
             }
+            if ($bookingObject->service_id == 13) {
+                $this->_fields('careServices');
+            }
             if (($bookingObject->service_id != 13) && $this->isReturning()) {
                 $this->_fields('returningOnly');
             }
@@ -3319,6 +3322,7 @@ EOT;
                     'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
                     'returning' => ['show' => ['cf_WFHtiGvf', 'cf_ZoXsdwEZ']],
                     'returningOnly' => ['show' => ['cf_DrKevcqV', 'cf_4zkIbeeY', 'cf_NVByvyYw', 'cf_cVndXX2e', 'cf_iAoOucDc']],
+                    'careServices' => ['show' => ['cf_DQ70wnRG']],
                 ];
                 $hideField = ($onSave ?? false) ? 'public' : 'hidden';
                 $values = is_array($customFields) ? $customFields : json_decode($customFields, true);
