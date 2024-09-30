@@ -73,7 +73,7 @@
                 echo OsFormHelper::text_field('booking[qhc][services][other_detail]', 'Please specify', $booking->get_meta_by_key('other_detail', ''), ['class' => 'os-form-control', 'placeholder' => 'Please specify', 'id' => 'other_detail'], array('class' => 'os-col-12'));
             }
             if ($id == 'qhc_service_mdi') {
-                echo OsFormHelper::select_field('booking[qhc][services][mdi_detail]', 'Which service do you need?', $booking->get_meta_by_key('mdi_detail', ''), ['id' => $id . '_detail'], ['class' => 'os-col-12', 'style' => 'display: none;']);
+                echo OsFormHelper::select_field('booking[qhc][services][mdi_detail]', 'Which service do you need?', $subMDI, $booking->get_meta_by_key('mdi_detail', ''), ['id' => $id . '_detail'], ['class' => 'os-col-12', 'style' => 'display: none;']);
             }
         }
         ?>
@@ -94,13 +94,12 @@
             });
 
             $('#qhc_service_mdi').on('change', function() {
-                if ($(this).val() != '') {
-                    $('#qhc_service_mdi_detail').show();
+                if ($(this).is(':checked')) {
+                    $('#qhc_service_mdi_detail').parents('.os-col-12').show();
                 } else {
-                    $('#qhc_service_mdi_detail').hide();
+                    $('#qhc_service_mdi_detail').parents('.os-col-12').hide();
                 }
             });
-
 
             $('body').on('change', 'input.os-form-checkbox[name="booking[qhc][services][Orthopedic surgery]"]', function() {
                 if (
