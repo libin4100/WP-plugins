@@ -15,7 +15,7 @@
             'Pain management',
             'Respiratory care',
             'Specialist referral',
-            'Medical diagnostics and imaging',
+            'mdi' => 'Medical diagnostics and imaging',
             'Paediatric care',
             'Medical procedure/surgery',
             'social and community support services',
@@ -60,12 +60,20 @@
                 "Others - please specify",
             ];
         if ($booking->agent_id == 18) array_unshift($list, 'Medical second opinion');
+        $subMDI = [
+            'MDI: OHIP-covered Service' => 'Looking for an OHIP-covered service',
+            'MDI: Private Service' => 'Looking for the PRIVATE service',
+            'MDI: WISB Coverage' => 'Has WISB coverage'
+        ];
 
         foreach ($list as $i => $custom_field) {
             $id = 'qhc_service_' . (stripos($custom_field, 'other') !== false ? 'other' : $i);
             echo OsFormHelper::checkbox_field('booking[qhc][services][' . $custom_field . ']', $custom_field, 'on', ($booking->get_meta_by_key($custom_field, 'off') == 'on'), ['id' => $id], ['class' => 'os-col-12']);
             if ($id == 'qhc_service_other') {
                 echo OsFormHelper::text_field('booking[qhc][services][other_detail]', 'Please specify', $booking->get_meta_by_key('other_detail', ''), ['class' => 'os-form-control', 'placeholder' => 'Please specify', 'id' => 'other_detail'], array('class' => 'os-col-12'));
+            }
+            if ($id == 'qhc_service_mdi') {
+                echo OsFormHelper::select_field('booking[qhc][services][mdi_detail]', 'Which service do you need?', $booking->get_meta_by_key('mdi_detail', ''), ['id' => $id . '_detail'], ['class' => 'os-col-12', 'style' => 'display: none;']);
             }
         }
         ?>
@@ -82,6 +90,14 @@
                 } else {
                     $otherDetail.hide();
                     $otherDetail.find('input').prop('required', false);
+                }
+            });
+
+            $('#qhc_service_mdi').on('change', function() {
+                if ($(this).val() != '') {
+                    $('#qhc_service_mdi_detail').show();
+                } else {
+                    $('#qhc_service_mdi_detail').hide();
                 }
             });
 
