@@ -18,7 +18,7 @@
 .os-col-12 > div:has(> #booking_custom_fields_cf_dq70wnrg) {
     display: none;
 }
-label[for="customer_custom_fields_cf_yf3kvpts"] {
+.latepoint-w .os-form-group.os-form-textfield-group label[for="customer_custom_fields_cf_yf3kvpts"] {
     position: unset !important;
     font-size: 14px !important;
     opacity: 1 !important;
