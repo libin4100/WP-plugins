@@ -23,6 +23,7 @@
             'Rehab services',
             'Dental care and orthotics',
             'Family medicine',
+            'biopsy' => 'Biopsy',
             'Other'
         ];
         if ($booking->service_id == 15)
@@ -69,6 +70,9 @@
             'qhc_service_sr' => [
                 'SR: OHIP-covered Appointment' => 'Looking for an OHIP-covered appointment',
                 'SR: Private Medical Consultant' => 'Looking for the private medical consultant'
+            ],
+            'qhc_service_biopsy' => [
+                'Biopsy: Thyroid' => 'Thyroid',
             ]
         ];
 
