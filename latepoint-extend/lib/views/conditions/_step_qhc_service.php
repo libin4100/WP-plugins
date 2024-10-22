@@ -24,6 +24,7 @@
             'Dental care and orthotics',
             'Family medicine',
             'biopsy' => 'Biopsy',
+            'og' => 'Obstetrics and Gynecology',
             'Other'
         ];
         if ($booking->service_id == 15)
@@ -73,6 +74,9 @@
             ],
             'qhc_service_biopsy' => [
                 'Biopsy: Thyroid' => 'Thyroid',
+            ],
+            'qhc_service_og' => [
+                'OG: Endometriosis Care' => 'Endometriosis Care',
             ]
         ];
 
