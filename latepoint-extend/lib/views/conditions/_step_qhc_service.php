@@ -76,7 +76,12 @@
                 'Biopsy: Thyroid' => 'Thyroid',
             ],
             'qhc_service_og' => [
-                'OG: Endometriosis Care' => 'Endometriosis Care',
+                'OBGYN: Endometriosis Care' => 'Endometriosis Care',
+                'OBGYN: Fibroids Care' => 'Fibroids Care',
+                'OBGYN: General Consultation' => 'General Consultation',
+                'OBGYN: Colposcopy' => 'Colposcopy',
+                'OBGYN: Vulva Care' => 'Vulva Care',
+                'OBGYN: Urogynecology' => 'Urogynecology',
             ]
         ];
 
