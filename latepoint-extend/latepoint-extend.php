@@ -3510,7 +3510,7 @@ EOT;
                 }
             }
 
-            $_SESSION['teamster'] = $cert;
+            $_SESSION['teamster'] = $check;
 
             return $check;
         }
