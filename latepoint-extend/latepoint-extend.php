@@ -159,8 +159,10 @@ if (!class_exists('LatePointExt')) :
             $care = $this->checkCert($id, 13);
             if ($care) {
                 $_SESSION['certCount'] = 0;
+                $_SESSION['teamster'] = true;
                 wp_send_json_success(['care' => 1], 200);
             } else {
+                $_SESSION['teamster'] = false;
                 $this->checkCertificate();
             }
             wp_die();
@@ -3509,8 +3511,6 @@ EOT;
                     $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
                 }
             }
-
-            $_SESSION['teamster'] = $check;
 
             return $check;
         }
