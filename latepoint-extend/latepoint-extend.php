@@ -620,9 +620,17 @@ jQuery(function($) {
 EOT;
             }
             if (in_array(OsStepsHelper::$booking_object->service_id, [13])) {
+                $append = '';
                 switch (OsStepsHelper::$booking_object->agent_id) {
+                    case '6':
+                        if ($_SESSION['teamster'] ?? false)
+                            $append = '<br><br><strong>Submit your request and get a FREE consultation first</strong><br>Payment required only after you would like to proceed';
+                        break;
                     case '11':
                         $desc = 'Thank you for your Gotodoctor Specialist Access Navigation Service request.';
+                        break;
+                    case '12':
+                        $append = '<br><br><strong>Submit your request and get a FREE consultation first</strong><br>Payment required only after you would like to proceed';
                         break;
                     case '18':
                         $desc = 'Thank you for your Gotodoctor Health System Navigator & Second Opinion request.';
@@ -640,7 +648,7 @@ jQuery(function($) {
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Request submitted');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('{$desc}');
     var cfb = $('.latepoint-side-panel .latepoint-step-desc-w .latepoint-step-desc .latepoint-desc-content').text() == $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-content').text();
-    var append = '<br><br><strong>Submit your request and get a FREE consultation first</strong><br>Payment required only after you would like to proceed';
+    var append = '{$append}';
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-content').append(append);
     if (cfb) {
         $('.latepoint-side-panel .latepoint-step-desc-w .latepoint-step-desc .latepoint-desc-content').append(append);
@@ -3492,15 +3500,18 @@ EOT;
         {
             global $wpdb;
             $check = $this->checkCertTest($cert);
-            if ($check) return $check;
-
-            if ($serviceId == 13) {
-                $row = $wpdb->get_row($wpdb->prepare("select * from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
-                // only group 7245 can book
-                $check = ($row->group ?? false) == 7245;
-            } else {
-                $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
+            if (!$check) {
+                if ($serviceId == 13) {
+                    $row = $wpdb->get_row($wpdb->prepare("select * from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
+                    // only group 7245 can book
+                    $check = ($row->group ?? false) == 7245;
+                } else {
+                    $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
+                }
             }
+
+            $_SESSION['teamster'] = $cert;
+
             return $check;
         }
 
