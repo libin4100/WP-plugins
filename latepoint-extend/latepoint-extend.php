@@ -159,10 +159,10 @@ if (!class_exists('LatePointExt')) :
             $care = $this->checkCert($id, 13);
             if ($care) {
                 $_SESSION['certCount'] = 0;
-                $_SESSION['teamster'] = true;
+                $_SESSION['nonteamster'] = false;
                 wp_send_json_success(['care' => 1], 200);
             } else {
-                $_SESSION['teamster'] = false;
+                $_SESSION['nonteamster'] = true;
                 $this->checkCertificate();
             }
             wp_die();
@@ -625,7 +625,7 @@ EOT;
                 $append = '';
                 switch (OsStepsHelper::$booking_object->agent_id) {
                     case '6':
-                        if ($_SESSION['teamster'] ?? false)
+                        if ($_SESSION['nonteamster'] ?? false)
                             $append = '<br><br><strong>Submit your request and get a FREE consultation first</strong><br>Payment required only after you would like to proceed';
                         break;
                     case '11':
