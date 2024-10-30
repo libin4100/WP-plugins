@@ -88,14 +88,16 @@
         foreach ($list as $i => $custom_field) {
             $id = 'qhc_service_' . (stripos($custom_field, 'other') !== false ? 'other' : $i);
             $options = ['id' => $id];
-            if (is_string($i)) $options['class'] = 'has-sub';
+            // if (is_string($i)) $options['class'] = 'has-sub';
             echo OsFormHelper::checkbox_field('booking[qhc][services][' . $custom_field . ']', $custom_field, 'on', ($booking->get_meta_by_key($custom_field, 'off') == 'on'), $options, ['class' => 'os-col-12']);
             if ($id == 'qhc_service_other') {
                 echo OsFormHelper::text_field('booking[qhc][services][other_detail]', 'Please specify', $booking->get_meta_by_key('other_detail', ''), ['class' => 'os-form-control', 'placeholder' => 'Please specify', 'id' => 'other_detail'], array('class' => 'os-col-12'));
             }
+            /*
             if (isset($subs[$id])) {    
                 echo OsFormHelper::select_field("booking[qhc][services][{$i}_detail]", 'Which service do you need?', $subs[$id], $booking->get_meta_by_key('mdi_detail', ''), ['id' => $id . '_detail'], ['class' => 'os-col-12', 'style' => 'display: none;']);
             }
+            */
         }
         ?>
     </div>
