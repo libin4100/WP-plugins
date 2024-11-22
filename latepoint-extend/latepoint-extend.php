@@ -1492,6 +1492,7 @@ EOT;
                     }
 
                     // Orthopedic surgery
+                    /*
                     if (($booking['qhc']['services']['Orthopedic surgery'] ?? false) == 'on') {
                         $select = trim($booking['custom_fields']['cf_DQ70wnRG'] ?? '');
                         if (!$select) {
@@ -1500,6 +1501,7 @@ EOT;
                             return;
                         }
                     }
+                    */
                     break;
                 case 'qhc_contact':
                     break;
