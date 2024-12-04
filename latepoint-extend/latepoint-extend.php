@@ -1952,6 +1952,7 @@ EOT;
                     'doctor_preference' => $booking->customer ? $booking->customer->get_meta_by_key('cf_7Lkik5fd', '') : '',
                     'referral' => $ref,
                     'physical_location' => $booking->get_meta_by_key('cf_6A3SfgET', ''),
+                    'agent' => $booking->agent ? $booking->agent->name : '',
                     'lang' => (defined('WPLANG') ? WPLANG : ''),
                 ];
                 $invoiceType = 'Appointment';
