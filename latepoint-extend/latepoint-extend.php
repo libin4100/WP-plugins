@@ -1939,6 +1939,11 @@ EOT;
                     $referralType = $wpdb->get_row("SELECT * from wp_referral_type where id = {$booking->type_id}");
                     $ref = $referralType->type_name . '[' . $referralType->type_registration_form_url . ']';
                 }
+                $agentName = '';
+                if ($booking->agent_id) {
+                    $agent = new OsAgentModel($booking->agent_id);
+                    $agentName = OsAgentHelper::get_full_name($agent);
+                }
 
                 $extra = [
                     'pname' => $booking->get_meta_by_key('cf_zDS7LUjv', ''),
@@ -1952,7 +1957,7 @@ EOT;
                     'doctor_preference' => $booking->customer ? $booking->customer->get_meta_by_key('cf_7Lkik5fd', '') : '',
                     'referral' => $ref,
                     'physical_location' => $booking->get_meta_by_key('cf_6A3SfgET', ''),
-                    'agent' => $booking->agent ? $booking->agent->name : '',
+                    'agent' => $agentName,
                     'lang' => (defined('WPLANG') ? WPLANG : ''),
                 ];
                 $invoiceType = 'Appointment';
