@@ -8,6 +8,23 @@ jQuery(function ($) {
     var show_summary = '<div class="os-show-summary os-summary-line os-has-value" style="display: block;flex: 0 0 100%;"><div class="os-summary-value os-summary-value-notice" style="color:red">Please note that your request for the time interval will be processed. DO NOT COME IN, until you receive YOUR SPECIFIC appointment time. </div> </div>';
     first_payment = true;
 
+    var fields = {
+        "qoqkhbly": { action: 'check_certificate', service_id: $('input[name="restrictions[selected_service]"').val() },
+        "pnwpruie": { action: 'check_certificate_fl' },
+        "w0izrltg": { action: 'check_certificate_imc' },
+        "vin78day": { action: 'check_certificate_sb' },
+        "sit7zefp": { action: 'check_certificate_p' },
+        "sit7zefo": { action: 'check_certificate_qh' },
+        "wzbhg9eb": { action: 'check_certificate_aas', service_id: $('input[name="restrictions[selected_service]"').val() },
+        "p56xpuo5": { action: 'check_certificate_gotohw' },
+        "4wvf2u9y": {},
+        "aku1t075": { action: 'check_certificate_seb', service_id: $('input[name="restrictions[selected_service]"').val() },
+        "qblbyjs8": { action: 'check_certificate_ub', service_id: $('input[name="restrictions[selected_service]"').val() },
+        "ayvpjhpp": { action: 'check_certificate_lg' },
+        "9oadikyh": { action: 'check_certificate_by', by: 'vpi' },
+        "yjnziz1d": { action: 'check_certificate_by', by: 'cc' },
+    }
+
     setInterval(function () {
         if ($('.latepoint-body .latepoint-footer.request-move').length) {
             $('.latepoint-body .latepoint-footer.request-move').css('display', 'flex').appendTo('.latepoint-form');
@@ -57,48 +74,63 @@ jQuery(function ($) {
         if ($('.latepoint-step-desc-library[data-step-name!="services"] .latepoint-desc-title').length) {
             $('.latepoint-step-desc-library[data-step-name!="services"][data-step-name!="confirmation"] .latepoint-desc-title').text('');
         }
-        if ($('#booking_custom_fields_cf_qoqkhbly').length && !$('#booking_custom_fields_cf_qoqkhbly').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_qoqkhbly').val($('#mbc-cert-hidden').val());
-            $('#booking_custom_fields_cf_qoqkhbly').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row').hide();
-        }
-        if ($('#booking_custom_fields_cf_pnwpruie').length && !$('#booking_custom_fields_cf_pnwpruie').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_pnwpruie').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
-        }
-        if ($('#booking_custom_fields_cf_w0izrltg').length && !$('#booking_custom_fields_cf_w0izrltg').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_w0izrltg').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
-        }
-        if ($('#booking_custom_fields_cf_vin78day').length && !$('#booking_custom_fields_cf_vin78day').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_vin78day').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
-        }
-        if ($('#booking_custom_fields_cf_sit7zefo').length && !$('#booking_custom_fields_cf_sit7zefo').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_sit7zefo').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
-        }
-        if ($('#booking_custom_fields_cf_sit7zefp').length && !$('#booking_custom_fields_cf_sit7zefp').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_sit7zefp').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
-        }
-        if ($('#booking_custom_fields_cf_wzbhg9eb').length && !$('#booking_custom_fields_cf_wzbhg9eb').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_wzbhg9eb').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
-        }
-        if ($('#booking_custom_fields_cf_p56xpuo5').length && !$('#booking_custom_fields_cf_p56xpuo5').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_xlaxtiqb').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
-            $('#booking_custom_fields_cf_p56xpuo5').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row')
-        }
-        if ($('#booking_custom_fields_cf_4wvf2u9y').length && !$('#booking_custom_fields_cf_4wvf2u9y').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_4wvf2u9y').val($('#mbc-cert-hidden').val());
-            $('#booking_custom_fields_cf_4wvf2u9y').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row').hide();
-        }
-        if ($('#booking_custom_fields_cf_aku1t075').length && !$('#booking_custom_fields_cf_aku1t075').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_aku1t075').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row');
-        }
-        if ($('#booking_custom_fields_cf_qblbyjs8').length && !$('#booking_custom_fields_cf_qblbyjs8').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_qblbyjs8').after('<input type="hidden" name="booking[custom_fields][group]" value="' + $('#groups').val() + '">');
-            $('#booking_custom_fields_cf_qblbyjs8').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row');
-        }
-        if ($('#booking_custom_fields_cf_ayvpjhpp').length && !$('#booking_custom_fields_cf_ayvpjhpp').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_ayvpjhpp').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row');
-        }
-        if ($('#booking_custom_fields_cf_9oadikyh').length && !$('#booking_custom_fields_cf_9oadikyh').parents('.os-col-12').is(':first-child')) {
-            $('#booking_custom_fields_cf_9oadikyh').parents('.os-col-12').prependTo('.step-custom-fields-for-booking-w.latepoint-step-content .os-row');
+        for (let key in fields) {
+            let id = '#booking_custom_fields_cf_' + key;
+            if ($(id).length) {
+                if (key == "p56xpuo5") {
+                    $("#booking_custom_fields_cf_xlaxtiqb")
+                    .parents(".os-col-12")
+                    .prependTo(
+                        ".step-custom-fields-for-booking-w.latepoint-step-content .os-row"
+                    );
+                }
+                if (key == "qblbyjs8") {
+                    $(id).after(
+                    '<input type="hidden" name="booking[custom_fields][group]" value="' +
+                        $("#groups").val() +
+                        '">'
+                    );
+                }
+                if (!$(id).parents(".os-col-12").is(":first-child")) {
+                    $(id)
+                    .parents(".os-col-12")
+                    .prependTo(
+                        ".step-custom-fields-for-booking-w.latepoint-step-content .os-row"
+                    );
+                }
+                if (["qoqkhbly", "4wvf2u9y"].includes(key)) {
+                    $(id).val($("#mbc-cert-hidden").val());
+                    $(id).parents(".os-col-12").hide();
+                }
+
+                if (fields[key].action) {
+                    $('body').on('blur', id, function () {
+                        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
+                        let data = fields[key];
+                        data.id = $(id).val();
+                        $.ajax({
+                            method: "POST",
+                            url: ajax_object.ajax_url,
+                            data: data,
+                        }).done(function () {
+                            $('.latepoint-body #certificate-error').remove();
+                        }).always(function () {
+                            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
+                        }).fail(function (xhr) {
+                            if (xhr.status == 404) {
+                                if (xhr.responseJSON.data.count >= 3) {
+                                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
+                                    $('.latepoint-body').empty();
+                                }
+
+                                if (!$('.latepoint-body #certificate-error').length)
+                                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
+                                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
+                            }
+                        });
+                    });
+                }
+            }
         }
         if ($('#customer_custom_fields_cf_4zkibeey').length) {
             if ($('#customer_custom_fields_cf_4zkibeey').val() == 'Other') {
@@ -192,333 +224,6 @@ jQuery(function ($) {
         if ($('.latepoint-body .mbc-image').length) $('.latepoint-body .mbc-image').remove();
         if ($('.latepoint-body .sb-image').length) $('.latepoint-body .sb-image').remove();
     })
-
-    $('body').on('blur', '#booking_custom_fields_cf_qoqkhbly', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate',
-                id: $('#booking_custom_fields_cf_qoqkhbly').val(),
-                service_id: $('input[name="restrictions[selected_service]"').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
-    $('body').on('blur', '#booking_custom_fields_cf_pnwpruie', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate_fl',
-                id: $('#booking_custom_fields_cf_pnwpruie').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
-    $('body').on('blur', '#booking_custom_fields_cf_w0izrltg', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate_imc',
-                id: $('#booking_custom_fields_cf_w0izrltg').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
-
-    $('body').on('blur', '#booking_custom_fields_cf_vin78day', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate_sb',
-                id: $('#booking_custom_fields_cf_vin78day').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
-
-    $('body').on('blur', '#booking_custom_fields_cf_sit7zefo', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate_qh',
-                id: $('#booking_custom_fields_cf_sit7zefo').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
-
-    $('body').on('blur', '#booking_custom_fields_cf_sit7zefp', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate_p',
-                id: $('#booking_custom_fields_cf_sit7zefp').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
-
-    $('body').on('blur', '#booking_custom_fields_cf_wzbhg9eb', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate_aas',
-                id: $('#booking_custom_fields_cf_wzbhg9eb').val(),
-                service_id: $('input[name="restrictions[selected_service]"').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
-
-    $('body').on('blur', '#booking_custom_fields_cf_qblbyjs8', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate_ub',
-                id: $('#booking_custom_fields_cf_qblbyjs8').val(),
-                service_id: $('input[name="restrictions[selected_service]"').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
-
-    $('body').on('blur', '#booking_custom_fields_cf_ayvpjhpp', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate_lg',
-                id: $('#booking_custom_fields_cf_ayvpjhpp').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
-
-    $('body').on('blur', '#booking_custom_fields_cf_9oadikyh', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate_by',
-                by: 'vpi',
-                id: $('#booking_custom_fields_cf_9oadikyh').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
-
-    $('body').on('blur', '#booking_custom_fields_cf_p56xpuo5', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate_gotohw',
-                id: $('#booking_custom_fields_cf_p56xpuo5').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
-
-    $('body').on('blur', '#booking_custom_fields_cf_aku1t075', function () {
-        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-        $.ajax({
-            method: "POST",
-            url: ajax_object.ajax_url,
-            data: {
-                action: 'check_certificate_seb',
-                id: $('#booking_custom_fields_cf_aku1t075').val(),
-                service_id: $('input[name="restrictions[selected_service]"').val()
-            },
-        }).done(function () {
-            $('.latepoint-body #certificate-error').remove();
-        }).always(function () {
-            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-        }).fail(function (xhr) {
-            if (xhr.status == 404) {
-                if (xhr.responseJSON.data.count >= 3) {
-                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                    $('.latepoint-body').empty();
-                }
-
-                if (!$('.latepoint-body #certificate-error').length)
-                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-            }
-        });
-    });
 
     $('body').on('blur', '#booking_qhc_pharmacy_password', function () {
         $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
