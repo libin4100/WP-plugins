@@ -200,33 +200,31 @@ jQuery(function ($) {
     for (let key in fields) {
         if (fields[key].action) {
             let id = '#booking_custom_fields_cf_' + key;
-            if ($(id).length) {
-                $('body').on('blur', id, function () {
-                    $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-                    let data = fields[key];
-                    data.id = $(id).val();
-                    $.ajax({
-                        method: "POST",
-                        url: ajax_object.ajax_url,
-                        data: data,
-                    }).done(function () {
-                        $('.latepoint-body #certificate-error').remove();
-                    }).always(function () {
-                        $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-                    }).fail(function (xhr) {
-                        if (xhr.status == 404) {
-                            if (xhr.responseJSON.data.count >= 3) {
-                                $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                                $('.latepoint-body').empty();
-                            }
-
-                            if (!$('.latepoint-body #certificate-error').length)
-                                $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                            $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
+            $('body').on('blur', id, function () {
+                $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
+                let data = fields[key];
+                data.id = $(id).val();
+                $.ajax({
+                    method: "POST",
+                    url: ajax_object.ajax_url,
+                    data: data,
+                }).done(function () {
+                    $('.latepoint-body #certificate-error').remove();
+                }).always(function () {
+                    $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
+                }).fail(function (xhr) {
+                    if (xhr.status == 404) {
+                        if (xhr.responseJSON.data.count >= 3) {
+                            $('.latepoint-footer .latepoint-btn').addClass('disabled');
+                            $('.latepoint-body').empty();
                         }
-                    });
+
+                        if (!$('.latepoint-body #certificate-error').length)
+                            $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
+                        $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
+                    }
                 });
-            }
+            });
         }
     }
 

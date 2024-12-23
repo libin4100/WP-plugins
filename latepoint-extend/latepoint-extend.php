@@ -1426,7 +1426,7 @@ EOT;
                             'union_benefits' => ['agent_id' => 18, 'field' => 'cf_qblbyjs8'],
                             'leslie_group' => ['agent_id' => 19, 'field' => 'cf_AYVpjhpP'],
                             'vpi' => ['agent_id' => 20, 'field' => 'cf_9OaDIkYh'],
-                            'cc' => ['agent_id' => 21, 'field' => 'cf_yjnZIZ1D'],
+                            'cleveland_clinic' => ['agent_id' => 21, 'field' => 'cf_yjnZIZ1D'],
                         ];
                         foreach ($lists as $key => $list) {
                             if ($bookingObject->agent_id == $list['agent_id'] && $k == $list['field']) {
