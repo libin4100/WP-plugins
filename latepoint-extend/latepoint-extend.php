@@ -339,7 +339,7 @@ if (!class_exists('LatePointExt')) :
             if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
             if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
 
-            if (!$this->checkCertPartner($id, 'cc')) {
+            if (!$this->checkCertPartner($id, 'cleveland_clinic')) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
                     $msg = "We're sorry. The service key provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
