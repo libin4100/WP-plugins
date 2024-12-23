@@ -102,34 +102,6 @@ jQuery(function ($) {
                     $(id).val($("#mbc-cert-hidden").val());
                     $(id).parents(".os-col-12").hide();
                 }
-
-                if (fields[key].action) {
-                    $('body').on('blur', id, function () {
-                        $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
-                        let data = fields[key];
-                        data.id = $(id).val();
-                        $.ajax({
-                            method: "POST",
-                            url: ajax_object.ajax_url,
-                            data: data,
-                        }).done(function () {
-                            $('.latepoint-body #certificate-error').remove();
-                        }).always(function () {
-                            $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
-                        }).fail(function (xhr) {
-                            if (xhr.status == 404) {
-                                if (xhr.responseJSON.data.count >= 3) {
-                                    $('.latepoint-footer .latepoint-btn').addClass('disabled');
-                                    $('.latepoint-body').empty();
-                                }
-
-                                if (!$('.latepoint-body #certificate-error').length)
-                                    $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
-                                $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
-                            }
-                        });
-                    });
-                }
             }
         }
         if ($('#customer_custom_fields_cf_4zkibeey').length) {
@@ -224,6 +196,39 @@ jQuery(function ($) {
         if ($('.latepoint-body .mbc-image').length) $('.latepoint-body .mbc-image').remove();
         if ($('.latepoint-body .sb-image').length) $('.latepoint-body .sb-image').remove();
     })
+
+    for (let key in fields) {
+        if (fields[key].action) {
+            let id = '#booking_custom_fields_cf_' + key;
+            if ($(id).length) {
+                $('body').on('blur', id, function () {
+                    $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
+                    let data = fields[key];
+                    data.id = $(id).val();
+                    $.ajax({
+                        method: "POST",
+                        url: ajax_object.ajax_url,
+                        data: data,
+                    }).done(function () {
+                        $('.latepoint-body #certificate-error').remove();
+                    }).always(function () {
+                        $('.latepoint-footer .latepoint-next-btn').removeClass('os-loading');
+                    }).fail(function (xhr) {
+                        if (xhr.status == 404) {
+                            if (xhr.responseJSON.data.count >= 3) {
+                                $('.latepoint-footer .latepoint-btn').addClass('disabled');
+                                $('.latepoint-body').empty();
+                            }
+
+                            if (!$('.latepoint-body #certificate-error').length)
+                                $('.latepoint-body').prepend('<div id="certificate-error" class="latepoint-message latepoint-message-error"></div>');
+                            $('.latepoint-body #certificate-error').html(xhr.responseJSON.data.message)
+                        }
+                    });
+                });
+            }
+        }
+    }
 
     $('body').on('blur', '#booking_qhc_pharmacy_password', function () {
         $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
