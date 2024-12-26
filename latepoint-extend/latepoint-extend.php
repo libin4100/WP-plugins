@@ -1580,6 +1580,11 @@ EOT;
                     if ($customer->id ?? false) {
                         OsAuthHelper::authorize_customer($customer->id);
                         OsStepsHelper::$booking_object->customer_id = $customer->id;
+                    } else {
+                        try {
+                            error_log("Latepoint error to get customer: " . json_encode(OsParamsHelper::get_params()));
+                        } catch (\Exception $e) {
+                        }
                     }
                     break;
                 case 'datepicker2':
