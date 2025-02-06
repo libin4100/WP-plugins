@@ -820,7 +820,7 @@ jQuery(function($) {
 });
 </script>
 EOT;
-            if ($bookingObject->agent_id == 8 && $bookingObject->location_id == 4) {
+            if (in_array($bookingObject->agent_id, [8, 21]) && $bookingObject->location_id == 4) {
                 echo <<<EOT
 <script>
 jQuery(function($) {
