@@ -97,14 +97,24 @@ trait LoadStepTrait
                     $custom_fields_controller->vars['current_step'] = $stepName;
                     $custom_fields_controller->set_layout('none');
                     $custom_fields_controller->set_return_format($format);
-                    $custom_fields_controller->format_render('_step_custom_fields_for_booking', [], [
+                    $extra = [
                         'step_name'         => $stepName,
                         'show_next_btn'     => OsStepsHelper::can_step_show_next_btn($stepName),
                         'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
                         'is_first_step'     => OsStepsHelper::is_first_step($stepName),
                         'is_last_step'      => OsStepsHelper::is_last_step($stepName),
                         'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
-                    ]);
+                    ];
+                    if ($this->isGTD) {
+                        $html = $custom_fields_controller->render($custom_fields_controller->get_view_uri('_step_custom_fields_for_booking_gtd', false), 'none', []);
+                        $html = substr($html, 0, -6) . $this->prescriptionJs() . '</div>';
+                        wp_send_json(array_merge(
+                            ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                            $extra
+                        ));
+                    } else {
+                        $custom_fields_controller->format_render('_step_custom_fields_for_booking', [], $extra);
+                    }
                 }
                 break;
             case 'datepicker':

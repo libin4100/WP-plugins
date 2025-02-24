@@ -134,6 +134,9 @@ trait SetFieldTrait
             }
             OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
         }
+        if ($this->isGTD) {
+            $this->_fields('isGTD');
+        }
     }
 
     protected function _fields($type = false, $reset = false)
@@ -1306,6 +1309,7 @@ trait SetFieldTrait
                 'returning' => ['show' => ['cf_WFHtiGvf', 'cf_ZoXsdwEZ']],
                 'returningOnly' => ['show' => ['cf_DrKevcqV', 'cf_4zkIbeeY', 'cf_NVByvyYw', 'cf_cVndXX2e', 'cf_iAoOucDc']],
                 'careServices' => ['show' => ['cf_DQ70wnRG']],
+                'isGTD' => ['show' => ['cf_Presc1_0', 'cf_Presc2_0', 'cf_Presc3_0', 'cf_Presc3_1', 'cf_Presc3_2']],
             ];
             $hideField = ($onSave ?? false) ? 'public' : 'hidden';
             $values = is_array($customFields) ? $customFields : json_decode($customFields, true);

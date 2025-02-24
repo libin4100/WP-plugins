@@ -17,6 +17,7 @@ if (!defined('ABSPATH')) {
 
 
 if (!class_exists('LatePointExt')) :
+    require_once(dirname(__FILE__) . '/Traits/GtdTrait.php');
     require_once(dirname(__FILE__) . '/Traits/LoadStepTrait.php');
     require_once(dirname(__FILE__) . '/Traits/ProcessStepTrait.php');
     require_once(dirname(__FILE__) . '/Traits/SetFieldTrait.php');
@@ -26,11 +27,12 @@ if (!class_exists('LatePointExt')) :
      */
     final class LatePointExt
     {
-        use LoadStepTrait, ProcessStepTrait, SetFieldTrait;
+        use LoadStepTrait, ProcessStepTrait, SetFieldTrait, GtdTrait;
 
         public $version = '1.4.2';
         public $dbVersion = '1.0.0';
         public $addonName = 'latepoint-extend';
+        public $isGTD;
 
         protected $covid;
         protected $others;
@@ -47,6 +49,8 @@ if (!class_exists('LatePointExt')) :
             $this->version = filemtime(__DIR__ . '/public/js/front.js');
             $this->defines();
             $this->hooks();
+            
+            $this->isGTD = OsParamsHelper::get_param('is_gtd') == '1';
         }
 
         public function defines() {}
