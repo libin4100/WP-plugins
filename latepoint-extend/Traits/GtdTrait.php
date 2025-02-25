@@ -19,7 +19,7 @@ trait GtdTrait
              * Has the patient used Gotodoctor or Enhanced Care Clinic before? - Yes
              * Where is the patient currently located? - Ontario
              */
-            'cf_Presc1_0' => [['cf_x18jr0Vf' => 'Yes', 'cf_6A3SfgET' => 'Ontario']], 
+            'cf_Presc1_0' => [['cf_x18jr0Vf' => 'Yes', 'cf_6A3SfgET' => 'Ontario']],
             'cf_Presc2_0' => [['cf_Presc1_0' => 'No']],
             'cf_Presc3_0' => [
                 ['cf_Presc2_0' => 'No'],
@@ -80,7 +80,7 @@ trait GtdTrait
     public function prescriptionJs()
     {
         $keys = $this->prescriptionFields(true);
-        $ids = array_map(function($key) {
+        $ids = array_map(function ($key) {
             return 'booking_custom_fields_' . strtolower($key);
         }, $keys);
         $fields = array_combine($keys, $ids);
@@ -101,9 +101,11 @@ jQuery(document).ready(function($) {
     for (var key in rules) {
         checkRuel(key);
 
-        for (var field in rules[key]) {
-            bindRule('#' + fields[field], [key]);
-        }
+        rules[key].forEach(function(rule) {
+            for (var field in rule) {
+                bindRule('#' + fields[field], [key]);
+            }
+        });
     }
 
     function toggleFields(list, action) {
@@ -138,7 +140,7 @@ jQuery(document).ready(function($) {
                 var f = $('#' + fields[key]);
                 if (value.startsWith('!=')) {
                     value = value.substring(2);
-                    if (f.val() === value) {
+                    if (!f.val() || (f.val() === value)) {
                         ruleMatch = false;
                         break;
                     }
