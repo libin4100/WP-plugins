@@ -66,9 +66,9 @@ trait LoadStepTrait
                     if ($values) {
                         foreach ($values as $id => $val) {
                             if (($val['visibility'] ?? false) != 'public')
-                            $values[$id]['visibility'] = 'public';
+                                $values[$id]['visibility'] = 'public';
                             if ($val['label'] == 'Doctor Preference' || $val['label'] == "Reason for today's visit ( required )")
-                            unset($values[$id]);
+                                unset($values[$id]);
                         }
                         OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                     }
@@ -79,14 +79,16 @@ trait LoadStepTrait
 
                 if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                     OsAuthHelper::logout_customer();
-                if (OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) {
-                    $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
-                    $fields = [];
-                    if ($customFields) {
-                        $values = json_decode(do_shortcode($customFields), true);
-                        if ($values) {
-                            foreach ($values as $id => $val) {
-                                if (!isset($val['visibility']) || $val['visibility'] == 'public') $fields[$id] = $val;
+                if (($allowShortcode = OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) || $this->isGTD()) {
+                    if ($allowShortcode) {
+                        $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
+                        $fields = [];
+                        if ($customFields) {
+                            $values = json_decode(do_shortcode($customFields), true);
+                            if ($values) {
+                                foreach ($values as $id => $val) {
+                                    if (!isset($val['visibility']) || $val['visibility'] == 'public') $fields[$id] = $val;
+                                }
                             }
                         }
                     }
