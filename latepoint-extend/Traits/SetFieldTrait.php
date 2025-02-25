@@ -134,7 +134,7 @@ trait SetFieldTrait
             }
             OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
         }
-        if ($this->isGTD) {
+        if ($this->isGTD()) {
             $this->_fields('isGTD');
         }
     }

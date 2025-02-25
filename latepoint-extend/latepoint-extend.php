@@ -32,7 +32,6 @@ if (!class_exists('LatePointExt')) :
         public $version = '1.4.2';
         public $dbVersion = '1.0.0';
         public $addonName = 'latepoint-extend';
-        public $isGTD;
 
         protected $covid;
         protected $others;
@@ -49,8 +48,6 @@ if (!class_exists('LatePointExt')) :
             $this->version = filemtime(__DIR__ . '/public/js/front.js');
             $this->defines();
             $this->hooks();
-            
-            $this->isGTD = OsParamsHelper::get_param('is_gtd') == '1';
         }
 
         public function defines() {}
@@ -1627,6 +1624,11 @@ EOT;
                     wp_delete_file(str_replace(wp_upload_dir()['baseurl'], wp_upload_dir()['basedir'], $file));
             }
             wp_send_json(['status' => 'success']);
+        }
+
+        public function isGTD()
+        {
+            return OsParamsHelper::get_param('is_gtd') == '1';
         }
 
         protected function checkCert($cert, $serviceId = null)
