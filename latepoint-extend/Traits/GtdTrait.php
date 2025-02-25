@@ -19,11 +19,20 @@ trait GtdTrait
              * Has the patient used Gotodoctor or Enhanced Care Clinic before? - Yes
              * Where is the patient currently located? - Ontario
              */
-            'cf_Presc1_0' => ['cf_x18jr0Vf' => 'Yes', 'cf_6A3SfgET' => 'Ontario'], 
-            'cf_Presc2_0' => ['cf_Presc1_0' => 'No'],
-            'cf_Presc3_0' => ['cf_Presc2_0' => 'No'],
-            'cf_Presc3_1' => ['cf_Presc2_0' => 'No'],
-            'cf_Presc3_2' => ['cf_Presc2_0' => 'No'],
+            'cf_Presc1_0' => [['cf_x18jr0Vf' => 'Yes', 'cf_6A3SfgET' => 'Ontario']], 
+            'cf_Presc2_0' => [['cf_Presc1_0' => 'No']],
+            'cf_Presc3_0' => [
+                ['cf_Presc2_0' => 'No'],
+                ['cf_x18jr0Vf' => 'Yes', 'cf_6A3SfgET' => '!=Ontario']
+            ],
+            'cf_Presc3_1' => [
+                ['cf_Presc2_0' => 'No'],
+                ['cf_x18jr0Vf' => 'Yes', 'cf_6A3SfgET' => '!=Ontario']
+            ],
+            'cf_Presc3_2' => [
+                ['cf_Presc2_0' => 'No'],
+                ['cf_x18jr0Vf' => 'Yes', 'cf_6A3SfgET' => '!=Ontario']
+            ],
         ];
     }
 
@@ -32,12 +41,29 @@ trait GtdTrait
         $rules = $this->prescriptionRules();
         $errors = [];
 
-        foreach ($rules as $field => $rule) {
-            $match = true;
+        foreach ($rules as $field => $ruleSets) {
+            $match = false;
 
-            foreach ($rule as $key => $val) {
-                if (isset($customFields[$key]) && $customFields[$key] !== $val) {
-                    $match = false;
+            foreach ($ruleSets as $rule) {
+                $ruleMatch = true;
+
+                foreach ($rule as $key => $val) {
+                    if (strpos($val, '!=') === 0) {
+                        $val = substr($val, 2);
+                        if (isset($customFields[$key]) && $customFields[$key] === $val) {
+                            $ruleMatch = false;
+                            break;
+                        }
+                    } else {
+                        if (isset($customFields[$key]) && $customFields[$key] !== $val) {
+                            $ruleMatch = false;
+                            break;
+                        }
+                    }
+                }
+
+                if ($ruleMatch) {
+                    $match = true;
                     break;
                 }
             }
@@ -102,16 +128,32 @@ jQuery(document).ready(function($) {
     }
 
     function checkRuel(field) {
-        var rule = rules[field];
-        var match = true;
-        for (var key in rule) {
-            var value = rule[key];
-            var f = $('#' + fields[key]);
-            if (f.val() !== value) {
-                match = false;
-                break;
+        var ruleSets = rules[field];
+        var match = false;
+
+        ruleSets.forEach(function(rule) {
+            var ruleMatch = true;
+            for (var key in rule) {
+                var value = rule[key];
+                var f = $('#' + fields[key]);
+                if (value.startsWith('!=')) {
+                    value = value.substring(2);
+                    if (f.val() === value) {
+                        ruleMatch = false;
+                        break;
+                    }
+                } else {
+                    if (f.val() !== value) {
+                        ruleMatch = false;
+                        break;
+                    }
+                }
             }
-        }
+            if (ruleMatch) {
+                match = true;
+            }
+        });
+
         if (match) {
             toggleFields([fields[field]], 'show');
         } else {
