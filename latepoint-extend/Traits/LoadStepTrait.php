@@ -91,6 +91,8 @@ trait LoadStepTrait
                                 }
                             }
                         }
+                    } else {
+                        $fields = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'customer');
                     }
 
                     $custom_fields_controller = new OsCustomFieldsController();
@@ -108,7 +110,7 @@ trait LoadStepTrait
                         'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
                     ];
                     if ($this->isGTD()) {
-                        $html = $custom_fields_controller->render($custom_fields_controller->get_view_uri('_step_custom_fields_for_booking_gtd', false), 'none', []);
+                        $html = $custom_fields_controller->render($custom_fields_controller->get_view_uri('_step_custom_fields_for_booking', false), 'none', []);
                         $html = substr($html, 0, -6) . $this->prescriptionJs() . '</div>';
                         wp_send_json(array_merge(
                             ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],

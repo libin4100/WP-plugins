@@ -76,7 +76,7 @@ jQuery(document).ready(function($) {
         checkRuel(key);
 
         for (var field in rules[key]) {
-            bindRule('#' + fields[key], [field]);
+            bindRule('#' + fields[field], [key]);
         }
     }
 
