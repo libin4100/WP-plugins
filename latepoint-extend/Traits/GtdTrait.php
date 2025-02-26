@@ -113,9 +113,11 @@ jQuery(document).ready(function($) {
             var f = $('#' + field);
             if (action === 'hide') {
                 f.closest('.os-form-group').hide();
+                f.closest('.os-form-group').siblings('#preferred_pharamcy_label').hide();
                 f.prop('required', false);
             } else {
                 f.closest('.os-form-group').show();
+                f.closest('.os-form-group').siblings('#preferred_pharamcy_label').show();
                 f.prop('required', true);
             }
         });
@@ -163,7 +165,7 @@ jQuery(document).ready(function($) {
         }
     }
 
-    $('#booking_custom_fields_cf_presc3_0').closest('.os-form-group').before('<div class="os-form-group os-form-select-group os-form-group-transparent" style="margin-bottom: 0 !important;"><label>Preferred pharmacy</label></div>');
+    $('#booking_custom_fields_cf_presc3_0').closest('.os-form-group').before('<div id="preferred_pharamcy_label" class="os-form-group os-form-select-group os-form-group-transparent" style="margin-bottom: 0 !important;"><label>Preferred pharmacy</label></div>');
 });
 </script>
 JS;
