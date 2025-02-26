@@ -162,6 +162,8 @@ jQuery(document).ready(function($) {
             toggleFields([fields[field]], 'hide');
         }
     }
+
+    $('#booking_custom_fields_cf_presc3_0').closest('.os-form-group').before('<div class="os-form-group os-form-select-group os-form-group-transparent" style="margin-bottom: 0 !important;"><label>Preferred pharmacy</label></div>');
 });
 </script>
 JS;
