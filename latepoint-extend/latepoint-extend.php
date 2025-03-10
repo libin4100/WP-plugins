@@ -1065,6 +1065,8 @@ EOT;
                         'start_date3',
                         'start_time3',
                         'group',
+                        'r',
+                        'region',
                     ] as $key
                 ) {
                     if ($data['custom_fields'][$key] ?? false) {
@@ -1117,7 +1119,9 @@ EOT;
                         'start_date2',
                         'start_time2',
                         'start_date3',
-                        'start_time3'
+                        'start_time3',
+                        'r',
+                        'region',
                     ] as $key
                 ) {
                     if ($model->custom_fields[$key] ?? false) {
