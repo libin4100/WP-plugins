@@ -293,6 +293,9 @@ if (!class_exists('LatePointExt')) :
                 case 'cc':
                     $this->ccCert($id);
                     break;
+                case 'sp':
+                    $this->spCert($id);
+                    break;
                 default:
                     wp_send_json_error(['message' => 'Partner not found.'], 404);
             }
@@ -351,6 +354,23 @@ if (!class_exists('LatePointExt')) :
                     $msg = "We're sorry. The service key provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                 else
                     $msg = 'Service key does not match our records. Please try again.';
+
+                wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
+            }
+            wp_die();
+        }
+
+        public function spCert($id)
+        {
+            if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
+            if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
+
+            if (!$this->checkCertPartner($id, 'small_partners')) {
+                $_SESSION['certCount'] += 1;
+                if ($_SESSION['certCount'] >= 3)
+                    $msg = "We're sorry. The certificate provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                else
+                    $msg = 'Certificate does not match our records. Please try again.';
 
                 wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
             }

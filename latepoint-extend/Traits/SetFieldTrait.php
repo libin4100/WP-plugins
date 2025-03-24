@@ -100,6 +100,10 @@ trait SetFieldTrait
                 // Cleveland Clinic
                 $fields = $this->_fields('cc');
                 break;
+            case $bookingObject->agent_id == 22:
+                // Hunters
+                $fields = $this->_fields('sp');
+                break;
             case in_array($bookingObject->service_id, [2, 3]):
                 $this->_fields('located');
                 break;
@@ -1274,6 +1278,36 @@ trait SetFieldTrait
                 ],
                 'cc' => [
                     'show' => ['cf_yjnZIZ1D', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                    'hide' => [
+                        'cf_hbCNgimu',
+                        'cf_zDS7LUjv',
+                        'cf_H7MIk6Kt',
+                    ],
+                    'add' => [
+                        'first_name' => [
+                            'label' => __('First Name', 'latepoint'),
+                            'placeholder' => __('First Name', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'first_name'
+                        ],
+                        'last_name' => [
+                            'label' => __('Last Name', 'latepoint'),
+                            'placeholder' => __('Last Name', 'latepoint'),
+                            'type' => 'text',
+                            'width' => 'os-col-12',
+                            'visibility' => 'public',
+                            'options' => '',
+                            'required' => 'on',
+                            'id' => 'last_name'
+                        ],
+                    ]
+                ],
+                'sp' => [
+                    'show' => ['cf_9e1mhF4v', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
                     'hide' => [
                         'cf_hbCNgimu',
                         'cf_zDS7LUjv',
