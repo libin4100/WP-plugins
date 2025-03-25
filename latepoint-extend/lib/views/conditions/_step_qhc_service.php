@@ -63,7 +63,7 @@
                 "Weight management",
                 "Others - please specify",
             ];
-        if ($booking->agent_id == 18) array_unshift($list, 'Medical second opinion');
+        if (in_array($booking->agent_id, [18, 22])) array_unshift($list, 'Medical second opinion');
         $subs = [
             'qhc_service_mdi' => [
                 'MDI: OHIP-covered Service' => 'Looking for an OHIP-covered service',
