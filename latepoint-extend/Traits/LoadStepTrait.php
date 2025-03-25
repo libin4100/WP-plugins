@@ -82,7 +82,7 @@ trait LoadStepTrait
                 if (
                     ($allowShortcode = OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) 
                     || $this->isGTD()
-                    || !OsStepsHelper::is_first_step($stepName)
+                    || (in_array($bookingObject->service_id ?? 0, [2, 3, 7, 8]))
                 ) {
                     if ($allowShortcode) {
                         $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
