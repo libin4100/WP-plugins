@@ -362,6 +362,7 @@ if (!class_exists('LatePointExt')) :
 
         public function spCert($id)
         {
+            wp_die();
             if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
             if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
 
