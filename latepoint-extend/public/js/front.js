@@ -23,7 +23,7 @@ jQuery(function ($) {
         "ayvpjhpp": { action: 'check_certificate_lg' },
         "9oadikyh": { action: 'check_certificate_by', by: 'vpi' },
         "yjnziz1d": { action: 'check_certificate_by', by: 'cc' },
-        "9e1mhf4v": { action: 'check_certificate_by', by: 'sp', agent_id: $('input[name="restrictions[selected_agent]"') },
+        "9e1mhf4v": { action: 'check_certificate_by', by: 'sp', agent_id: 'input[name="restrictions[selected_agent]"' },
     }
 
     setInterval(function () {
@@ -211,7 +211,7 @@ jQuery(function ($) {
                 $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
                 let data = fields[key];
                 data.id = $(id).val();
-                if (data.agent_id) data.agent_id = data.agent_id.val();
+                if (data.agent_id) data.agent_id = $(data.agent_id).val();
                 $.ajax({
                     method: "POST",
                     url: ajax_object.ajax_url,
