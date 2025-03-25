@@ -1338,10 +1338,10 @@ trait SetFieldTrait
                     ]
                 ],
                 //'located' => ['show' => ['cf_6A3SfgET', 'cf_YXtUB2Jc']],
-                'located' => ['show' => ['cf_6A3SfgET']],
-                'locatedOther' => ['show' => ['cf_6A3SfgET']],
+                'located' => ['show' => ['cf_6A3SfgET', 'cf_NeRenew0', 'cf_NeRenew1', 'cf_NeRenew2', 'cf_NeRenew3', 'cf_NeRenew4', 'cf_NeRenew5', 'cf_NeRenew6']],
+                'locatedOther' => ['show' => ['cf_6A3SfgET', 'cf_NeRenew0', 'cf_NeRenew1', 'cf_NeRenew2', 'cf_NeRenew3', 'cf_NeRenew4', 'cf_NeRenew5', 'cf_NeRenew6']],
                 'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
-                'returning' => ['show' => ['cf_WFHtiGvf', 'cf_ZoXsdwEZ', 'cf_NeRenew0', 'cf_NeRenew1', 'cf_NeRenew2', 'cf_NeRenew3', 'cf_NeRenew4', 'cf_NeRenew5', 'cf_NeRenew6']],
+                'returning' => ['show' => ['cf_WFHtiGvf', 'cf_ZoXsdwEZ']],
                 'returningOnly' => ['show' => ['cf_DrKevcqV', 'cf_4zkIbeeY', 'cf_NVByvyYw', 'cf_cVndXX2e', 'cf_iAoOucDc']],
                 'careServices' => ['show' => ['cf_DQ70wnRG']],
                 'isGTD' => ['show' => ['cf_Presc1_0', 'cf_Presc2_0', 'cf_Presc3_0', 'cf_Presc3_1', 'cf_Presc3_2']],
