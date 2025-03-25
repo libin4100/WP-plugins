@@ -1309,6 +1309,7 @@ trait SetFieldTrait
                 'sp' => [
                     'show' => ['cf_9e1mhF4v', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
                     'hide' => [
+                        'email',
                         'cf_hbCNgimu',
                         'cf_zDS7LUjv',
                         'cf_H7MIk6Kt',
