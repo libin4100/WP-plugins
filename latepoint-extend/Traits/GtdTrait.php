@@ -131,7 +131,7 @@ jQuery(document).ready(function($) {
         var value = $(this).val();
         if (value === 'Not on Medication or Not Available') {
             $('#nerenew5_notice').html('Please Note If we find that you are taking medications but have not provided a complete list, it may result in a delay in your appointment.');
-        } else if (value === 'Enter Medication List Below') {
+        } else if (value === 'Send via Email or Fax') {
             $('#nerenew5_notice').html('Kindly ensure that you send your medication list to <b>telemedicine@gotodoctor.ca</b> or via fax to <b>1-888-238-2029</b>. Delays in providing this information may result in a delay in your appointment as well.');
         } else {
             $('#nerenew5_notice').html('');
