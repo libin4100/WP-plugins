@@ -954,7 +954,7 @@ EOT;
 <script>
 jQuery(function($) {
     var aid = {$bookingObject->agent_id};
-    var alist = [2, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 19, 20, 21];
+    var alist = [2, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22];
     $('body').on('DOMSubtreeModified', '.latepoint-booking-form-element', function() {
         showhide();
     });
