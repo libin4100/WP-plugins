@@ -280,6 +280,7 @@ if (!class_exists('LatePointExt')) :
             }
             $id = trim($_POST['id'] ?? '');
             $by = trim($_POST['by'] ?? '');
+            $agentId = trim($_POST['agent_id'] ?? '');
             if (!$id) {
                 wp_send_json_error(['message' => 'Certificate number is required.'], 404);
             }
@@ -294,7 +295,7 @@ if (!class_exists('LatePointExt')) :
                     $this->ccCert($id);
                     break;
                 case 'sp':
-                    $this->spCert($id);
+                    $this->spCert($id, $agentId);
                     break;
                 default:
                     wp_send_json_error(['message' => 'Partner not found.'], 404);
@@ -360,13 +361,22 @@ if (!class_exists('LatePointExt')) :
             wp_die();
         }
 
-        public function spCert($id)
+        public function spCert($id, $agentId)
         {
-            wp_die();
             if (!($_SESSION['certCount'] ?? false)) $_SESSION['certCount'] = 0;
             if ($_SESSION['certCount'] >= 3) $_SESSION['certCount'] = 0;
 
-            if (!$this->checkCertPartner($id, 'small_partners')) {
+            switch ($agentId) 
+            {
+                case 22:
+                    $partner = 'hunters';
+                    break;
+                default:
+                    $partner = '';
+                    break;
+            }
+
+            if (!$this->checkCertPartner($id, $partner)) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
                     $msg = "We're sorry. The certificate provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
