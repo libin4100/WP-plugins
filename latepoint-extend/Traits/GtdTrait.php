@@ -123,7 +123,24 @@ trait GtdTrait
 
     public function needRenewJs()
     {
-        return $this->rulesJs('needRenewFields', 'needRenewRules');
+        $customJs = <<<JS
+<script>
+jQuery(document).ready(function($) {
+    $('#booking_custom_fields_cf_nerenew5').closest('.os-form-group').append('<div id="nerenew5_notice"></div>');
+    $('#booking_custom_fields_cf_nerenew5').on('change', function() {
+        var value = $(this).val();
+        if (value === 'Not on Medication or Not Available') {
+            $('#nerenew5_notice').html('Please Note If we find that you are taking medications but have not provided a complete list, it may result in a delay in your appointment.');
+        } else if (value === 'Enter Medication List Below') {
+            $('#nerenew5_notice').html('Kindly ensure that you send your medication list to <b>telemedicine@gotodoctor.ca</b> or via fax to <b>1-888-238-2029</b>. Delays in providing this information may result in a delay in your appointment as well.');
+        } else {
+            $('#nerenew5_notice').html('');
+        }
+    });
+});
+</script>
+JS;
+        return $customJs . $this->rulesJs('needRenewFields', 'needRenewRules');
     }
 
     public function rulesJs($funcFields = 'prescriptionFields', $funcRules = 'prescriptionRules')
