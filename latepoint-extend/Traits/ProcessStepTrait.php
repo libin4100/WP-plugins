@@ -102,6 +102,9 @@ trait ProcessStepTrait
                         }
                     }
                 }
+                if ($_errors = $this->validNeedRenew($custom_fields_data, $custom_fields_for_booking)) {
+                    $errors = array_merge($errors, $_errors);
+                }
                 if ($this->isGTD()) {
                     $_errors = $this->validPrescription($custom_fields_data, $custom_fields_for_booking);
                     if ($_errors) {

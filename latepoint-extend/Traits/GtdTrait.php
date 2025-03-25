@@ -38,7 +38,12 @@ trait GtdTrait
 
     public function validPrescription($customFields, $customFieldsForBookig)
     {
-        $rules = $this->prescriptionRules();
+        return $this->validRules($customFields, $customFieldsForBookig, 'prescriptionRules');
+    }
+
+    public function validRules($customFields, $customFieldsForBookig, $funcRules = 'prescriptionRules')
+    {
+        $rules = $this->$funcRules();
         $errors = [];
 
         foreach ($rules as $field => $ruleSets) {
@@ -79,13 +84,57 @@ trait GtdTrait
 
     public function prescriptionJs()
     {
-        $keys = $this->prescriptionFields(true);
+        return $this->rulesJs('prescriptionFields', 'prescriptionRules');
+    }
+
+    public function needRenewFields($prepend = false)
+    {
+        return array_merge([
+            'cf_NeRenew0',
+            'cf_NeRenew1',
+            'cf_NeRenew2',
+            'cf_NeRenew3',
+            'cf_NeRenew4',
+            'cf_NeRenew5',
+            'cf_NeRenew6',
+        ], $prepend ? ['cf_x18jr0Vf'] : []);
+    }
+
+    public function needRenewRules()
+    {
+        return [
+            /**
+             * Has the patient used Gotodoctor or Enhanced Care Clinic before? - Yes
+             */
+            'cf_NeRenew0' => [['cf_x18jr0Vf' => 'Yes']],
+            'cf_NeRenew1' => [['cf_NeRenew0' => 'No']],
+            'cf_NeRenew2' => [['cf_NeRenew0' => 'No']],
+            'cf_NeRenew3' => [['cf_NeRenew0' => 'No']],
+            'cf_NeRenew4' => [['cf_NeRenew0' => 'No']],
+            'cf_NeRenew5' => [['cf_NeRenew0' => 'No']],
+            'cf_NeRenew6' => [['cf_NeRenew5' => 'Enter Medication List Below']],
+        ];
+    }
+
+    public function validNeedRenew($customFields, $customFieldsForBookig)
+    {
+        return $this->validRules($customFields, $customFieldsForBookig, 'needRenewRules');
+    }
+
+    public function needRenewJs()
+    {
+        return $this->rulesJs('needRenewFields', 'needRenewRules');
+    }
+
+    public function rulesJs($funcFields = 'prescriptionFields', $funcRules = 'prescriptionRules')
+    {
+        $keys = $this->$funcFields(true);
         $ids = array_map(function ($key) {
             return 'booking_custom_fields_' . strtolower($key);
         }, $keys);
         $fields = array_combine($keys, $ids);
         $init = array_slice($keys, 0, -2);
-        $rules = $this->prescriptionRules();
+        $rules = $this->$funcRules();
 
         $fieldsJs = json_encode($fields);
         $initJs = json_encode(array_values($init));
