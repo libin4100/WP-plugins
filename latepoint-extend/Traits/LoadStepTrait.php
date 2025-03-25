@@ -79,44 +79,50 @@ trait LoadStepTrait
 
                 if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                     OsAuthHelper::logout_customer();
-                if ($allowShortcode) {
-                    $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
-                    $fields = [];
-                    if ($customFields) {
-                        $values = json_decode(do_shortcode($customFields), true);
-                        if ($values) {
-                            foreach ($values as $id => $val) {
-                                if (!isset($val['visibility']) || $val['visibility'] == 'public') $fields[$id] = $val;
+                if (
+                    ($allowShortcode = OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) 
+                    || $this->isGTD()
+                    || !OsStepsHelper::is_first_step($stepName)
+                ) {
+                    if ($allowShortcode) {
+                        $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_booking', false);
+                        $fields = [];
+                        if ($customFields) {
+                            $values = json_decode(do_shortcode($customFields), true);
+                            if ($values) {
+                                foreach ($values as $id => $val) {
+                                    if (!isset($val['visibility']) || $val['visibility'] == 'public') $fields[$id] = $val;
+                                }
                             }
                         }
+                    } else {
+                        $fields = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'customer');
                     }
-                } else {
-                    $fields = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'customer');
-                }
 
-                $custom_fields_controller = new OsCustomFieldsController();
-                $custom_fields_controller->vars['custom_fields_for_booking'] = $fields;
-                $custom_fields_controller->vars['booking'] = $bookingObject;
-                $custom_fields_controller->vars['current_step'] = $stepName;
-                $custom_fields_controller->set_layout('none');
-                $custom_fields_controller->set_return_format($format);
-                $extra = [
-                    'step_name'         => $stepName,
-                    'show_next_btn'     => OsStepsHelper::can_step_show_next_btn($stepName),
-                    'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
-                    'is_first_step'     => OsStepsHelper::is_first_step($stepName),
-                    'is_last_step'      => OsStepsHelper::is_last_step($stepName),
-                    'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
-                ];
-                $html = $custom_fields_controller->render($custom_fields_controller->get_view_uri('_step_custom_fields_for_booking', false), 'none', []);
-                $html = substr($html, 0, -6) . $this->needRenewJs() . '</div>';
-                if ($this->isGTD()) {
-                    $html = substr($html, 0, -6) . $this->prescriptionJs() . '</div>';
+                    $custom_fields_controller = new OsCustomFieldsController();
+                    $custom_fields_controller->vars['custom_fields_for_booking'] = $fields;
+                    $custom_fields_controller->vars['booking'] = $bookingObject;
+                    $custom_fields_controller->vars['current_step'] = $stepName;
+                    $custom_fields_controller->set_layout('none');
+                    $custom_fields_controller->set_return_format($format);
+                    $extra = [
+                        'step_name'         => $stepName,
+                        'show_next_btn'     => OsStepsHelper::can_step_show_next_btn($stepName),
+                        'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
+                        'is_first_step'     => OsStepsHelper::is_first_step($stepName),
+                        'is_last_step'      => OsStepsHelper::is_last_step($stepName),
+                        'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                    ];
+                    $html = $custom_fields_controller->render($custom_fields_controller->get_view_uri('_step_custom_fields_for_booking', false), 'none', []);
+                    $html = substr($html, 0, -6) . $this->needRenewJs() . '</div>';
+                    if ($this->isGTD()) {
+                        $html = substr($html, 0, -6) . $this->prescriptionJs() . '</div>';
+                    }
+                    wp_send_json(array_merge(
+                        ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                        $extra
+                    ));
                 }
-                wp_send_json(array_merge(
-                    ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
-                    $extra
-                ));
                 break;
             case 'datepicker':
                 if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
