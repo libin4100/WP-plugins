@@ -107,12 +107,12 @@ trait GtdTrait
              * Has the patient used Gotodoctor or Enhanced Care Clinic before? - Yes
              */
             'cf_NeRenew0' => [['cf_x18jr0Vf' => 'Yes']],
-            'cf_NeRenew1' => [['cf_NeRenew0' => 'No']],
-            'cf_NeRenew2' => [['cf_NeRenew0' => 'No']],
-            'cf_NeRenew3' => [['cf_NeRenew0' => 'No']],
-            'cf_NeRenew4' => [['cf_NeRenew0' => 'No']],
-            'cf_NeRenew5' => [['cf_NeRenew0' => 'No']],
-            'cf_NeRenew6' => [['cf_NeRenew5' => 'Enter Medication List Below']],
+            'cf_NeRenew1' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
+            'cf_NeRenew2' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
+            'cf_NeRenew3' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
+            'cf_NeRenew4' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
+            'cf_NeRenew5' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
+            'cf_NeRenew6' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew5' => 'Enter Medication List Below']],
         ];
     }
 
