@@ -370,16 +370,18 @@ if (!class_exists('LatePointExt')) :
             {
                 case 22:
                     $partner = 'hunters';
+                    $key = 'Email address';
                     break;
                 default:
                     $partner = '';
+                    $key = '';
                     break;
             }
 
             if (!$this->checkCertPartner($id, $partner)) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
-                    $msg = "We're sorry. The certificate provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                    $msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                 else
                     $msg = 'Certificate does not match our records. Please try again.';
 
