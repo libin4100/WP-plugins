@@ -165,7 +165,7 @@ jQuery(document).ready(function($) {
     toggleFields(hiddenFields, 'hide');
 
     for (var key in rules) {
-        checkRuel(key);
+        checkRule(key);
 
         rules[key].forEach(function(rule) {
             for (var field in rule) {
@@ -174,7 +174,7 @@ jQuery(document).ready(function($) {
         });
     }
 
-    function toggleFields(list, action) {
+    var toggleFields = function(list, action) {
         list.forEach(function(field) {
             var f = $('#' + field);
             if (action === 'hide') {
@@ -189,15 +189,15 @@ jQuery(document).ready(function($) {
         });
     }
 
-    function bindRule(selector, list) {
+    var bindRule = function(selector, list) {
         $('body').on('change', selector, function() {
             list.forEach(function(field) {
-                checkRuel(field);
+                checkRule(field);
             });
         });
     }
 
-    function checkRuel(field) {
+    var checkRule = function(field) {
         var ruleSets = rules[field];
         var match = false;
 
@@ -231,7 +231,9 @@ jQuery(document).ready(function($) {
         }
     }
 
-    $('#booking_custom_fields_cf_presc3_0').closest('.os-form-group').before('<div id="preferred_pharamcy_label" class="os-form-group os-form-select-group os-form-group-transparent" style="margin-bottom: 0 !important;"><label>Preferred pharmacy</label></div>');
+    if (!$('#preferred_pharamcy_label').length) {
+        $('#booking_custom_fields_cf_presc3_0').closest('.os-form-group').before('<div id="preferred_pharamcy_label" class="os-form-group os-form-select-group os-form-group-transparent" style="margin-bottom: 0 !important;"><label>Preferred pharmacy</label></div>');
+    }
 });
 </script>
 JS;
