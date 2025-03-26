@@ -174,7 +174,7 @@ jQuery(document).ready(function($) {
         });
     }
 
-    var toggleFields = function(list, action) {
+    function toggleFields(list, action) {
         list.forEach(function(field) {
             var f = $('#' + field);
             if (action === 'hide') {
@@ -189,7 +189,7 @@ jQuery(document).ready(function($) {
         });
     }
 
-    var bindRule = function(selector, list) {
+    function bindRule(selector, list) {
         $('body').on('change', selector, function() {
             list.forEach(function(field) {
                 checkRule(field);
@@ -197,7 +197,7 @@ jQuery(document).ready(function($) {
         });
     }
 
-    var checkRule = function(field) {
+    function checkRule(field) {
         var ruleSets = rules[field];
         var match = false;
 
