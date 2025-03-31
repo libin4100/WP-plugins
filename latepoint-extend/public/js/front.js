@@ -211,7 +211,7 @@ jQuery(function ($) {
                 $('.latepoint-footer .latepoint-next-btn').addClass('os-loading');
                 let data = fields[key];
                 data.id = $(id).val();
-                if (data.agent_id) data.agent_id = $(data.agent_id).val();
+                if (data.agent_id && data.agent_id.includes('input')) data.agent_id = $(data.agent_id).val();
                 $.ajax({
                     method: "POST",
                     url: ajax_object.ajax_url,
