@@ -281,7 +281,7 @@ if (!class_exists('LatePointExt')) :
             $id = trim($_POST['id'] ?? '');
             $by = trim($_POST['by'] ?? '');
             $agentId = trim($_POST['agent_id'] ?? '');
-            if (!$id) {
+            if (!$id && !$agentId) {
                 wp_send_json_error(['message' => 'Certificate number is required.'], 404);
             }
             if (!$by) {
@@ -376,6 +376,10 @@ if (!class_exists('LatePointExt')) :
                     $partner = '';
                     $key = '';
                     break;
+            }
+
+            if (!$id) {
+                wp_send_json_error(['message' => $key . ' is required.'], 404);
             }
 
             if (!$this->checkCertPartner($id, $partner)) {
