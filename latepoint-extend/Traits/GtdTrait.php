@@ -232,7 +232,7 @@ jQuery(document).ready(function($) {
     }
 
     if (!$('#preferred_pharamcy_label').length) {
-        $('#booking_custom_fields_cf_presc3_0').closest('.os-form-group').prepend('<div id="preferred_pharamcy_label" class="os-form-group os-form-select-group os-form-group-transparent" style="margin-bottom: 0 !important;color: #AFB8D6 !important;font-weight: 500;">Preferred pharmacy</div>');
+        $('#booking_custom_fields_cf_presc3_0').closest('.os-form-group').before('<div id="preferred_pharamcy_label" class="os-form-group os-form-select-group os-form-group-transparent" style="margin-bottom: 0 !important; display:none"><label>Preferred pharmacy</label></div>');
     }
 });
 </script>
