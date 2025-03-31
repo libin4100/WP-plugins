@@ -383,7 +383,7 @@ if (!class_exists('LatePointExt')) :
                 if ($_SESSION['certCount'] >= 3)
                     $msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                 else
-                    $msg = 'Certificate does not match our records. Please try again.';
+                    $msg = $key . ' does not match our records. Please try again.';
 
                 wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
             }
@@ -1745,6 +1745,7 @@ EOT;
         protected function checkCertTest($cert, $partner = null)
         {
             return ($cert == '123456')
+                || ($cert == 'support@teledact.ca')
                 || (($partner == 'fabricland') && ($cert == 'FABRICFRIENDS'))
                 || (($partner == 'imperial_capital') && ($cert == '1234567890'))
                 || (($partner == 'cb_providers') && ($cert == '1234567890'));
