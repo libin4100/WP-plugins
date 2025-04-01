@@ -129,6 +129,14 @@ jQuery(function ($) {
         if ($('#booking_custom_fields_cf_9e1mhf4v').length && $('#customer_email').length) {
             $('#customer_email').val($('#booking_custom_fields_cf_9e1mhf4v').val()).closest('.os-col-12').hide();
         }
+        if ($('.os-summary-value-time').length && ($('.os-summary-value-time').length != $('.os-summary-value-time.notranslate').length)) {
+            $('.os-summary-value-time').each(function () {
+                if (!$(this).hasClass('notranslate')) {
+                    $(this).addClass('notranslate');
+                    $(this).attr('translate', 'no');
+                }
+            });
+        }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function () {
