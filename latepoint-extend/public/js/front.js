@@ -24,6 +24,7 @@ jQuery(function ($) {
         "9oadikyh": { action: 'check_certificate_by', by: 'vpi' },
         "yjnziz1d": { action: 'check_certificate_by', by: 'cc' },
         "9e1mhf4v": { action: 'check_certificate_by', by: 'sp', agent_id: 'input[name="restrictions[selected_agent]"' },
+        "zdwwtasg": { action: 'check_certificate_by', by: 'sp', agent_id: 'input[name="restrictions[selected_agent]"' },
     }
 
     setInterval(function () {

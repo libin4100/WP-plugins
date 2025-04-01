@@ -372,6 +372,10 @@ if (!class_exists('LatePointExt')) :
                     $partner = 'hunters';
                     $key = 'Email address';
                     break;
+                case 23:
+                    $partner = 'casm';
+                    $key = 'Certificate number';
+                    break;
                 default:
                     $partner = '';
                     $key = '';
