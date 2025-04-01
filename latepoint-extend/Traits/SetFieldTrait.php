@@ -102,7 +102,12 @@ trait SetFieldTrait
                 break;
             case $bookingObject->agent_id == 22:
                 // Hunters
-                $fields = $this->_fields('sp');
+                $certKey = 'cf_9e1mhF4v';
+                $fields = $this->_fields('sp', false, compact('certKey'));
+            case $bookingObject->agent_id == 23:
+                // CPSM
+                $certKey = 'cf_zdwWTAsg';
+                $fields = $this->_fields('sp', false, compact('certKey'));
                 break;
             case in_array($bookingObject->service_id, [2, 3]):
                 $this->_fields('located');
@@ -145,7 +150,7 @@ trait SetFieldTrait
         }
     }
 
-    protected function _fields($type = false, $reset = false)
+    protected function _fields($type = false, $reset = false, $options = [])
     {
         static $cfBooking;
         $setting = new OsSettingsModel();
@@ -1309,7 +1314,7 @@ trait SetFieldTrait
                     ]
                 ],
                 'sp' => [
-                    'show' => ['cf_9e1mhF4v', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+                    'show' => [$options['certKey'] ?? false, 'cf_6A3SfgET', 'cf_sBJs0cqR'],
                     'hide' => [
                         'email',
                         'cf_hbCNgimu',
