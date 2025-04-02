@@ -373,7 +373,7 @@ if (!class_exists('LatePointExt')) :
                     $key = 'Email address';
                     break;
                 case 23:
-                    $partner = 'casm';
+                    $partner = 'cpsm';
                     $key = 'Certificate number';
                     break;
                 default:

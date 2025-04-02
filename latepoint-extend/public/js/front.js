@@ -129,9 +129,6 @@ jQuery(function ($) {
         if ($('#booking_custom_fields_cf_9e1mhf4v').length && $('#customer_email').length) {
             $('#customer_email').val($('#booking_custom_fields_cf_9e1mhf4v').val()).closest('.os-col-12').hide();
         }
-        if ($('.dp-timeslot .dp-label').length) {
-            $('.dp-timeslot .dp-label').addClass('notranslate');
-        }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function () {
