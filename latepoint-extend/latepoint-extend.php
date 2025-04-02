@@ -371,10 +371,12 @@ if (!class_exists('LatePointExt')) :
                 case 22:
                     $partner = 'hunters';
                     $key = 'Email address';
+                    $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     break;
                 case 23:
                     $partner = 'cpsm';
                     $key = 'Certificate number';
+                    $_msg = "We're sorry. The {$key} provided does not match our records. Please contact CPSM at 1-514-723-3594 to confirm eligibility. For any technical issues, Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     break;
                 default:
                     $partner = '';
@@ -389,7 +391,7 @@ if (!class_exists('LatePointExt')) :
             if (!$this->checkCertPartner($id, $partner)) {
                 $_SESSION['certCount'] += 1;
                 if ($_SESSION['certCount'] >= 3)
-                    $msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                    $msg = $_msg;
                 else
                     $msg = $key . ' does not match our records. Please try again.';
 
