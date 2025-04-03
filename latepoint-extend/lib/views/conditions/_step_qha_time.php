@@ -51,8 +51,8 @@
                     $('.os-summary-value-time').parents('.os-summary-line').addClass('os-has-show').show();
                     $('#time-type').append('<input type="hidden" name="booking[start_date]" value="<?= date('Y-m-d') ?>"><input type="hidden" name="booking[start_time]" value="0">');
                     setInterval(function() {
-                        if ($('.confirmation-info-w .confirmation-app-info ul li').length) {
-                            $('.confirmation-info-w .confirmation-app-info ul li').eq(0).html('Requested time: <strong>Next available appointment</strong>');
+                        if ($('.confirmation-info-w .confirmation-app-info ul li').length && !$('.confirmation-info-w .confirmation-app-info ul li.fastest').length) {
+                            $('.confirmation-info-w .confirmation-app-info ul li').eq(0).addClass('fastest').html('Requested time: <strong>Next available appointment</strong>');
                         }
                     }, 100);
                     $('#time-type-css').append('<style>.confirmation-info-w .confirmation-app-info ul li:nth-child(2) { display: none !important; }</style>');
