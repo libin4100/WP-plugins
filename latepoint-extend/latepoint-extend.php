@@ -670,9 +670,6 @@ jQuery(function($) {
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-media').css("background-image", 'url({$url})');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Payment');
     $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="confirmation"]').text('Appointment Information');
-    if ($('html').attr('lang') == 'fr') {
-        $('.latepoint-body > .latepoint-step-content').append('input type="hidden" name="booking[custom_fields][language]" value="fr" />');
-    }
     {$style}
 });
     delete is_rapid;
@@ -853,6 +850,9 @@ EOT;
 <script>
 jQuery(function($) {
     latepoint_location_id = {$lid};
+    if ($('html').attr('lang') == 'fr') {
+        $('.latepoint-body > .latepoint-step-content').append('input type="hidden" name="booking[custom_fields][language]" value="fr" />');
+    }
     setInterval(function() {
         $str
         if($('#customer_custom_fields_cf_eh0zhq9s.init').length) {
