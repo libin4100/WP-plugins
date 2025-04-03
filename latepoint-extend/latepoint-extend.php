@@ -670,6 +670,9 @@ jQuery(function($) {
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-media').css("background-image", 'url({$url})');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Payment');
     $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="confirmation"]').text('Appointment Information');
+    if ($('html').attr('lang') == 'fr') {
+        $('.latepoint-body > .latepoint-step-content').append('input type="hidden" name="booking[custom_fields][language]" value="fr" />');
+    }
     {$style}
 });
     delete is_rapid;
@@ -978,9 +981,24 @@ EOT;
 jQuery(function($) {
     var aid = {$bookingObject->agent_id};
     var alist = [2, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22];
-    $('body').on('DOMSubtreeModified', '.latepoint-booking-form-element', function() {
+    var observer = new MutationObserver(function(mutations) {
         showhide();
     });
+    
+    // Start observing the form element once it's available
+    var formCheckInterval = setInterval(function() {
+        var formElement = $('.latepoint-booking-form-element')[0];
+        if (formElement) {
+            observer.observe(formElement, { 
+                childList: true, 
+                subtree: true,
+                attributes: true
+            });
+            clearInterval(formCheckInterval);
+            // Initial call to ensure proper state
+            showhide();
+        }
+    }, 200);
     $('body').on('change', '#booking_custom_fields_cf_x18jr0vf', function() {
         showhide();
     });
@@ -1110,6 +1128,7 @@ EOT;
                         'group',
                         'r',
                         'region',
+                        'language',
                     ] as $key
                 ) {
                     if ($data['custom_fields'][$key] ?? false) {
@@ -1165,6 +1184,7 @@ EOT;
                         'start_time3',
                         'r',
                         'region',
+                        'language',
                     ] as $key
                 ) {
                     if ($model->custom_fields[$key] ?? false) {
