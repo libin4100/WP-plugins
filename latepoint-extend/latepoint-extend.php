@@ -851,7 +851,7 @@ EOT;
 jQuery(function($) {
     latepoint_location_id = {$lid};
     if ($('html').attr('lang') == 'fr') {
-        $('.latepoint-body > .latepoint-step-content').append('input type="hidden" name="booking[custom_fields][language]" value="fr" />');
+        $('.latepoint-body > .latepoint-step-content').append('<input type="hidden" name="booking[custom_fields][language]" value="fr" />');
     }
     setInterval(function() {
         $str
