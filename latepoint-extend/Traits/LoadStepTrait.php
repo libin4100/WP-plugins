@@ -73,6 +73,15 @@ trait LoadStepTrait
                         OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                     }
                 }
+                $booking = OsParamsHelper::get_param('booking');
+                if (($booking['custom_fields']['language'] ?? false) == 'fr') {
+                    $customFields = OsSettingsHelper::get_settings_value('custom_fields_for_customer', false);
+                    $values = json_decode($customFields, true);
+                    if ($values && isset($values['cf_language'])) {
+                        $values['cf_language']['options'] = 'French\r\nEnglish';
+                        OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
+                    }
+                }
                 break;
             case 'custom_fields_for_booking':
                 $_SESSION['certCount'] = 0;
