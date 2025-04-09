@@ -336,17 +336,19 @@ jQuery(function ($) {
         }
     })
 
-    const notranslates = [
-        'British Columbia',
-        'New Brunswick',
-        'Nova Scotia'
-    ];
-    notranslates.forEach(function (item) {
-        if ($('div.latepoint-book-button.os_trigger_booking').length) {
-            $('div.latepoint-book-button.os_trigger_booking').each(function () {
-                $(this).html($(this).html().replace(item, '<span translate="no">' + item + '</span>'));
-            });
-        }
+    const notranslates = {
+        'British Columbia Health': 'Santé British Columbia',
+        'New Brunswick Health': 'Santé New Brunswick',
+        'Nova Scotia Health': 'Santé Nova Scotia',
+    };
+    Object.keys(notranslates).forEach((key) => {
+        const value = notranslates[key];
+        $('div.latepoint-book-button.os_trigger_booking').each(function () {
+            const text = $(this).text();
+            if (text.includes(key)) {
+                $(this).html('<span class="notranslate"><span class="en">' + key + '</span><span class="fr">' + value + '</span></span>');
+            }
+        });
     });
 });
 start_date = '';
