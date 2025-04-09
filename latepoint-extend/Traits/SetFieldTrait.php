@@ -104,6 +104,7 @@ trait SetFieldTrait
                 // Hunters
                 $certKey = 'cf_9e1mhF4v';
                 $fields = $this->_fields('sp', false, compact('certKey'));
+                break;
             case $bookingObject->agent_id == 23:
                 // CPSM
                 $certKey = 'cf_zdwWTAsg';
