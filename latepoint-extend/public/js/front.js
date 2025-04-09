@@ -129,6 +129,16 @@ jQuery(function ($) {
         if ($('#booking_custom_fields_cf_9e1mhf4v').length && $('#customer_email').length) {
             $('#customer_email').val($('#booking_custom_fields_cf_9e1mhf4v').val()).closest('.os-col-12').hide();
         }
+        if ($('html[lang="fr"] #customer_custom_fields_cf_7lkik5fd').length && !$('html[lang="fr"] #customer_custom_fields_cf_7lkik5fd').hasClass('replaced')) {
+            const replaces = {
+                "Male": "homme",
+                "Female": "femme",
+            }
+            for (let key in replaces) {
+                $('html[lang="fr"] #customer_custom_fields_cf_7lkik5fd').find('option[value="' + key + '"]').text(replaces[key]);
+            }
+            $('html[lang="fr"] #customer_custom_fields_cf_7lkik5fd').addClass('replaced');
+        }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function () {
