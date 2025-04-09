@@ -344,7 +344,7 @@ jQuery(function ($) {
     notranslates.forEach(function (item) {
         if ($('div.latepoint-book-button.os_trigger_booking').length) {
             $('div.latepoint-book-button.os_trigger_booking').each(function () {
-                $(this).html($(this).html().replace(item, '<span class="notranslate">' + item + '</span>'));
+                $(this).html($(this).html().replace(item, '<span translate="no">' + item + '</span>'));
             });
         }
     });
