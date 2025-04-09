@@ -335,6 +335,19 @@ jQuery(function ($) {
             $('.mbc-image').remove();
         }
     })
+
+    const notranslates = [
+        'British Columbia',
+        'New Brunswick',
+        'Nova Scotia'
+    ];
+    notranslates.forEach(function (item) {
+        if ($('div.latepoint-book-button.os_trigger_booking').length) {
+            $('div.latepoint-book-button.os_trigger_booking').each(function () {
+                $(this).html($(this).html().replace(item, '<span class="notranslate">' + item + '</span>'));
+            });
+        }
+    });
 });
 start_date = '';
 start_time = '';
