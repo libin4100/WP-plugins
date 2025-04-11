@@ -223,7 +223,7 @@ trait SetFieldTrait
             'mbc' => $this->getMbcFields(),
             'mbcc' => $this->getMbccFields(),
             'sb' => $this->getSbFields(),
-            'sbc' => $this->getSbFields(),
+            'sbc' => $this->getSbcFields(),
             'qh' => $this->getQhFields(),
             'qhc' => $this->getQhcFields(),
             'p' => $this->getPFields(),
