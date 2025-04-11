@@ -82,7 +82,8 @@ trait SetFieldTrait
             case $bookingObject->agent_id == 23:
                 // CPSM
                 $certKey = 'cf_zdwWTAsg';
-                $fields = $this->_fields('sp', false, compact('certKey'));
+                $care = $bookingObject->service_id == 13;
+                $fields = $this->_fields('sp', false, compact('certKey', 'care'));
                 break;
             case in_array($bookingObject->service_id, [2, 3]):
                 $this->_fields('located');
@@ -423,10 +424,10 @@ trait SetFieldTrait
      */
     protected function getSpFields($options)
     {
-        return [
-            'show' => [$options['certKey'] ?? false, 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-            'hide' => array_merge(['email'], $this->getStandardHideFields()),
-            'add' => $this->getStandardPersonFields()
-        ];
+        if ($options['care'] ?? false) {
+            return $this->createCareProviderField($options['certKey'] ?? '');
+        } else {
+            return $this->createProviderField($options['certKey'] ?? '');
+        }
     }
 }
