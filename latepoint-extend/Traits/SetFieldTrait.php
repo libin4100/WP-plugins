@@ -962,45 +962,4 @@ $namespaceJs
 </script>
 JS;
     }
-
-    /**
-     * Generate JavaScript for needRenew
-     *
-     * @return string JavaScript code
-     */
-    public function needRenewJs()
-    {
-        static $needRenewIncluded = false;
-        
-        $customJs = '';
-        if (!$needRenewIncluded) {
-            $customJs = <<<JS
-<script>
-jQuery(document).ready(function($) {
-    // Remove existing element and event handler to avoid duplication
-    $('#nerenew5_notice').remove();
-    $('#booking_custom_fields_cf_nerenew5').off('change.nerenew5');
-    
-    $('#booking_custom_fields_cf_nerenew5').closest('.os-form-group').append('<div id="nerenew5_notice"></div>');
-    $('#booking_custom_fields_cf_nerenew5').on('change.nerenew5', function() {
-        var value = $(this).val();
-        if (value === 'Not on Medication or Not Available') {
-            $('#nerenew5_notice').html('Please Note If we find that you are taking medications but have not provided a complete list, it may result in a delay in your appointment.');
-        } else if (value === 'Send via Email or Fax') {
-            $('#nerenew5_notice').html('Kindly ensure that you send your medication list to <b>telemedicine@gotodoctor.ca</b> or via fax to <b>1-888-238-2029</b>. Delays in providing this information may result in a delay in your appointment as well.');
-        } else {
-            $('#nerenew5_notice').html('');
-        }
-    });
-    
-    // Trigger the change event to set initial state
-    $('#booking_custom_fields_cf_nerenew5').trigger('change.nerenew5');
-});
-</script>
-JS;
-            $needRenewIncluded = true;
-        }
-        
-        return $customJs . $this->rulesJs('needRenewFields', 'needRenewRules');
-    }
 }
