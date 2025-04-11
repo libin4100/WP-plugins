@@ -16,7 +16,10 @@ trait SetFieldTrait
                 break;
             case $bookingObject->agent_id == 7:
                 //Simply Benefits
-                $fields = $this->_fields('sb');
+                if ($bookingObject->service_id == 13)
+                    $fields = $this->_fields('sbc');
+                else
+                    $fields = $this->_fields('sb');
                 break;
             case $bookingObject->agent_id == 8:
                 //Quick health access
@@ -220,6 +223,7 @@ trait SetFieldTrait
             'mbc' => $this->getMbcFields(),
             'mbcc' => $this->getMbccFields(),
             'sb' => $this->getSbFields(),
+            'sbc' => $this->getSbFields(),
             'qh' => $this->getQhFields(),
             'qhc' => $this->getQhcFields(),
             'p' => $this->getPFields(),
@@ -413,6 +417,24 @@ trait SetFieldTrait
             'show' => ['cf_Vin78Day', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
             'hide' => $this->getStandardHideFields(),
             'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get Simply Benefits Care field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getSbcFields()
+    {
+        return [
+            'show' => ['cf_Vin78Day', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => $this->getStandardClientMerges()
         ];
     }
 
