@@ -154,6 +154,8 @@ trait SetFieldTrait
     protected function _fields($type = false, $reset = false, $options = [])
     {
         static $cfBooking;
+        static $jsIncluded = false; // Track if JavaScript has been included
+        
         $setting = new OsSettingsModel();
         if (!$cfBooking) {
             $cfBooking = $setting->where(['name' => 'custom_fields_for_booking'])->set_limit(1)->get_results_as_models();
@@ -170,1222 +172,813 @@ trait SetFieldTrait
             OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = $cfBooking->value;
             OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = $cfCustomer->value;
         } else {
-            $fields = [
-                'mbc' => [
-                    'show' => ['cf_qOqKhbly', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Has the patient used or registered with GotoDoctor or Enhanced Care Clinic before?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'mbcc' => [
-                    'show' => ['cf_qOqKhbly', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Has the patient used or registered with GotoDoctor or Enhanced Care Clinic before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'sb' => [
-                    'show' => ['cf_Vin78Day', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'qh' => [
-                    'show' => ['cf_SIt7Zefo', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'qhc' => [
-                    'show' => ['cf_SIt7Zefo', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'p' => [
-                    'show' => ['cf_SIt7Zefp', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'pc' => [
-                    'show' => ['cf_SIt7Zefp', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'gotohealthwallet' => [
-                    'show' => ['cf_P56xPUO5', 'cf_XlAxtIqB', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'gc' => [
-                    'show' => ['cf_P56xPUO5', 'cf_XlAxtIqB', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'aas' => [
-                    'show' => ['cf_WzbhG9eB', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'aasc' => [
-                    'show' => ['cf_WzbhG9eB', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'fabricland' => [
-                    'show' => ['cf_pnWPrUIe', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'fc' => [
-                    'show' => ['cf_pnWPrUIe', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'imc' => [
-                    'show' => ['cf_W0iZRLtG', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'imcc' => [
-                    'show' => ['cf_W0iZRLtG', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'ic' => [
-                    'show' => ['cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_zZbexFje', 'cf_DQ70wnRG'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'cbp' => [
-                    'show' => ['cf_4wVF2U9Y', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'cbpc' => [
-                    'show' => ['cf_4wVF2U9Y', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'cbpe' => [
-                    'show' => ['cf_4wVF2U9Y', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'emergency' => [
-                            'label' => __('Are you experiencing a life-threatening emergency or require immediate medical attention?', 'latepoint'),
-                            'placeholder' => __('---Please Select---', 'latepoint'),
-                            'type' => 'select',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => "Yes\nNo",
-                            'required' => 'on',
-                            'id' => 'emergency',
-                        ],
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'seb' => [
-                    'show' => ['cf_aku1T075', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'sebc' => [
-                    'show' => ['cf_aku1T075', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'ub' => [
-                    'show' => ['cf_QBLBYjS8', 'cf_6A3SfgET', 'cf_dREtrHWr', 'cf_Yf3KvptS'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'ubc' => [
-                    'show' => ['cf_QBLBYjS8', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                        'cf_nxwjDAcZ',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('Client First Name', 'latepoint'),
-                            'placeholder' => __('Client First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Client Last Name', 'latepoint'),
-                            'placeholder' => __('Client Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                        'phone' => [
-                            'label' => __('Client Contact Number', 'latepoint'),
-                            'placeholder' => __('Client Contact Number', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'phone'
-                        ],
-                        'email' => [
-                            'label' => __('Client Email', 'latepoint'),
-                            'placeholder' => __('Client Email', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'email'
-                        ],
-                    ],
-                    'merge' => [
-                        'cf_x18jr0Vf' => [
-                            'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
-                        ],
-                        'cf_6A3SfgET' => [
-                            'label' => __('Where are you or the client currently located?', 'latepoint'),
-                        ],
-                    ]
-                ],
-                'lg' => [
-                    'show' => ['cf_AYVpjhpP', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'vpi' => [
-                    'show' => ['cf_9OaDIkYh', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'cc' => [
-                    'show' => ['cf_yjnZIZ1D', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                'sp' => [
-                    'show' => [$options['certKey'] ?? false, 'cf_6A3SfgET', 'cf_sBJs0cqR'],
-                    'hide' => [
-                        'email',
-                        'cf_hbCNgimu',
-                        'cf_zDS7LUjv',
-                        'cf_H7MIk6Kt',
-                    ],
-                    'add' => [
-                        'first_name' => [
-                            'label' => __('First Name', 'latepoint'),
-                            'placeholder' => __('First Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'first_name'
-                        ],
-                        'last_name' => [
-                            'label' => __('Last Name', 'latepoint'),
-                            'placeholder' => __('Last Name', 'latepoint'),
-                            'type' => 'text',
-                            'width' => 'os-col-12',
-                            'visibility' => 'public',
-                            'options' => '',
-                            'required' => 'on',
-                            'id' => 'last_name'
-                        ],
-                    ]
-                ],
-                //'located' => ['show' => ['cf_6A3SfgET', 'cf_YXtUB2Jc']],
-                'located' => ['show' => ['cf_6A3SfgET']],
-                'locatedOther' => ['show' => ['cf_6A3SfgET']],
-                'needRenew' => ['show' => ['cf_NeRenew0', 'cf_NeRenew1', 'cf_NeRenew2', 'cf_NeRenew3', 'cf_NeRenew4', 'cf_NeRenew5', 'cf_NeRenew6']],
-                'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
-                'returning' => ['show' => ['cf_WFHtiGvf', 'cf_ZoXsdwEZ']],
-                'returningOnly' => ['show' => ['cf_DrKevcqV', 'cf_4zkIbeeY', 'cf_NVByvyYw', 'cf_cVndXX2e', 'cf_iAoOucDc']],
-                'careServices' => ['show' => ['cf_DQ70wnRG']],
-                'isGTD' => ['show' => ['cf_Presc1_0', 'cf_Presc2_0', 'cf_Presc3_0', 'cf_Presc3_1', 'cf_Presc3_2']],
-            ];
+            $fields = $this->getFieldDefinitions($options);
             $hideField = ($onSave ?? false) ? 'public' : 'hidden';
+            
             $values = is_array($customFields) ? $customFields : json_decode($customFields, true);
-            if ($values && $fields[$type]) {
+            if ($values && isset($fields[$type])) {
                 foreach ($values as $id => $val) {
                     if (in_array($id ?? false, ($fields[$type]['hide'] ?? [])))
                         $values[$id]['visibility'] = $hideField;
                     if (in_array($id ?? false, ($fields[$type]['show'] ?? [])))
                         $values[$id]['visibility'] = 'public';
 
-                    if ($fields[$type]['merge'][$id] ?? false)
+                    if (isset($fields[$type]['merge'][$id]))
                         $values[$id] = array_merge($values[$id], $fields[$type]['merge'][$id]);
                 }
                 $values = ($fields[$type]['add'] ?? []) + $values;
                 OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($values);
             }
+            
             if ($cfCustomer) {
                 $values = is_array($cfCustomer->value) ? $cfCustomer->value : json_decode($cfCustomer->value, true);
-                if ($values && $fields[$type]) {
+                if ($values && isset($fields[$type])) {
                     foreach ($values as $id => $val) {
                         if (in_array($id ?? false, ($fields[$type]['hide'] ?? [])))
                             $values[$id]['visibility'] = $hideField;
                         if (in_array($id ?? false, ($fields[$type]['show'] ?? [])))
                             $values[$id]['visibility'] = 'public';
 
-                        if ($fields[$type]['merge'][$id] ?? false)
+                        if (isset($fields[$type]['merge'][$id]))
                             $values[$id] = array_merge($values[$id], $fields[$type]['merge'][$id]);
                     }
-                    //$values = ($fields[$type]['add'] ?? []) + $values;
                     OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                 }
             }
         }
+    }
+
+    /**
+     * Get field definitions for all field types
+     * 
+     * @param array $options Additional options
+     * @return array Field definitions
+     */
+    protected function getFieldDefinitions($options = [])
+    {
+        return [
+            'mbc' => $this->getMbcFields(),
+            'mbcc' => $this->getMbccFields(),
+            'sb' => $this->getSbFields(),
+            'qh' => $this->getQhFields(),
+            'qhc' => $this->getQhcFields(),
+            'p' => $this->getPFields(),
+            'pc' => $this->getPcFields(),
+            'gotohealthwallet' => $this->getGotohealthwalletFields(),
+            'gc' => $this->getGcFields(),
+            'aas' => $this->getAasFields(),
+            'aasc' => $this->getAascFields(),
+            'fabricland' => $this->getFabriclandFields(),
+            'fc' => $this->getFcFields(),
+            'imc' => $this->getImcFields(),
+            'imcc' => $this->getImccFields(),
+            'ic' => $this->getIcFields(),
+            'cbp' => $this->getCbpFields(),
+            'cbpc' => $this->getCbpcFields(),
+            'cbpe' => $this->getCbpeFields(),
+            'seb' => $this->getSebFields(),
+            'sebc' => $this->getSebcFields(),
+            'ub' => $this->getUbFields(), 
+            'ubc' => $this->getUbcFields(),
+            'lg' => $this->getLgFields(),
+            'vpi' => $this->getVpiFields(),
+            'cc' => $this->getCcFields(),
+            'sp' => $this->getSpFields($options),
+            'located' => ['show' => ['cf_6A3SfgET']],
+            'locatedOther' => ['show' => ['cf_6A3SfgET']],
+            'needRenew' => ['show' => ['cf_NeRenew0', 'cf_NeRenew1', 'cf_NeRenew2', 'cf_NeRenew3', 'cf_NeRenew4', 'cf_NeRenew5', 'cf_NeRenew6']],
+            'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
+            'returning' => ['show' => ['cf_WFHtiGvf', 'cf_ZoXsdwEZ']],
+            'returningOnly' => ['show' => ['cf_DrKevcqV', 'cf_4zkIbeeY', 'cf_NVByvyYw', 'cf_cVndXX2e', 'cf_iAoOucDc']],
+            'careServices' => ['show' => ['cf_DQ70wnRG']],
+            'isGTD' => ['show' => ['cf_Presc1_0', 'cf_Presc2_0', 'cf_Presc3_0', 'cf_Presc3_1', 'cf_Presc3_2']],
+        ];
+    }
+
+    /**
+     * Creates standard field definitions for first and last name
+     * 
+     * @param bool $isClientFields Whether these are client fields or regular fields
+     * @return array Field definitions
+     */
+    protected function getStandardPersonFields($isClientFields = false)
+    {
+        $prefix = $isClientFields ? 'Client ' : '';
+        
+        return [
+            'first_name' => [
+                'label' => __($prefix . 'First Name', 'latepoint'),
+                'placeholder' => __($prefix . 'First Name', 'latepoint'),
+                'type' => 'text',
+                'width' => 'os-col-12',
+                'visibility' => 'public',
+                'options' => '',
+                'required' => 'on',
+                'id' => 'first_name'
+            ],
+            'last_name' => [
+                'label' => __($prefix . 'Last Name', 'latepoint'),
+                'placeholder' => __($prefix . 'Last Name', 'latepoint'),
+                'type' => 'text',
+                'width' => 'os-col-12',
+                'visibility' => 'public',
+                'options' => '',
+                'required' => 'on',
+                'id' => 'last_name'
+            ]
+        ];
+    }
+
+    /**
+     * Creates client contact fields (phone, email)
+     * 
+     * @return array Field definitions
+     */
+    protected function getClientContactFields()
+    {
+        return [
+            'phone' => [
+                'label' => __('Client Contact Number', 'latepoint'),
+                'placeholder' => __('Client Contact Number', 'latepoint'),
+                'type' => 'text',
+                'width' => 'os-col-12',
+                'visibility' => 'public',
+                'options' => '',
+                'required' => 'on',
+                'id' => 'phone'
+            ],
+            'email' => [
+                'label' => __('Client Email', 'latepoint'),
+                'placeholder' => __('Client Email', 'latepoint'),
+                'type' => 'text',
+                'width' => 'os-col-12',
+                'visibility' => 'public',
+                'options' => '',
+                'required' => 'on',
+                'id' => 'email'
+            ]
+        ];
+    }
+
+    /**
+     * Get standard field merges for client-related fields
+     * 
+     * @return array Field merges
+     */
+    protected function getStandardClientMerges()
+    {
+        return [
+            'cf_x18jr0Vf' => [
+                'label' => __('Have you or client used GotoDoctor before?', 'latepoint'),
+            ],
+            'cf_6A3SfgET' => [
+                'label' => __('Where are you or the client currently located?', 'latepoint'),
+            ],
+        ];
+    }
+
+    /**
+     * Get standard hide fields
+     * 
+     * @param bool $includeExtra Whether to include extra hidden fields
+     * @return array Hide fields
+     */
+    protected function getStandardHideFields($includeExtra = false)
+    {
+        $fields = [
+            'cf_hbCNgimu',
+            'cf_zDS7LUjv',
+            'cf_H7MIk6Kt',
+        ];
+        
+        if ($includeExtra) {
+            $fields[] = 'cf_nxwjDAcZ';
+        }
+        
+        return $fields;
+    }
+
+    /**
+     * Get MBC field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getMbcFields()
+    {
+        return [
+            'show' => ['cf_qOqKhbly', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields(),
+            'merge' => [
+                'cf_x18jr0Vf' => [
+                    'label' => __('Has the patient used or registered with GotoDoctor or Enhanced Care Clinic before?', 'latepoint'),
+                ],
+            ]
+        ];
+    }
+
+    /**
+     * Get MBCC field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getMbccFields()
+    {
+        return [
+            'show' => ['cf_qOqKhbly', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => [
+                'cf_x18jr0Vf' => [
+                    'label' => __('Has the patient used or registered with GotoDoctor or Enhanced Care Clinic before?', 'latepoint'),
+                ],
+                'cf_6A3SfgET' => [
+                    'label' => __('Where are you or the client currently located?', 'latepoint'),
+                ],
+            ]
+        ];
+    }
+
+    /**
+     * Get Simply Benefits field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getSbFields()
+    {
+        return [
+            'show' => ['cf_Vin78Day', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get Quick Health Access field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getQhFields()
+    {
+        return [
+            'show' => ['cf_SIt7Zefo', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get Quick Health Care field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getQhcFields()
+    {
+        return [
+            'show' => ['cf_SIt7Zefo', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => $this->getStandardClientMerges()
+        ];
+    }
+
+    /**
+     * Get Partners field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getPFields()
+    {
+        return [
+            'show' => ['cf_SIt7Zefp', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get Partners Care field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getPcFields()
+    {
+        return [
+            'show' => ['cf_SIt7Zefp', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => $this->getStandardClientMerges()
+        ];
+    }
+
+    /**
+     * Get GotoHealthWallet field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getGotohealthwalletFields()
+    {
+        return [
+            'show' => ['cf_P56xPUO5', 'cf_XlAxtIqB', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get Goto Care field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getGcFields()
+    {
+        return [
+            'show' => ['cf_P56xPUO5', 'cf_XlAxtIqB', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => $this->getStandardClientMerges()
+        ];
+    }
+
+    /**
+     * Get AAS field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getAasFields()
+    {
+        return [
+            'show' => ['cf_WzbhG9eB', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get AASC field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getAascFields()
+    {
+        return [
+            'show' => ['cf_WzbhG9eB', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => $this->getStandardClientMerges()
+        ];
+    }
+
+    /**
+     * Get Fabricland field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getFabriclandFields()
+    {
+        return [
+            'show' => ['cf_pnWPrUIe', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get Fabricland Care field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getFcFields()
+    {
+        return [
+            'show' => ['cf_pnWPrUIe', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => $this->getStandardClientMerges()
+        ];
+    }
+
+    /**
+     * Get Imperial Capital field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getImcFields()
+    {
+        return [
+            'show' => ['cf_W0iZRLtG', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get Imperial Capital Care field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getImccFields()
+    {
+        return [
+            'show' => ['cf_W0iZRLtG', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => $this->getStandardClientMerges()
+        ];
+    }
+
+    /**
+     * Get Individual Care field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getIcFields()
+    {
+        return [
+            'show' => ['cf_6A3SfgET', 'cf_sBJs0cqR', 'cf_zZbexFje', 'cf_DQ70wnRG'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => $this->getStandardClientMerges()
+        ];
+    }
+
+    /**
+     * Get CB Providers field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getCbpFields()
+    {
+        return [
+            'show' => ['cf_4wVF2U9Y', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get CB Providers Care field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getCbpcFields()
+    {
+        return [
+            'show' => ['cf_4wVF2U9Y', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => $this->getStandardClientMerges()
+        ];
+    }
+
+    /**
+     * Get CB Providers Emergency field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getCbpeFields()
+    {
+        $fields = $this->getCbpcFields();
+        
+        // Add emergency field
+        $emergencyField = [
+            'emergency' => [
+                'label' => __('Are you experiencing a life-threatening emergency or require immediate medical attention?', 'latepoint'),
+                'placeholder' => __('---Please Select---', 'latepoint'),
+                'type' => 'select',
+                'width' => 'os-col-12',
+                'visibility' => 'public',
+                'options' => "Yes\nNo",
+                'required' => 'on',
+                'id' => 'emergency',
+            ]
+        ];
+        
+        $fields['add'] = $emergencyField + $fields['add'];
+        
+        return $fields;
+    }
+
+    /**
+     * Get SEB field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getSebFields()
+    {
+        return [
+            'show' => ['cf_aku1T075', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get SEB Care field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getSebcFields()
+    {
+        return [
+            'show' => ['cf_aku1T075', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => $this->getStandardClientMerges()
+        ];
+    }
+
+    /**
+     * Get Union Benefits field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getUbFields()
+    {
+        return [
+            'show' => ['cf_QBLBYjS8', 'cf_6A3SfgET', 'cf_dREtrHWr', 'cf_Yf3KvptS'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get Union Benefits Care field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getUbcFields()
+    {
+        return [
+            'show' => ['cf_QBLBYjS8', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(true),
+            'add' => array_merge(
+                $this->getStandardPersonFields(true),
+                $this->getClientContactFields()
+            ),
+            'merge' => $this->getStandardClientMerges()
+        ];
+    }
+
+    /**
+     * Get Leslie Group field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getLgFields()
+    {
+        return [
+            'show' => ['cf_AYVpjhpP', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get VPI field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getVpiFields()
+    {
+        return [
+            'show' => ['cf_9OaDIkYh', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get Cleveland Clinic field definitions
+     * 
+     * @return array Field definitions
+     */
+    protected function getCcFields()
+    {
+        return [
+            'show' => ['cf_yjnZIZ1D', 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => $this->getStandardHideFields(),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Get SP field definitions
+     * 
+     * @param array $options Options with certKey
+     * @return array Field definitions
+     */
+    protected function getSpFields($options)
+    {
+        return [
+            'show' => [$options['certKey'] ?? false, 'cf_6A3SfgET', 'cf_sBJs0cqR'],
+            'hide' => array_merge(['email'], $this->getStandardHideFields()),
+            'add' => $this->getStandardPersonFields()
+        ];
+    }
+
+    /**
+     * Generate JavaScript for rules
+     *
+     * @param string $funcFields Function name for fields
+     * @param string $funcRules Function name for rules
+     * @return string JavaScript code
+     */
+    public function rulesJs($funcFields = 'prescriptionFields', $funcRules = 'prescriptionRules')
+    {
+        static $jsNamespaceIncluded = false;
+        
+        $keys = $this->$funcFields(true);
+        $ids = array_map(function ($key) {
+            return 'booking_custom_fields_' . strtolower($key);
+        }, $keys);
+        $fields = array_combine($keys, $ids);
+        $init = array_slice($keys, 0, -2);
+        $rules = $this->$funcRules();
+
+        $fieldsJs = json_encode($fields);
+        $initJs = json_encode(array_values($init));
+        $rulesJs = json_encode($rules);
+        
+        // Generate a unique ID for this instance
+        $instanceId = md5($funcFields . $funcRules);
+        
+        $namespaceJs = '';
+        if (!$jsNamespaceIncluded) {
+            // Only include the namespace definition once
+            $namespaceJs = <<<JS
+    // Define functions only once using a namespace approach
+    if (typeof window.GtdTraitHelpers === 'undefined') {
+        window.GtdTraitHelpers = {
+            toggleFields: function(list, action, fields) {
+                list.forEach(function(field) {
+                    var f = $('#' + fields[field] || field);
+                    if (action === 'hide') {
+                        f.closest('.os-form-group').hide();
+                        f.closest('.os-form-group').siblings('#preferred_pharamcy_label').hide();
+                        f.prop('required', false);
+                    } else {
+                        f.closest('.os-form-group').show();
+                        f.closest('.os-form-group').siblings('#preferred_pharamcy_label').show();
+                        f.prop('required', true);
+                    }
+                });
+            },
+            
+            bindRule: function(selector, list, checkRuleFn) {
+                // Remove any existing event handler first
+                $('body').off('change.gtdtrait', selector);
+                $('body').on('change.gtdtrait', selector, function() {
+                    list.forEach(function(field) {
+                        checkRuleFn(field);
+                    });
+                });
+            },
+            
+            createCheckRuleFn: function(rules, fields) {
+                return function(field) {
+                    var ruleSets = rules[field];
+                    var match = false;
+
+                    ruleSets.forEach(function(rule) {
+                        var ruleMatch = true;
+                        for (var key in rule) {
+                            var value = rule[key];
+                            var f = $('#' + fields[key]);
+                            if (value.startsWith('!=')) {
+                                value = value.substring(2);
+                                if (!f.val() || (f.val() === value)) {
+                                    ruleMatch = false;
+                                    break;
+                                }
+                            } else {
+                                if (f.val() !== value) {
+                                    ruleMatch = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (ruleMatch) {
+                            match = true;
+                        }
+                    });
+
+                    if (match) {
+                        window.GtdTraitHelpers.toggleFields([fields[field]], 'show', fields);
+                    } else {
+                        window.GtdTraitHelpers.toggleFields([fields[field]], 'hide', fields);
+                    }
+                };
+            }
+        };
+    }
+JS;
+            $jsNamespaceIncluded = true;
+        }
+        
+        return <<<JS
+<script>
+jQuery(document).ready(function($) {
+$namespaceJs
+    
+    // Each call to rulesJs creates its own instance
+    var instanceId = '$instanceId';
+    var hiddenFields = $initJs;
+    var fields = $fieldsJs;
+    var rules = $rulesJs;
+    
+    // Use the singleton functions from our namespace
+    window.GtdTraitHelpers.toggleFields(hiddenFields, 'hide', fields);
+    
+    var checkRule = window.GtdTraitHelpers.createCheckRuleFn(rules, fields);
+    
+    for (var key in rules) {
+        checkRule(key);
+
+        rules[key].forEach(function(rule) {
+            for (var field in rule) {
+                window.GtdTraitHelpers.bindRule('#' + fields[field], [key], checkRule);
+            }
+        });
+    }
+
+    // Only add this once
+    if (!$('#preferred_pharamcy_label').length) {
+        $('#booking_custom_fields_cf_presc3_0').closest('.os-form-group').before('<div id="preferred_pharamcy_label" class="os-form-group os-form-select-group os-form-group-transparent" style="margin-bottom: 0 !important;"><label>Preferred pharmacy</label></div>');
+    }
+});
+</script>
+JS;
+    }
+
+    /**
+     * Generate JavaScript for needRenew
+     *
+     * @return string JavaScript code
+     */
+    public function needRenewJs()
+    {
+        static $needRenewIncluded = false;
+        
+        $customJs = '';
+        if (!$needRenewIncluded) {
+            $customJs = <<<JS
+<script>
+jQuery(document).ready(function($) {
+    // Remove existing element and event handler to avoid duplication
+    $('#nerenew5_notice').remove();
+    $('#booking_custom_fields_cf_nerenew5').off('change.nerenew5');
+    
+    $('#booking_custom_fields_cf_nerenew5').closest('.os-form-group').append('<div id="nerenew5_notice"></div>');
+    $('#booking_custom_fields_cf_nerenew5').on('change.nerenew5', function() {
+        var value = $(this).val();
+        if (value === 'Not on Medication or Not Available') {
+            $('#nerenew5_notice').html('Please Note If we find that you are taking medications but have not provided a complete list, it may result in a delay in your appointment.');
+        } else if (value === 'Send via Email or Fax') {
+            $('#nerenew5_notice').html('Kindly ensure that you send your medication list to <b>telemedicine@gotodoctor.ca</b> or via fax to <b>1-888-238-2029</b>. Delays in providing this information may result in a delay in your appointment as well.');
+        } else {
+            $('#nerenew5_notice').html('');
+        }
+    });
+    
+    // Trigger the change event to set initial state
+    $('#booking_custom_fields_cf_nerenew5').trigger('change.nerenew5');
+});
+</script>
+JS;
+            $needRenewIncluded = true;
+        }
+        
+        return $customJs . $this->rulesJs('needRenewFields', 'needRenewRules');
     }
 }
