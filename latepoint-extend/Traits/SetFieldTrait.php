@@ -205,8 +205,8 @@ trait SetFieldTrait
 
         // Provider field definitions using a factory method
         $providerFieldDefs = [
-            'mbc' => $this->createProviderField('cf_qOqKhbly', false, ['cf_x18jr0Vf' => __('Has the patient used or registered with GotoDoctor or Enhanced Care Clinic before?', 'latepoint')]),
-            'mbcc' => $this->createCareProviderField('cf_qOqKhbly', ['cf_x18jr0Vf' => __('Has the patient used or registered with GotoDoctor or Enhanced Care Clinic before?', 'latepoint'), 'cf_6A3SfgET' => __('Where are you or the client currently located?', 'latepoint')]),
+            'mbc' => $this->createProviderField('cf_qOqKhbly', false, ['cf_x18jr0Vf' => ['label' => __('Has the patient used or registered with GotoDoctor or Enhanced Care Clinic before?', 'latepoint')]]),
+            'mbcc' => $this->createCareProviderField('cf_qOqKhbly', ['cf_x18jr0Vf' => ['label' => __('Has the patient used or registered with GotoDoctor or Enhanced Care Clinic before?', 'latepoint')], 'cf_6A3SfgET' => ['label' => __('Where are you or the client currently located?', 'latepoint')]]),
             'sb' => $this->createProviderField('cf_Vin78Day'),
             'sbc' => $this->createCareProviderField('cf_Vin78Day'),
             'qh' => $this->createProviderField('cf_SIt7Zefo'),
