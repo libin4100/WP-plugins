@@ -89,7 +89,7 @@
                         for (let mutation of mutationsList) {
                             console.log('Mutation observed:', mutation); // <-- Log any mutation first
                             if (mutation.type === 'childList') {
-                                const stepContent = $('.latepoint-body').closest('.latepoint-step-content:not(.is-hidden)');
+                                const stepContent = $('.latepoint-body').find('.latepoint-step-content:not(.is-hidden)').first();
                                 const stepName = stepContent.data('step-name');
                                 const restrictionDate = $('input[name="restrictions[calendar_start_date]"]').val();
                                 console.log('Mutation Target:', mutation.target);
