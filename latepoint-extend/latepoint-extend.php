@@ -1796,12 +1796,29 @@ EOT;
         protected function _timezone($bookingObject)
         {
             $booking = OsParamsHelper::get_param('booking');
-            $custom_fields_data = $booking['custom_fields'];
             $timezone = '';
             if (isset($booking['custom_fields']['cf_6A3SfgET'])) {
                 unset($_SESSION['earliest']);
 
                 switch ($booking['custom_fields']['cf_6A3SfgET']) {
+                    // The time shift, the base is Ontario
+                    case 'Alberta':
+                    case 'Northwest Territories':
+                    case 'Yukon':
+                        $_SESSION['earliest'] = -120;
+                        break;
+                    case 'Newfoundland and Labrador':
+                        $_SESSION['earliest'] = 90;
+                        break;
+                    case 'Nova Scotia':
+                    case 'New Brunswick':
+                    case 'Prince Edward Island':
+                        $_SESSION['earliest'] = 60;
+                        break;
+                    case 'Quebec':
+                    case 'Ontario':
+                        $_SESSION['earliest'] = 0;
+                        break;
                     case 'British Columbia':
                         $_SESSION['earliest'] = -180;
                         break;
