@@ -72,6 +72,9 @@
                     $('#time-type').empty();
                 }
             });
+            <?php if($next_date): ?>
+            $('input[name="restrictions[calendar_start_date]"]').val('<?= $next_date ?>');
+            <?php endif; ?>
         });
     </script>
     <style>.step-qha-time-w .os-item-name-w i { font-size: 2.5em !important; color: #205681 !important }</style>

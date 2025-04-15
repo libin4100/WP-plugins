@@ -136,9 +136,6 @@ trait LoadStepTrait
             case 'datepicker':
                 if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                     OsAuthHelper::logout_customer();
-                if (isset($_SESSION['next_available_date'])) {
-                    OsStepsHelper::set_restrictions(['calendar_start_date' => $_SESSION['next_available_date']]);
-                }
                 if ($format == 'json' && $bookingObject->service_id == 10) {
                     $controller = new OsStepsController();
                     $controller->vars = $controller->vars_for_view;
@@ -290,18 +287,19 @@ EOT;
                             $args['custom_date'] = $day;
                             $range = OsBookingHelper::get_work_start_end_time_for_date($args);
                             if ($range[0]) {
-                                $_SESSION['next_available_date'] = $day;
+                                $nextDate = $day;
                                 break;
                             }
                         }
                     } else {
                         $today = true;
-                        unset($_SESSION['next_available_date']);
+                        $nextDate = '';
                     }
                     
                     $controller = new OsConditionsController();
                     $html = $controller->render($controller->get_view_uri('_step_qha_time'), 'none', [
                         'today' => $today,
+                        'next_date' => $nextDate,
                         'booking' => $bookingObject,
                         'current_step' => $stepName
                     ]);
