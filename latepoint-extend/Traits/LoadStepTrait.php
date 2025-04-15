@@ -136,6 +136,9 @@ trait LoadStepTrait
             case 'datepicker':
                 if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
                     OsAuthHelper::logout_customer();
+                if (isset($_SESSION['next_available_date'])) {
+                    OsStepsHelper::set_restrictions(['calendar_start_date' => $_SESSION['next_available_date']]);
+                }
                 if ($format == 'json' && $bookingObject->service_id == 10) {
                     $controller = new OsStepsController();
                     $controller->vars = $controller->vars_for_view;
@@ -267,8 +270,38 @@ EOT;
             //Steps for QHA appointment request
             case 'qha_time':
                 if (!in_array($bookingObject->service_id, [13, 15])) {
+                    $currentTime = date('H') * 60 + date('i');
+                    if ($_SESSION['earliest'] ?? false) {
+                        $currentTime += $_SESSION['earliest'];
+                    }
+                    $day = date('Y-m-d');
+                    $args = [
+                        'custom_date' => $day,
+                        'service_id' => $bookingObject->service_id,
+                        'location_id' => $bookingObject->location_id,
+                        'agent_id' => $bookingObject->agent_id,
+                    ];
+                    $range = OsBookingHelper::get_work_start_end_time_for_date($args);
+                    if (!$range[1] || ($currentTime > $range[1])) {
+                        $today = false;
+                        // Get the next available date
+                        for ($i = 1; $i <= 7; $i++) {
+                            $day = date('Y-m-d', strtotime("+$i days"));
+                            $args['custom_date'] = $day;
+                            $range = OsBookingHelper::get_work_start_end_time_for_date($args);
+                            if ($range[0]) {
+                                $_SESSION['next_available_date'] = $day;
+                                break;
+                            }
+                        }
+                    } else {
+                        $today = true;
+                        unset($_SESSION['next_available_date']);
+                    }
+                    
                     $controller = new OsConditionsController();
                     $html = $controller->render($controller->get_view_uri('_step_qha_time'), 'none', [
+                        'today' => $today,
                         'booking' => $bookingObject,
                         'current_step' => $stepName
                     ]);

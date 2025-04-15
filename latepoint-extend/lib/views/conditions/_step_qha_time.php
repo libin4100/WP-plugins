@@ -1,5 +1,6 @@
 <div class="step-qha-time-w latepoint-step-content" data-step-name="qha_time">
     <div class="os-animated-parent os-items os-as-rows">
+        <?php if($today): ?>
         <div class="os-animated-child os-item os-priced-item with-description" data-time-type="fastest">
             <div class="os-service-selector os-item-i os-animated-self" data-time-type="fastest">
                 <span class="os-item-img-w"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></span>
@@ -9,6 +10,17 @@
                 </span>
             </div>
         </div>
+        <?php else: ?>
+        <div class="os-animated-child os-item os-priced-item with-description" data-time-type="lastest">
+            <div class="os-service-selector os-item-i os-animated-self" data-time-type="lastest">
+                <span class="os-item-img-w"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></span>
+                <span class="os-item-name-w">
+                    <span class="os-item-name">Lastest available appointment date</span>
+                    <span class="os-item-desc"></span>
+                </span>
+            </div>
+        </div>
+        <?php endif; ?>
         <div class="os-animated-child os-item os-priced-item with-description" data-time-type="future">
             <div class="os-service-selector os-item-i os-animated-self" data-time-type="future">
                 <span class="os-item-img-w"><i class="fa fa-calendar" aria-hidden="true"></i></span>
