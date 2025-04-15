@@ -361,24 +361,6 @@ jQuery(function ($) {
             }
         });
     });
-
-    // Add dom change observer on .latepoint-body
-    const targetNode = document.querySelector('.latepoint-body');
-    const config = { childList: true, subtree: true };
-    const callback = function (mutationsList, observer) {
-        for (let mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-                // Get data-step-name from .latepoint-step-content which is not .is-hidden
-                const stepName = $(mutation.target).closest('.latepoint-step-content:not(.is-hidden)').data('step-name');
-                const restrictionDate = $('input[name="restrictions[calendar_start_date]"]').val();
-                if (restrictionDate && stepName.includes('datepicker')) {
-                    $('div.os-day[data-date="' + restrictionDate + '"]').trigger('click');
-                }
-            }
-        }
-    };
-    const observer = new MutationObserver(callback);
-    observer.observe(targetNode, config);
 });
 start_date = '';
 start_time = '';
