@@ -130,6 +130,9 @@ jQuery(function ($) {
         if ($('#booking_custom_fields_cf_9e1mhf4v').length && $('#customer_email').length) {
             $('#customer_email').val($('#booking_custom_fields_cf_9e1mhf4v').val()).closest('.os-col-12').hide();
         }
+        if ($('#booking_custom_fields_cf_frhzp65m').length && $('#customer_email').length) {
+            $('#customer_email').val($('#booking_custom_fields_cf_frhzp65m').val()).closest('.os-col-12').hide();
+        }
         if ($('html[lang="fr"] #customer_custom_fields_cf_7lkik5fd').length && !$('html[lang="fr"] #customer_custom_fields_cf_7lkik5fd').hasClass('replaced')) {
             const replaces = {
                 "Male": "homme",
