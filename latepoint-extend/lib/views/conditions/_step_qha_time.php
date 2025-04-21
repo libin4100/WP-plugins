@@ -89,7 +89,7 @@
                                 const stepName = stepContent.data('step-name');
                                 const restrictionDate = $('input[name="restrictions[calendar_start_date]"]').val();
 
-                                if (restrictionDate && stepName && stepName.includes('datepicker') && $('#booking_qha_time').val() == 'latest') {
+                                if (restrictionDate && stepName && stepName.includes('datepicker') && ($('#booking_qha_time').val() == 'latest')) {
                                     $('div.os-day[data-date="' + restrictionDate + '"]').trigger('click');
                                 } else {
                                     console.log('Conditions not met.');
