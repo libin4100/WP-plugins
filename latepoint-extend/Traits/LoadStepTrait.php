@@ -279,7 +279,7 @@ EOT;
                         'agent_id' => $bookingObject->agent_id,
                     ];
                     $range = OsBookingHelper::get_work_start_end_time_for_date($args);
-                    if (!$range[1] || ($currentTime > $range[1])) {
+                    if (!$range[1] || ($currentTime > $range[1] - 120)) {
                         $today = false;
                         // Get the next available date
                         for ($i = 1; $i <= 7; $i++) {

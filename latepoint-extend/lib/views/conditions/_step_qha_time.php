@@ -15,8 +15,8 @@
                 <div class="os-service-selector os-item-i os-animated-self" data-time-type="lastest">
                     <span class="os-item-img-w"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></span>
                     <span class="os-item-name-w">
-                        <span class="os-item-name">Lastest available appointment date</span>
-                        <span class="os-item-desc"></span>
+                        <span class="os-item-name">Latest available appointment date</span>
+                        <span class="os-item-desc">We're all set for today. Please go ahead and choose your preferred date and time for the latest next appointment.</span>
                     </span>
                 </div>
             </div>
