@@ -11,8 +11,8 @@
                 </div>
             </div>
         <?php else: ?>
-            <div class="os-animated-child os-item os-priced-item with-description" data-time-type="lastest">
-                <div class="os-service-selector os-item-i os-animated-self" data-time-type="lastest">
+            <div class="os-animated-child os-item os-priced-item with-description" data-time-type="latest">
+                <div class="os-service-selector os-item-i os-animated-self" data-time-type="latest">
                     <span class="os-item-img-w"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></span>
                     <span class="os-item-name-w">
                         <span class="os-item-name">Latest available appointment date</span>
