@@ -11,8 +11,8 @@
                 </div>
             </div>
         <?php else: ?>
-            <div class="os-animated-child os-item os-priced-item with-description" data-time-type="latest">
-                <div class="os-service-selector os-item-i os-animated-self" data-time-type="latest">
+            <div class="os-animated-child os-item os-priced-item with-description">
+                <div class="os-service-selector os-item-i os-animated-self" style="cursor: not-allowed;">
                     <span class="os-item-img-w"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></span>
                     <span class="os-item-name-w">
                         <span class="os-item-name">Latest available appointment date</span>
@@ -50,6 +50,9 @@
             var $timeType = $('.step-qha-time-w').find('[name="booking[qha_time]"]');
             var $timeTypeItems = $('.step-qha-time-w').find('.os-item');
             $timeTypeItems.on('click', function() {
+                if (!$(this).data('time-type')) {
+                    return;
+                }
                 $timeType.val($(this).data('time-type'));
                 $timeTypeItems.removeClass('selected');
                 $(this).addClass('selected');
@@ -89,7 +92,7 @@
                                 const stepName = stepContent.data('step-name');
                                 const restrictionDate = $('input[name="restrictions[calendar_start_date]"]').val();
 
-                                if (restrictionDate && stepName && stepName.includes('datepicker') && ($('#booking_qha_time').val() == 'latest')) {
+                                if (restrictionDate && stepName && stepName.includes('datepicker')) {
                                     $('div.os-day[data-date="' + restrictionDate + '"]').trigger('click');
                                 } else {
                                     console.log('Conditions not met.');
