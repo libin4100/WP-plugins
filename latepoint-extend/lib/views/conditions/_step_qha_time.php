@@ -93,7 +93,7 @@
                                 const restrictionDate = $('input[name="restrictions[calendar_start_date]"]').val();
 
                                 if (restrictionDate && stepName && stepName.includes('datepicker')) {
-                                    $('div.os-day[data-date="' + restrictionDate + '"]').trigger('click');
+                                    $('div.os-day[data-date="' + restrictionDate + '"]').trigger('click').addClass('selected');
                                 } else {
                                     console.log('Conditions not met.');
                                 }
