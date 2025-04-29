@@ -384,7 +384,7 @@ if (!class_exists('LatePointExt')) :
                     $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     break;
                 case 25:
-                    $partner = 'logo711';
+                    $partner = 'local711';
                     $key = 'Email address';
                     $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     break;
