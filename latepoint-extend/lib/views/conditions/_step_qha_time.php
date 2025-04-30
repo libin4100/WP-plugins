@@ -1,14 +1,26 @@
 <div class="step-qha-time-w latepoint-step-content" data-step-name="qha_time">
     <div class="os-animated-parent os-items os-as-rows">
-        <div class="os-animated-child os-item os-priced-item with-description" data-time-type="fastest">
-            <div class="os-service-selector os-item-i os-animated-self" data-time-type="fastest">
-                <span class="os-item-img-w"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></span>
-                <span class="os-item-name-w">
-                    <span class="os-item-name">Next available appointment</span>
-                    <span class="os-item-desc"></span>
-                </span>
+        <?php if ($today): ?>
+            <div class="os-animated-child os-item os-priced-item with-description" data-time-type="fastest">
+                <div class="os-service-selector os-item-i os-animated-self" data-time-type="fastest">
+                    <span class="os-item-img-w"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></span>
+                    <span class="os-item-name-w">
+                        <span class="os-item-name">Next available appointment</span>
+                        <span class="os-item-desc"></span>
+                    </span>
+                </div>
             </div>
-        </div>
+        <?php else: ?>
+            <div class="os-animated-child os-item os-priced-item with-description">
+                <div class="os-service-selector os-item-i os-animated-self" style="cursor: not-allowed;">
+                    <span class="os-item-img-w"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></span>
+                    <span class="os-item-name-w">
+                        <span class="os-item-name">Next available appointment</span>
+                        <span class="os-item-desc">We're all set for today. Please go ahead and choose your preferred date and time for the latest next appointment.</span>
+                    </span>
+                </div>
+            </div>
+        <?php endif; ?>
         <div class="os-animated-child os-item os-priced-item with-description" data-time-type="future">
             <div class="os-service-selector os-item-i os-animated-self" data-time-type="future">
                 <span class="os-item-img-w"><i class="fa fa-calendar" aria-hidden="true"></i></span>
@@ -38,6 +50,9 @@
             var $timeType = $('.step-qha-time-w').find('[name="booking[qha_time]"]');
             var $timeTypeItems = $('.step-qha-time-w').find('.os-item');
             $timeTypeItems.on('click', function() {
+                if (!$(this).data('time-type')) {
+                    return;
+                }
                 $timeType.val($(this).data('time-type'));
                 $timeTypeItems.removeClass('selected');
                 $(this).addClass('selected');
@@ -60,7 +75,41 @@
                     $('#time-type').empty();
                 }
             });
+            <?php if ($next_date): ?>
+                $('input[name="restrictions[calendar_start_date]"]').val('<?= $next_date ?>');
+
+                // Add dom change observer on .latepoint-body
+                const targetNode = document.querySelector('.latepoint-body');
+
+                if (targetNode) {
+                    const config = {
+                        childList: true,
+                    };
+                    const callback = function(mutationsList, observer) {
+                        for (let mutation of mutationsList) {
+                            if (mutation.type === 'childList' && mutation.target === targetNode) {
+                                const stepContent = $('.latepoint-body').find('.latepoint-step-content:not(.is-hidden)').first();
+                                const stepName = stepContent.data('step-name');
+                                const restrictionDate = $('input[name="restrictions[calendar_start_date]"]').val();
+
+                                if (restrictionDate && stepName && stepName.includes('datepicker')) {
+                                    $('div.os-day[data-date="' + restrictionDate + '"]').trigger('click').addClass('selected');
+                                } else {
+                                    console.log('Conditions not met.');
+                                }
+                            }
+                        }
+                    };
+                    const observer = new MutationObserver(callback);
+                    observer.observe(targetNode, config);
+                }
+            <?php endif; ?>
         });
     </script>
-    <style>.step-qha-time-w .os-item-name-w i { font-size: 2.5em !important; color: #205681 !important }</style>
+    <style>
+        .step-qha-time-w .os-item-name-w i {
+            font-size: 2.5em !important;
+            color: #205681 !important
+        }
+    </style>
 </div>

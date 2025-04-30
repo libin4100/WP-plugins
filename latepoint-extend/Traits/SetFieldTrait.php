@@ -91,6 +91,16 @@ trait SetFieldTrait
                 $care = $bookingObject->service_id == 13;
                 $fields = $this->_fields('sp', false, compact('certKey', 'care'));
                 break;
+            case $bookingObject->agent_id == 24:
+                // Asylum
+                $certKey = 'cf_FRhzp65m';
+                $fields = $this->_fields('sp', false, compact('certKey'));
+                break;
+            case $bookingObject->agent_id == 25:
+                // LOGO 711
+                $certKey = 'cf_lbBtEi3k';
+                $fields = $this->_fields('sp', false, compact('certKey'));
+                break;
             case in_array($bookingObject->service_id, [2, 3]):
                 $this->_fields('located');
                 break;

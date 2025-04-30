@@ -267,8 +267,39 @@ EOT;
             //Steps for QHA appointment request
             case 'qha_time':
                 if (!in_array($bookingObject->service_id, [13, 15])) {
+                    $currentTime = date('H') * 60 + date('i');
+                    if ($_SESSION['earliest'] ?? false) {
+                        $currentTime += $_SESSION['earliest'];
+                    }
+                    $day = date('Y-m-d');
+                    $args = [
+                        'custom_date' => $day,
+                        'service_id' => $bookingObject->service_id,
+                        'location_id' => $bookingObject->location_id,
+                        'agent_id' => $bookingObject->agent_id,
+                    ];
+                    $range = OsBookingHelper::get_work_start_end_time_for_date($args);
+                    if (!$range[1] || ($currentTime > $range[1] - 120)) {
+                        $today = false;
+                        // Get the next available date
+                        for ($i = 1; $i <= 7; $i++) {
+                            $day = date('Y-m-d', strtotime("+$i days"));
+                            $args['custom_date'] = $day;
+                            $range = OsBookingHelper::get_work_start_end_time_for_date($args);
+                            if ($range[0]) {
+                                $nextDate = $day;
+                                break;
+                            }
+                        }
+                    } else {
+                        $today = true;
+                        $nextDate = '';
+                    }
+                    
                     $controller = new OsConditionsController();
                     $html = $controller->render($controller->get_view_uri('_step_qha_time'), 'none', [
+                        'today' => $today,
+                        'next_date' => $nextDate,
                         'booking' => $bookingObject,
                         'current_step' => $stepName
                     ]);

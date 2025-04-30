@@ -383,6 +383,11 @@ if (!class_exists('LatePointExt')) :
                     $key = 'Email address';
                     $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     break;
+                case 25:
+                    $partner = 'local711';
+                    $key = 'Email address';
+                    $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                    break;
                 default:
                     $partner = '';
                     $key = '';
@@ -877,7 +882,7 @@ jQuery(function($) {
 });
 </script>
 EOT;
-            if (in_array($bookingObject->agent_id, [8, 21, 22, 23, 24]) && $bookingObject->location_id == 4) {
+            if (in_array($bookingObject->agent_id, [8, 21, 22, 23, 24, 25]) && $bookingObject->location_id == 4) {
                 echo <<<EOT
 <script>
 jQuery(function($) {
@@ -947,7 +952,7 @@ EOT;
             }
             if (
                 (in_array($bookingObject->agent_id, [2, 7, 9, 10, 14]) && !in_array($bookingObject->location_id, [14]))
-                || (in_array($bookingObject->agent_id, [8, 21, 22, 23, 24]) && !in_array($bookingObject->location_id, [4, 14]))
+                || (in_array($bookingObject->agent_id, [8, 21, 22, 23, 24, 25]) && !in_array($bookingObject->location_id, [4, 14]))
             ) {
                 $location = $bookingObject->location->name ?? '';
                 $other = in_array($bookingObject->location_id, [4]) ? true : false;
@@ -985,7 +990,7 @@ EOT;
 <script>
 jQuery(function($) {
     var aid = {$bookingObject->agent_id};
-    var alist = [2, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24];
+    var alist = [2, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25];
     var observer = new MutationObserver(function(mutations) {
         showhide();
     });
@@ -1418,14 +1423,14 @@ EOT;
                 ($booking->service_id == 10)
                 || $this->acorn
                 || $this->covid
-                || ($this->others && (!in_array($booking->agent_id, [6, 8, 11, 15, 16, 19, 20, 21, 22, 23, 24])
-                    || (in_array($booking->agent_id, [8, 21, 22, 23, 24]) && !in_array($ploc, ['Quebec', 'New Brunswick']))
+                || ($this->others && (!in_array($booking->agent_id, [6, 8, 11, 15, 16, 19, 20, 21, 22, 23, 24, 25])
+                    || (in_array($booking->agent_id, [8, 21, 22, 23, 24, 25]) && !in_array($ploc, ['Quebec', 'New Brunswick']))
                     || (in_array($booking->agent_id, [11, 14, 15, 16, 19, 20, 21]) && !in_array($ploc, ['Quebec']))
                 ))
                 || $this->diff = (
                     (in_array($booking->agent_id, [2, 7, 9, 10, 14]) && (stripos($loc, $ploc) === false))
                     || (in_array($booking->agent_id, [11, 15, 16, 19, 20, 21]) && !$this->others && !in_array($ploc, ['Quebec']) && (stripos($loc, $ploc) === false))
-                    || (in_array($booking->agent_id, [8, 21, 22, 23, 24]) && !$this->others && (stripos($loc, $ploc) === false))
+                    || (in_array($booking->agent_id, [8, 21, 22, 23, 24, 25]) && !$this->others && (stripos($loc, $ploc) === false))
                 )
             ) {
                 return true;
@@ -1444,7 +1449,7 @@ EOT;
         {
             return (
                 (($booking->location_id == 1) && in_array($booking->agent_id, [3, 4]))
-                || in_array($booking->agent_id, [2, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24])
+                || in_array($booking->agent_id, [2, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25])
             ) ? true : false;
         }
 
@@ -1796,12 +1801,29 @@ EOT;
         protected function _timezone($bookingObject)
         {
             $booking = OsParamsHelper::get_param('booking');
-            $custom_fields_data = $booking['custom_fields'];
             $timezone = '';
             if (isset($booking['custom_fields']['cf_6A3SfgET'])) {
                 unset($_SESSION['earliest']);
 
                 switch ($booking['custom_fields']['cf_6A3SfgET']) {
+                    // The time shift, the base is Ontario
+                    case 'Alberta':
+                    case 'Northwest Territories':
+                    case 'Yukon':
+                        $_SESSION['earliest'] = -120;
+                        break;
+                    case 'Newfoundland and Labrador':
+                        $_SESSION['earliest'] = 90;
+                        break;
+                    case 'Nova Scotia':
+                    case 'New Brunswick':
+                    case 'Prince Edward Island':
+                        $_SESSION['earliest'] = 60;
+                        break;
+                    case 'Quebec':
+                    case 'Ontario':
+                        $_SESSION['earliest'] = 0;
+                        break;
                     case 'British Columbia':
                         $_SESSION['earliest'] = -180;
                         break;
