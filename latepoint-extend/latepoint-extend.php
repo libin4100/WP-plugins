@@ -1711,7 +1711,7 @@ EOT;
         protected function checkCert($cert, $serviceId = null)
         {
             global $wpdb;
-            $check = $this->checkCertTest($cert);
+            $check = $this->checkCertTest($cert, 'mbc');
             if (!$check) {
                 if ($serviceId == 13) {
                     $row = $wpdb->get_row($wpdb->prepare("select * from {$wpdb->prefix}mbc_members where concat('a', certificate) = '%s'", 'a' . $cert));
@@ -1728,7 +1728,7 @@ EOT;
         protected function checkCertSB($cert)
         {
             global $wpdb;
-            return  $this->checkCertTest($cert) ?: $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}sb_members where concat('a', certificate) = '%s'", 'a' . $cert));
+            return  $this->checkCertTest($cert, 'sb') ?: $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}sb_members where concat('a', certificate) = '%s'", 'a' . $cert));
         }
 
         protected function checkCertQH($cert)
@@ -1786,6 +1786,7 @@ EOT;
         {
             return ($cert == '123456')
                 || ($cert == 'support@teledact.ca')
+                || ($cert == 'TESTGTD' && in_array($partner, ['cb_providers', 'sb', 'mbc']))
                 || (($partner == 'fabricland') && ($cert == 'FABRICFRIENDS'))
                 || (($partner == 'imperial_capital') && ($cert == '1234567890'))
                 || (($partner == 'cb_providers') && ($cert == '1234567890'));
