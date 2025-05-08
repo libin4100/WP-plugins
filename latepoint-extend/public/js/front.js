@@ -144,6 +144,47 @@ jQuery(function ($) {
             }
             $('html[lang="fr"] #customer_custom_fields_cf_7lkik5fd').addClass('replaced');
         }
+        if ($('html[lang="fr"] .latepoint-prev-btn:not(.replaced)').length) {
+            const replaces = {
+                "dos": "Retour"
+            }
+            for (let key in replaces) {
+                $('html[lang="fr"] .latepoint-prev-btn').html($('html[lang="fr"] .latepoint-prev-btn').html().replace(key, replaces[key]));
+            }
+            $('html[lang="fr"] .latepoint-prev-btn').addClass('replaced');
+        }
+        if ($('html[lang="fr"] .os-mask-phone:not(.replaced)').length) {
+            latepoint_mask_phone(jQuery(".os-mask-phone"))
+            $('html[lang="fr"] .os-mask-phone').addClass('replaced');
+        }
+        if ($('html[lang="fr"] .dp-success-label:not(.replaced)').length) {
+            const replaces = {
+                "Selected": "Choisi",
+            }
+            for (let key in replaces) {
+                $('html[lang="fr"] .dp-success-label').html($('html[lang="fr"] .dp-success-label').html().replace(key, replaces[key]));
+            }
+            $('html[lang="fr"] .dp-success-label').addClass('replaced');
+        }
+        if ($('html[lang="fr"] .current-month:not(.replaced)').length) {
+            const replaces = {
+                "Peut": "Mai",
+                "Épouser": "Mer",
+                "Assis": "Sam",
+                "Soleil": "Dim",
+            }
+            original = $('html[lang="fr"] .current-month').text();
+            origWeek = $('html[lang="fr"] .os-weekdays').html();
+            for (let key in replaces) {
+                if (original.includes(key)) {
+                    $('html[lang="fr"] .current-month').text(original.replace(key, replaces[key]));
+                }
+                if (origWeek.includes(key)) {
+                    $('html[lang="fr"] .os-weekdays').html(origWeek.replace(key, replaces[key]));
+                }
+            }
+            $('html[lang="fr"] .current-month').addClass('replaced');
+        }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function () {
