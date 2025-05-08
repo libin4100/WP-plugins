@@ -176,6 +176,14 @@ jQuery(function ($) {
             latepoint_mask_phone(jQuery(".os-mask-phone"))
             $('html[lang="fr"] .os-mask-phone').addClass('replaced');
         }
+        if ($('.confirmation-app-info:not(.replaced) li > strong').length) {
+            $('.confirmation-app-info li > strong').each(function () {
+                if (!$(this).text()) {
+                    $(this).closest('li').attr('style', 'display:none !important');
+                }
+            });
+            $('.confirmation-app-info').addClass('replaced');
+        }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function () {
