@@ -144,6 +144,46 @@ jQuery(function ($) {
             }
             $('html[lang="fr"] #customer_custom_fields_cf_7lkik5fd').addClass('replaced');
         }
+        const replaces = {
+            ".latepoint-prev-btn": {
+                "Dos": "Retour",
+            },
+            ".dp-success-label": {
+                "Selected": "Choisi",
+            },
+            ".current-month > font": {
+                "Peut": "Mai",
+            },
+            ".os-weekdays": {
+                "Épouser": "Mer",
+                "Assis": "Sam",
+                "Soleil": "Dim",
+            },
+        }
+        for (let cls in replaces) {
+            if ($('html[lang="fr"] ' + cls + ':not(.replaced)').length) {
+                let html = $('html[lang="fr"] ' + cls).html();
+                for (let key in replaces[cls]) {
+                    if (html.includes(key)) {
+                        html = html.replace(key, replaces[cls][key]);
+                        $('html[lang="fr"] ' + cls).html(html);
+                        $('html[lang="fr"] ' + cls).addClass("replaced notranslate");
+                    }
+                }
+            }
+        }
+        if ($('html[lang="fr"] .os-mask-phone:not(.replaced)').length && $('html[lang="fr"] .os-mask-phone[placeholder="Numéro de téléphone portable"]').length) {
+            latepoint_mask_phone(jQuery(".os-mask-phone"))
+            $('html[lang="fr"] .os-mask-phone').addClass('replaced');
+        }
+        if ($('.confirmation-app-info:not(.replaced) li > strong').length) {
+            $('.confirmation-app-info li > strong').each(function () {
+                if (!$(this).text()) {
+                    $(this).closest('li').attr('style', 'display:none !important');
+                }
+            });
+            $('.confirmation-app-info').addClass('replaced');
+        }
     }, 100);
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function () {
