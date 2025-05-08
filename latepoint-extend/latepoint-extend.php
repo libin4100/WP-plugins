@@ -717,7 +717,7 @@ EOT;
                         $desc = 'Thank you for your Gotodoctor Health System Navigator & Second Opinion request.';
                         break;
                     default:
-                        $desc = 'Thank you for your Gotodoctor Employee Assistance Program request.';
+                        $desc = '';
                 }
                 $desc .= ' You will hear back from us within the next business day. Contact us if you have any questions. Call 911 or visit the nearest hospital for any emergencies.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*';
                 echo <<<EOT
