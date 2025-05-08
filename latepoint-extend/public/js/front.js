@@ -151,7 +151,7 @@ jQuery(function ($) {
             ".dp-success-label": {
                 "Selected": "Choisi",
             },
-            ".current-month": {
+            ".current-month > font": {
                 "Peut": "Mai",
             },
             ".os-weekdays": {
@@ -165,15 +165,14 @@ jQuery(function ($) {
                 let html = $('html[lang="fr"] ' + cls).html();
                 for (let key in replaces[cls]) {
                     if (html.includes(key)) {
-                        $('html[lang="fr"] ' + cls).html(
-                            html.replace(key, replaces[cls][key])
-                        );
-                        $('html[lang="fr"] ' + cls).addClass("replaced");
+                        html = html.replace(key, replaces[cls][key]);
+                        $('html[lang="fr"] ' + cls).html(html);
+                        $('html[lang="fr"] ' + cls).addClass("replaced notranslate");
                     }
                 }
             }
         }
-        if ($('html[lang="fr"] .os-mask-phone:not(.replaced)').length) {
+        if ($('html[lang="fr"] .os-mask-phone:not(.replaced)').length && $('html[lang="fr"] .os-mask-phone[placeholder="Numéro de téléphone portable"]').length) {
             latepoint_mask_phone(jQuery(".os-mask-phone"))
             $('html[lang="fr"] .os-mask-phone').addClass('replaced');
         }
