@@ -268,7 +268,9 @@ jQuery(document).ready(function($) {
 
     function noService() {
         hide_next_btn(jQuery(".latepoint-booking-form-element"));
-        $('#booking_custom_fields_cf_6a3sfget').after('<div class="latepoint-message latepoint-message-error" id="no-service">Sorry, no service available for the selected location.</div>');
+        if (!$('#no-service').length) {
+            $('#booking_custom_fields_cf_6a3sfget').after('<div class="latepoint-message latepoint-message-error" id="no-service">Sorry, no service available for the selected location.</div>');
+        }
     }
     function resetNoService() {
         jQuery("#no-service").remove();
