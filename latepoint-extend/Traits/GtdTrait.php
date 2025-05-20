@@ -238,4 +238,45 @@ jQuery(document).ready(function($) {
 </script>
 JS;
     }
+
+    public function noServiceJs($conditions, $fomula = 'in')
+    {
+        $conditions = json_encode((array)$conditions);
+        $js = <<<JS
+<script>
+jQuery(document).ready(function($) {
+    var conditions = {$conditions};
+    var rule = '{$fomula}';
+    $('.latepoint-booking-form-element').on('change', '#booking_custom_fields_cf_6a3sfget', function() {
+        var selectedValue = $(this).val();
+        var isConditionMet = false;
+
+        if (selectedValue) {
+            if (rule === 'in') {
+                isConditionMet = conditions.includes(selectedValue);
+            } else {
+                isConditionMet = !conditions.includes(selectedValue);
+            }
+        }
+
+        if (isConditionMet) {
+            noService();
+        } else {
+            resetNoService();
+        }
+    });
+
+    function noService() {
+        hide_next_btn(jQuery(".latepoint-booking-form-element"));
+        $('#booking_custom_fields_cf_6a3sfget').after('<div class="latepoint-message latepoint-message-error" id="no-service">Sorry, no service available for the selected location.</div>');
+    }
+    function resetNoService() {
+        jQuery("#no-service").remove();
+        show_next_btn(jQuery(".latepoint-booking-form-element"));
+    }
+});
+</script>
+JS;
+        return $js;
+    }
 }
