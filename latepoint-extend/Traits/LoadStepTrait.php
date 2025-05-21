@@ -125,14 +125,15 @@ trait LoadStepTrait
                     $html = $custom_fields_controller->render($custom_fields_controller->get_view_uri('_step_custom_fields_for_booking', false), 'none', []);
                     $html = substr($html, 0, -6) . $this->needRenewJs() . '</div>';
                     if ($this->isGTD()) {
-                        $html = substr($html, 0, -6)
-                            . $this->prescriptionJs()
-                            . $this->noServiceJs('Outside Canada')
-                            . '</div>';
+                        $html = substr($html, 0, -6) . $this->prescriptionJs() . '</div>';
                     }
                     if ($bookingObject->agent_id == 21) {
                         $html = substr($html, 0, -6)
-                            . $this->noServiceJs('Quebec', 'not')
+                            . $this->noServiceJs('Quebec', 'not', ['message' => 'If you are connecting for care outside of Quebec, please call 1-844-338-3355 or email expresscarecanada@ccf.org.'])
+                            . '</div>';
+                    } else {
+                        $html = substr($html, 0, -6)
+                            . $this->noServiceJs('Outside Canada')
                             . '</div>';
                     }
                     wp_send_json(array_merge(

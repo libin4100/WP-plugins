@@ -239,9 +239,13 @@ jQuery(document).ready(function($) {
 JS;
     }
 
-    public function noServiceJs($conditions, $fomula = 'in')
+    public function noServiceJs($conditions, $fomula = 'in', $options = [])
     {
         $conditions = json_encode((array)$conditions);
+        $msg = 'Sorry, no service available for the selected location.';
+        if (isset($options['message'])) {
+            $msg = $options['message'];
+        }
         $js = <<<JS
 <script>
 jQuery(document).ready(function($) {
@@ -269,7 +273,7 @@ jQuery(document).ready(function($) {
     function noService() {
         hide_next_btn(jQuery(".latepoint-booking-form-element"));
         if (!$('#no-service').length) {
-            $('#booking_custom_fields_cf_6a3sfget').after('<div class="latepoint-message latepoint-message-error" id="no-service">Sorry, no service available for the selected location.</div>');
+            $('#booking_custom_fields_cf_6a3sfget').after('<div class="latepoint-message latepoint-message-error" id="no-service">{$msg}</div>');
         }
     }
     function resetNoService() {
