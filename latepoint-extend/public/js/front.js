@@ -88,7 +88,7 @@ jQuery(function ($) {
                         ".step-custom-fields-for-booking-w.latepoint-step-content .os-row"
                     );
                 }
-                if (key == "qblbyjs8") {
+                if (key == "qblbyjs8" && !$('input[name="booking[custom_fields][group]"]').length) {
                     $(id).after(
                     '<input type="hidden" name="booking[custom_fields][group]" value="' +
                         $("#groups").val() +
