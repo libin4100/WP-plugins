@@ -244,7 +244,7 @@ trait SetFieldTrait
             'ubc' => $this->createCareProviderField('cf_QBLBYjS8'),
             'lg' => $this->createProviderField('cf_AYVpjhpP'),
             'vpi' => $this->createProviderField('cf_9OaDIkYh'),
-            'cc' => $this->createProviderField('cf_yjnZIZ1D'),
+            'cc' => $this->createProviderField('cf_yjnZIZ1D', false, ['cf_6A3SfgET' => ['label' => __('Are you located in Quebec?', 'latepoint'), 'options' => 'Yes\nNo']]),
         ];
 
         return array_merge($providerFieldDefs, $specialFieldDefs);

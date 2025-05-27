@@ -129,7 +129,7 @@ trait LoadStepTrait
                     }
                     if ($bookingObject->agent_id == 21) {
                         $html = substr($html, 0, -6)
-                            . $this->noServiceJs('Quebec', 'not', ['message' => 'If you are connecting for care outside of Quebec, please call 1-844-338-3355 or email expresscarecanada@ccf.org.'])
+                            . $this->noServiceJs('Yes', 'in', ['message' => 'If you are connecting for care outside of Quebec, please call 1-844-338-3355 or email expresscarecanada@ccf.org.'])
                             . '</div>';
                     } else {
                         $html = substr($html, 0, -6)
