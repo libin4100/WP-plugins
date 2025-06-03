@@ -183,11 +183,10 @@ if (!class_exists('LatePointExt')) :
             if (!$id) {
                 wp_send_json_error(['message' => 'Certificate number is required.'], 404);
             }
-            $care = $this->checkCertPartner($id, 'cb_providers', 13);
-            $eap = $this->checkCertPartner($id, 'cb_providers', 15);
+            list($care, $eap, $op) = $this->checkCertPartner($id, 'cb_providers', 'services');
             if ($care || $eap) {
                 $_SESSION['certCount'] = 0;
-                wp_send_json_success(['care' => $care, 'eap' => $eap], 200);
+                wp_send_json_success(['care' => $care, 'eap' => $eap, 'op' => $op], 200);
             } else {
                 $this->checkCertificateCBP();
             }
@@ -1768,10 +1767,12 @@ EOT;
                 switch ($partner) {
                     case 'cb_providers':
                         $row = $wpdb->get_row($wpdb->prepare("select * from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
-                        if ($serviceId == 13)
-                            $check = stripos($row->service, 'navigation') !== false;
-                        elseif ($serviceId == 15)
-                            $check = stripos($row->service, 'eap2') !== false;
+                        if ($serviceId == 'services') {
+                            $care = stripos($row->service, 'navigation') !== false;
+                            $eap = stripos($row->service, 'eap2') !== false;
+                            $op = stripos($row->service, '2ndop') !== false;
+                            $check = compact('care', 'eap', 'op');
+                        }
                         break;
                     default:
                         $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));

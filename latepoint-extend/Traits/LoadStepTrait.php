@@ -329,8 +329,16 @@ EOT;
             case 'qhc_service':
                 if (in_array($bookingObject->service_id, [13, 15])) {
                     $controller = new OsConditionsController();
+                    $secondOpinion = false;
+                    // CB Providers
+                    if ($bookingObject->agent_id == 15 && $bookingObject->service_id == 13) {
+                        $id = OsParamsHelper::get_param('booking')['custom_fields']['cf_4wVF2U9Y'] ?? '';
+                        $services = $this->checkCertPartner($id, 'cb_providers', 'services');
+                        $secondOpinion = $services['op'] ?? false;
+                    }
                     $html = $controller->render($controller->get_view_uri('_step_qhc_service'), 'none', [
                         'booking' => $bookingObject,
+                        'secondOpinion' => $secondOpinion,
                         'current_step' => $stepName
                     ]);
                     wp_send_json(array_merge(
