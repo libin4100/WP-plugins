@@ -340,7 +340,9 @@ jQuery(function ($) {
             },
         }).done(function (msg) {
             Custombox.modal.close()
-            if (msg && msg.data && msg.data.care) {
+            if (msg && msg.data && msg.data.op) {
+                $('.with-op').first().find('a').first().click();
+            } else if (msg && msg.data && msg.data.care) {
                 $('.with-care').first().find('a').first().click();
             } else {
                 if ($('.mbc-popup').first().find('a').length) {
