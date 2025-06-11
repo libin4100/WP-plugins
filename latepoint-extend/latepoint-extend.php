@@ -1795,6 +1795,7 @@ EOT;
             return ($cert == '123456')
                 || ($cert == 'support@teledact.ca')
                 || ($cert == 'Testgtd' && in_array($partner, ['cb_providers', 'sb', 'mbc']))
+                || (($partner == 'mbc') && ($cert == 'MBCHELPS'))
                 || (($partner == 'fabricland') && ($cert == 'FABRICFRIENDS'))
                 || (($partner == 'imperial_capital') && ($cert == '1234567890'))
                 || (($partner == 'cb_providers') && ($cert == '1234567890'));
