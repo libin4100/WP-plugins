@@ -160,7 +160,9 @@ if (!class_exists('LatePointExt')) :
             }
             $id = trim($_POST['id']);
             if (!$id) {
-                wp_send_json_error(['message' => 'Certificate number is required.'], 404);
+                $isWildfire = stripos($_SERVER['HTTP_REFERER'] ?? '', 'wildfire') !== false;
+                $num = $isWildfire ? 'Use code' : 'Certificate number';
+                wp_send_json_error(['message' => "{$num} is required."], 404);
             }
             $care = $this->checkCert($id, 13);
             if ($care) {
@@ -428,10 +430,14 @@ if (!class_exists('LatePointExt')) :
             $id = trim($_POST['id']);
             if ($id && !$this->checkCert($id, $_POST['service_id'] ?? null)) {
                 $_SESSION['certCount'] += 1;
-                if ($_SESSION['certCount'] >= 3)
-                    $msg = "We're sorry. The certificate number provided does not match our records. Please contact Manitoba Blue Cross at <nobr>1-888-596-1032</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
-                else
-                    $msg = 'Certificate number does not match our records. Please try again.';
+                $isWildfire = stripos($_SERVER['HTTP_REFERER'] ?? '', 'wildfire') !== false;
+                if ($_SESSION['certCount'] >= 3) {
+                    $num = $isWildfire ? 'use code' : 'certificate number';
+                    $msg = "We're sorry. The {$num} provided does not match our records. Please contact Manitoba Blue Cross at <nobr>1-888-596-1032</nobr> to confirm eligibility. For any technical issues, please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
+                } else {
+                    $num = $isWildfire ? 'Provided code' : 'Certificate number';
+                    $msg = "{$num} does not match our records. Please try again.";
+                }
 
                 wp_send_json_error(['message' => $msg, 'count' => $_SESSION['certCount']], 404);
             }
