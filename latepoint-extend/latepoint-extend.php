@@ -1785,6 +1785,8 @@ EOT;
                             $check = stripos($row->service, 'navigation') !== false;
                         elseif ($serviceId == 15)
                             $check = stripos($row->service, 'eap2') !== false;
+                        else
+                            $check = $row;
 
                         break;
                     default:
