@@ -187,11 +187,15 @@ jQuery(function ($) {
             });
             $('.confirmation-app-info').addClass('replaced');
         }
+        if ($('.os-months:not(.binded)').length) {
+            $('.os-months').each(function () {
+                $(this).on('click', '.os-day', function () {
+                    if (($('html').attr('lang') == 'fr') && (window.doGTranslate)) window.doGTranslate('en|fr');
+                });
+                $(this).addClass('binded');
+            });
+        }
     }, 100);
-
-    $('html[lang="fr"]').on('click', '.os-day', function () {
-        if (window.doGTranslate) window.doGTranslate('en|fr');
-    });
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function () {
         $('.latepoint-body .latepoint_start_date').val(start_date);
