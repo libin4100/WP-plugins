@@ -161,15 +161,18 @@ jQuery(function ($) {
             },
         }
         for (let cls in replaces) {
-            if ($('html[lang="fr"] ' + cls + ':not(.replaced)').length) {
-                let html = $('html[lang="fr"] ' + cls).html();
-                for (let key in replaces[cls]) {
+            if ($('html[lang="fr"] ' + cls + ":not(.replaced)").length) {
+                $('html[lang="fr"] ' + cls).each(function () {
+                    let el = $(this);
+                    let html = el.html();
+                    for (let key in replaces[cls]) {
                     if (html.includes(key)) {
                         html = html.replace(key, replaces[cls][key]);
-                        $('html[lang="fr"] ' + cls).html(html);
-                        $('html[lang="fr"] ' + cls).addClass("replaced notranslate");
+                        el.html(html);
+                        el.addClass("replaced notranslate");
                     }
-                }
+                    }
+                });
             }
         }
         if ($('html[lang="fr"] .os-mask-phone:not(.replaced)').length && $('html[lang="fr"] .os-mask-phone[placeholder="Numéro de téléphone portable"]').length) {
@@ -185,6 +188,10 @@ jQuery(function ($) {
             $('.confirmation-app-info').addClass('replaced');
         }
     }, 100);
+
+    $('html[lang="fr"]').on('click', '.os-day', function () {
+        if (window.doGTranslate) window.doGTranslate('en|fr');
+    });
 
     $('body').on('click', '.latepoint-body .latepoint-skip-datetime-btn', function () {
         $('.latepoint-body .latepoint_start_date').val(start_date);
