@@ -337,6 +337,7 @@ jQuery(function ($) {
     })
     $('body').on('click', '.check-mbc-cert', function () {
         $(this).addClass('os-loading').prop('disabled', true);
+        if($('#mbc-cert-hidden').length) $('#mbc-cert-hidden').remove();
         var pform = $(this).closest('.form');
         var cert = pform.find('.mbc-cert').val();
         var action = 'mbc_certificate';
@@ -399,7 +400,7 @@ jQuery(function ($) {
             $('.mbc-wrapper .os-loading').removeClass('os-loading');
             $('.mbc-wrapper .form').show();
             $('.mbc-wrapper .form').find('#certificate-error').remove();
-            $('#mbc-cert-hidden').remove();
+            //$('#mbc-cert-hidden').remove();
             $('.mbc-image').remove();
         }
     })
