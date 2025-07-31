@@ -161,15 +161,18 @@ jQuery(function ($) {
             },
         }
         for (let cls in replaces) {
-            if ($('html[lang="fr"] ' + cls + ':not(.replaced)').length) {
-                let html = $('html[lang="fr"] ' + cls).html();
-                for (let key in replaces[cls]) {
+            if ($('html[lang="fr"] ' + cls + ":not(.replaced)").length) {
+                $('html[lang="fr"] ' + cls).each(function () {
+                    let el = $(this);
+                    let html = el.html();
+                    for (let key in replaces[cls]) {
                     if (html.includes(key)) {
                         html = html.replace(key, replaces[cls][key]);
-                        $('html[lang="fr"] ' + cls).html(html);
-                        $('html[lang="fr"] ' + cls).addClass("replaced notranslate");
+                        el.html(html);
+                        el.addClass("replaced notranslate");
                     }
-                }
+                    }
+                });
             }
         }
         if ($('html[lang="fr"] .os-mask-phone:not(.replaced)').length && $('html[lang="fr"] .os-mask-phone[placeholder="Numéro de téléphone portable"]').length) {
@@ -183,6 +186,14 @@ jQuery(function ($) {
                 }
             });
             $('.confirmation-app-info').addClass('replaced');
+        }
+        if ($('.os-months:not(.binded)').length) {
+            $('.os-months').each(function () {
+                $(this).on('click', '.os-day', function () {
+                    if (($('html').attr('lang') == 'fr') && (window.doGTranslate)) window.doGTranslate('en|fr');
+                });
+                $(this).addClass('binded');
+            });
         }
     }, 100);
 
@@ -326,6 +337,7 @@ jQuery(function ($) {
     })
     $('body').on('click', '.check-mbc-cert', function () {
         $(this).addClass('os-loading').prop('disabled', true);
+        if($('#mbc-cert-hidden').length) $('#mbc-cert-hidden').remove();
         var pform = $(this).closest('.form');
         var cert = pform.find('.mbc-cert').val();
         var action = 'mbc_certificate';
@@ -388,7 +400,7 @@ jQuery(function ($) {
             $('.mbc-wrapper .os-loading').removeClass('os-loading');
             $('.mbc-wrapper .form').show();
             $('.mbc-wrapper .form').find('#certificate-error').remove();
-            $('#mbc-cert-hidden').remove();
+            //$('#mbc-cert-hidden').remove();
             $('.mbc-image').remove();
         }
     })
