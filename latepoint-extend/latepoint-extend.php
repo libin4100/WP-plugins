@@ -1208,6 +1208,7 @@ EOT;
                         'r',
                         'region',
                         'language',
+                        'group_id',
                     ] as $key
                 ) {
                     if ($model->custom_fields[$key] ?? false) {
