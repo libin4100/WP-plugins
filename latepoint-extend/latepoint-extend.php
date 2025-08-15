@@ -1152,6 +1152,7 @@ EOT;
                         'r',
                         'region',
                         'language',
+                        'group_id',
                     ] as $key
                 ) {
                     if ($data['custom_fields'][$key] ?? false) {
