@@ -394,7 +394,7 @@ if (!class_exists('LatePointExt')) :
                     break;
                 case 28:
                     $partner = 'mgt';
-                    $key = 'Certificate number';
+                    $key = 'MGT employee ID';
                     $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     break;
                 default:

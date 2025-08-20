@@ -160,6 +160,12 @@ jQuery(function ($) {
                 "Assis": "Sam",
                 "Soleil": "Dim",
             },
+            "h3 > span.notranslate": {
+                "Montreal Gateway Terminal Partnership": "Société Terminaux Montréal Gateway"
+            },
+            "#booking_custom_fields_cf_ewhb7h3k": {
+                "ID d'employé MGT": "Numéro d’employé MGT"
+            }
         }
         for (let cls in replaces) {
             if ($('html[lang="fr"] ' + cls + ":not(.replaced)").length) {
