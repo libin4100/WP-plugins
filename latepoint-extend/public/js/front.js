@@ -174,14 +174,33 @@ jQuery(function ($) {
                     let html = el.html();
                     for (let key in replaces[cls]) {
                         if (html.includes(key)) {
-                            html = html.replace(key, replaces[cls][key]);
-                            el.html(html);
+                            html = html.replaceAll(key, replaces[cls][key]);
+                            el.html(html).addClass("replaced notranslate");
                         }
                     }
-                    el.addClass("replaced notranslate");
                 });
             }
         }
+        const reverts = {
+            "h3 > span.notranslate.replaced": {
+                "Société Terminaux Montréal Gateway": "Montreal Gateway Terminal Partnership"
+            },
+        }
+        for (let cls in reverts) {
+            if ($('html[lang!="fr"] ' + cls).length) {
+                $('html[lang!="fr"] ' + cls).each(function () {
+                    let el = $(this);
+                    let html = el.html();
+                    for (let key in reverts[cls]) {
+                        if (html.includes(reverts[cls][key])) {
+                            html = html.replaceAll(reverts[cls][key], key);
+                            el.html(html).removeClass("replaced");
+                        }
+                    }
+                });
+            }
+        }
+            
         if ($('html[lang="fr"] .os-mask-phone:not(.replaced)').length && $('html[lang="fr"] .os-mask-phone[placeholder="Numéro de téléphone portable"]').length) {
             latepoint_mask_phone(jQuery(".os-mask-phone"))
             $('html[lang="fr"] .os-mask-phone').addClass('replaced');
