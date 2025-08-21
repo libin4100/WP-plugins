@@ -81,6 +81,7 @@ trait ProcessStepTrait
                         'vpi' => ['agent_id' => 20, 'field' => 'cf_9OaDIkYh'],
                         'cleveland_clinic' => ['agent_id' => 21, 'field' => 'cf_yjnZIZ1D'],
                         'hunters' => ['agent_id' => 22, 'field' => 'cf_9e1mhF4v'],
+                        'bestbuy' => ['agent_id' => 29, 'field' => 'cf_ryf56IpW'],
                     ];
                     foreach ($lists as $key => $list) {
                         if ($bookingObject->agent_id == $list['agent_id'] && $k == $list['field']) {
