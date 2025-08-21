@@ -396,6 +396,7 @@ if (!class_exists('LatePointExt')) :
                 case 29:
                     $partner = 'seb';
                     $key = 'EEID';
+                    break;
                 default:
                     $partner = '';
                     $key = '';
