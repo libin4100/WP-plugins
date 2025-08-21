@@ -375,7 +375,6 @@ if (!class_exists('LatePointExt')) :
                 case 22:
                     $partner = 'hunters';
                     $key = 'Email address';
-                    $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     break;
                 case 23:
                     $partner = 'cpsm';
@@ -385,23 +384,24 @@ if (!class_exists('LatePointExt')) :
                 case 24:
                     $partner = 'asylum';
                     $key = 'Email address';
-                    $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     break;
                 case 25:
                     $partner = 'local711';
                     $key = 'Email address';
-                    $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     break;
                 case 28:
                     $partner = 'mgt';
                     $key = 'MGT employee ID';
-                    $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
                     break;
+                case 29:
+                    $partner = 'seb';
+                    $key = 'EEID';
                 default:
                     $partner = '';
                     $key = '';
                     break;
             }
+            !isset($_msg) && $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-833-820-8800</nobr> for assistance.";
 
             if (!$id) {
                 wp_send_json_error(['message' => $key . ' is required.'], 404);

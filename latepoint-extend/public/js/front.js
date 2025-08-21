@@ -28,7 +28,7 @@ jQuery(function ($) {
         "frhzp65m": { action: 'check_certificate_by', by: 'sp', agent_id: 'input[name="restrictions[selected_agent]"' },
         "lbbtei3k": { action: 'check_certificate_by', by: 'sp', agent_id: 'input[name="restrictions[selected_agent]"' },
         "ewhb7h3k": { action: 'check_certificate_by', by: 'sp', agent_id: 'input[name="restrictions[selected_agent]"' },
-        "ryf56ipw": { action: 'check_certificate_seb', service_id: $('input[name="restrictions[selected_service]"').val() },
+        "ryf56ipw": { action: 'check_certificate_by', by: 'sp', agent_id: 'input[name="restrictions[selected_agent]"' },
     }
 
     setInterval(function () {

@@ -86,7 +86,8 @@ trait ProcessStepTrait
                     foreach ($lists as $key => $list) {
                         if ($bookingObject->agent_id == $list['agent_id'] && $k == $list['field']) {
                             if (!$this->checkCertPartner($custom_fields_data[$k] ?? '', $key, $bookingObject->service_id)) {
-                                $msg = 'Certificate number does not match our records. Please try again.';
+                                $name = $f['label'] ?? 'Certificate number';
+                                $msg = $name . ' does not match our records. Please try again.';
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
                         }
