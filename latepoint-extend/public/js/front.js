@@ -192,8 +192,8 @@ jQuery(function ($) {
                     let el = $(this);
                     let html = el.html();
                     for (let key in reverts[cls]) {
-                        if (html.includes(reverts[cls][key])) {
-                            html = html.replaceAll(reverts[cls][key], key);
+                        if (html.includes(key)) {
+                            html = html.replaceAll(key, reverts[cls][key]);
                             el.html(html).removeClass("replaced");
                         }
                     }
