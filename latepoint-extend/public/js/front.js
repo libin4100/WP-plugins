@@ -28,6 +28,7 @@ jQuery(function ($) {
         "frhzp65m": { action: 'check_certificate_by', by: 'sp', agent_id: 'input[name="restrictions[selected_agent]"' },
         "lbbtei3k": { action: 'check_certificate_by', by: 'sp', agent_id: 'input[name="restrictions[selected_agent]"' },
         "ewhb7h3k": { action: 'check_certificate_by', by: 'sp', agent_id: 'input[name="restrictions[selected_agent]"' },
+        "ryf56ipw": { action: 'check_certificate_by', by: 'sp', agent_id: 'input[name="restrictions[selected_agent]"' },
     }
 
     setInterval(function () {
@@ -160,6 +161,12 @@ jQuery(function ($) {
                 "Assis": "Sam",
                 "Soleil": "Dim",
             },
+            "h3 > span.notranslate": {
+                "Montreal Gateway Terminal Partnership": "Société Terminaux Montréal Gateway"
+            },
+            ".step-custom-fields-for-booking-w": {
+                "ID d'employé MGT": "Numéro d’employé MGT"
+            }
         }
         for (let cls in replaces) {
             if ($('html[lang="fr"] ' + cls + ":not(.replaced)").length) {
@@ -167,15 +174,34 @@ jQuery(function ($) {
                     let el = $(this);
                     let html = el.html();
                     for (let key in replaces[cls]) {
-                    if (html.includes(key)) {
-                        html = html.replace(key, replaces[cls][key]);
-                        el.html(html);
-                        el.addClass("replaced notranslate");
-                    }
+                        if (html.includes(key)) {
+                            html = html.replaceAll(key, replaces[cls][key]);
+                            el.html(html).addClass("replaced notranslate");
+                        }
                     }
                 });
             }
         }
+        const reverts = {
+            "h3 > span.notranslate.replaced": {
+                "Société Terminaux Montréal Gateway": "Montreal Gateway Terminal Partnership"
+            },
+        }
+        for (let cls in reverts) {
+            if ($('html[lang!="fr"] ' + cls).length) {
+                $('html[lang!="fr"] ' + cls).each(function () {
+                    let el = $(this);
+                    let html = el.html();
+                    for (let key in reverts[cls]) {
+                        if (html.includes(key)) {
+                            html = html.replaceAll(key, reverts[cls][key]);
+                            el.html(html).removeClass("replaced");
+                        }
+                    }
+                });
+            }
+        }
+            
         if ($('html[lang="fr"] .os-mask-phone:not(.replaced)').length && $('html[lang="fr"] .os-mask-phone[placeholder="Numéro de téléphone portable"]').length) {
             latepoint_mask_phone(jQuery(".os-mask-phone"))
             $('html[lang="fr"] .os-mask-phone').addClass('replaced');
