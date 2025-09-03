@@ -81,11 +81,13 @@ trait ProcessStepTrait
                         'vpi' => ['agent_id' => 20, 'field' => 'cf_9OaDIkYh'],
                         'cleveland_clinic' => ['agent_id' => 21, 'field' => 'cf_yjnZIZ1D'],
                         'hunters' => ['agent_id' => 22, 'field' => 'cf_9e1mhF4v'],
+                        'bestbuy' => ['agent_id' => 29, 'field' => 'cf_ryf56IpW'],
                     ];
                     foreach ($lists as $key => $list) {
                         if ($bookingObject->agent_id == $list['agent_id'] && $k == $list['field']) {
                             if (!$this->checkCertPartner($custom_fields_data[$k] ?? '', $key, $bookingObject->service_id)) {
-                                $msg = 'Certificate number does not match our records. Please try again.';
+                                $name = $f['label'] ?? 'Certificate number';
+                                $msg = $name . ' does not match our records. Please try again.';
                                 $errors[] = ['type' => 'validation', 'message' => $msg];
                             }
                         }

@@ -103,6 +103,10 @@ trait SetFieldTrait
                 $care = $bookingObject->service_id == 13;
                 $fields = $this->_fields('sp', false, compact('certKey', 'care'));
                 break;
+            case $bookingObject->agent_id == 29:
+                // SEB/BestBuy
+                $fields = $this->_fields($bookingObject->service_id == 13 ? 'bestbuyc' : 'bestbuy');
+                break;
             case in_array($bookingObject->service_id, [2, 3]):
                 $this->_fields('located');
                 break;
@@ -251,6 +255,8 @@ trait SetFieldTrait
             'lg' => $this->createProviderField('cf_AYVpjhpP'),
             'vpi' => $this->createProviderField('cf_9OaDIkYh'),
             'cc' => $this->createProviderField('cf_yjnZIZ1D', false, ['cf_6A3SfgET' => ['label' => __('Are you located in Quebec?', 'latepoint'), 'options' => "Yes\nNo"]]),
+            'bestbuy' => $this->createProviderField('cf_ryf56IpW'),
+            'bestbuyc' => $this->createCareProviderField('cf_ryf56IpW'),
         ];
 
         return array_merge($providerFieldDefs, $specialFieldDefs);
