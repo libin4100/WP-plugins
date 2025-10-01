@@ -22,7 +22,7 @@
             'Home health and community care',
             'Rehab services',
             'Dental care and orthotics',
-            'Family medicine',
+            'Family doctor',
             'biopsy' => 'Biopsy',
             'og' => 'Obstetrics and Gynecology',
             'Other'
