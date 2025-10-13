@@ -396,6 +396,7 @@ if (!class_exists('LatePointExt')) :
                 case 29:
                     $partner = 'seb';
                     $key = 'EEID';
+                    $_msg = "We're sorry. The {$key} provided does not match our records. Please contact Gotodoctor.ca at <nobr>1-866-866-8659</nobr> for assistance.";
                     break;
                 default:
                     $partner = '';
