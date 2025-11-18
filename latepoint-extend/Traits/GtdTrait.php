@@ -285,4 +285,17 @@ jQuery(document).ready(function($) {
 JS;
         return $js;
     }
+
+    public function wifiField()
+    {
+        return ['cf_sx8M50Pw', 'cf_VTXfH4Wq', 'cf_ZmLsfxFI'];
+    }
+
+    public function wifiRules()
+    {
+        return [
+            'cf_VTXfH4Wq' => [['cf_sx8M50Pw' => '!=No']],
+            'cf_ZmLsfxFI' => [['cf_sx8M50Pw' => '!=No']],
+        ];
+    }
 }
