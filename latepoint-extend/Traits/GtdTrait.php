@@ -288,14 +288,16 @@ JS;
 
     public function wifiField()
     {
-        return ['cf_sx8M50Pw', 'cf_VTXfH4Wq', 'cf_ZmLsfxFI'];
+        return ['cf_sx8M50Pw', 'cf_VTXfH4Wq', 'cf_ZmLsfxFI', 'cf_fH4hcx29', 'cf_B7rj01VE'];
     }
 
     public function wifiRules()
     {
         return [
-            'cf_VTXfH4Wq' => [['cf_sx8M50Pw' => '!=No']],
-            'cf_ZmLsfxFI' => [['cf_sx8M50Pw' => '!=No']],
+            'cf_fH4hcx29' => [['cf_sx8M50Pw' => 'Yes']],
+            'cf_B7rj01VE' => [['cf_fH4hcx29' => 'No']],
+            'cf_VTXfH4Wq' => [['cf_fH4hcx29' => 'Yes'], ['cf_fH4hcx29' => 'No']],
+            'cf_ZmLsfxFI' => [['cf_sx8M50Pw' => 'Yes'], ['cf_fH4hcx29' => 'No']],
         ];
     }
 }
