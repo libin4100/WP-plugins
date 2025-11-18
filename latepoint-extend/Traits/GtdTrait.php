@@ -97,7 +97,7 @@ trait GtdTrait
             'cf_NeRenew4',
             'cf_NeRenew5',
             'cf_NeRenew6',
-        ], $prepend ? ['cf_x18jr0Vf'] : []);
+        ], $prepend ? ['cf_x18jr0Vf', ''] : []);
     }
 
     public function needRenewRules()
@@ -286,9 +286,15 @@ JS;
         return $js;
     }
 
-    public function wifiField()
+    public function wifiField($prepend = false)
     {
-        return ['cf_sx8M50Pw', 'cf_VTXfH4Wq', 'cf_ZmLsfxFI', 'cf_fH4hcx29', 'cf_B7rj01VE'];
+        return array_merge([
+            'cf_sx8M50Pw',
+            'cf_VTXfH4Wq',
+            'cf_ZmLsfxFI',
+            'cf_fH4hcx29',
+            'cf_B7rj01VE',
+        ], $prepend ? ['', '1'] : []);
     }
 
     public function wifiRules()
