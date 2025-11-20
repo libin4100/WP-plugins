@@ -300,7 +300,7 @@ JS;
             'cf_ZmLsfxFI',
             'cf_fH4hcx29',
             'cf_B7rj01VE',
-        ], $prepend ? ['', '1'] : []);
+        ], $prepend ? ['', 'cf_WFHtiGvf'] : []);
     }
 
     public function wifiRules()
