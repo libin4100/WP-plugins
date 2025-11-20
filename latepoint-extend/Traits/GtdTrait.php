@@ -212,6 +212,12 @@ jQuery(document).ready(function($) {
                         ruleMatch = false;
                         break;
                     }
+                } else if (value.startsWith('<')) {
+                    value = value.substring(1);
+                    if (!f.val() || (f.val() >= value)) {
+                        ruleMatch = false;
+                        break;
+                    }
                 } else {
                     if (f.val() !== value) {
                         ruleMatch = false;
@@ -300,6 +306,7 @@ JS;
     public function wifiRules()
     {
         return [
+            'cf_sx8M50Pw' => [['cf_WFHtiGvf' => '<' . date('Y-m-d', strtotime('18 years ago'))]],
             'cf_fH4hcx29' => [['cf_sx8M50Pw' => 'Home Tyto']],
             'cf_B7rj01VE' => [['cf_fH4hcx29' => 'No']],
             'cf_VTXfH4Wq' => [['cf_fH4hcx29' => 'Yes'], ['cf_fH4hcx29' => 'No']],
