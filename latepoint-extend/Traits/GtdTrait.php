@@ -296,6 +296,7 @@ JS;
     {
         return array_merge([
             'cf_sx8M50Pw',
+            'cf_nmfpde3f',
             'cf_VTXfH4Wq',
             'cf_ZmLsfxFI',
             'cf_fH4hcx29',
@@ -306,6 +307,7 @@ JS;
     public function wifiRules()
     {
         return [
+            'cf_nmfpde3f' => [['cf_sx8M50Pw' => 'Tyto Clinic']],
             'cf_fH4hcx29' => [['cf_sx8M50Pw' => 'Tyto Home']],
             'cf_B7rj01VE' => [['cf_fH4hcx29' => 'No']],
             'cf_VTXfH4Wq' => [['cf_fH4hcx29' => 'Yes'], ['cf_fH4hcx29' => 'No']],

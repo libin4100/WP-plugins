@@ -254,7 +254,7 @@ trait SetFieldTrait
             'ubc' => $this->createCareProviderField('cf_QBLBYjS8'),
             'lg' => $this->createProviderField('cf_AYVpjhpP'),
             'vpi' => $this->createProviderField('cf_9OaDIkYh'),
-            'cc' => $this->createProviderField(['cf_yjnZIZ1D', 'cf_sx8M50Pw', 'cf_VTXfH4Wq', 'cf_ZmLsfxFI', 'cf_fH4hcx29', 'cf_B7rj01VE'], false, ['cf_6A3SfgET' => ['label' => __('Are you located in Quebec?', 'latepoint'), 'options' => "Yes\nNo"]]),
+            'cc' => $this->createProviderField(['cf_yjnZIZ1D', 'cf_sx8M50Pw', 'cf_VTXfH4Wq', 'cf_ZmLsfxFI', 'cf_fH4hcx29', 'cf_B7rj01VE', 'cf_nmfpde3f'], false, ['cf_6A3SfgET' => ['label' => __('Are you located in Quebec?', 'latepoint'), 'options' => "Yes\nNo"]]),
             'bestbuy' => $this->createProviderField('cf_ryf56IpW'),
             'bestbuyc' => $this->createCareProviderField('cf_ryf56IpW'),
         ];
