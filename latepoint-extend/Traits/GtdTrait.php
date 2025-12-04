@@ -309,9 +309,9 @@ JS;
         return [
             'cf_nmfpde3f' => [['cf_sx8M50Pw' => 'Tyto Clinic']],
             'cf_fH4hcx29' => [['cf_sx8M50Pw' => 'Tyto Home']],
-            'cf_B7rj01VE' => [['cf_fH4hcx29' => 'No']],
-            'cf_VTXfH4Wq' => [['cf_fH4hcx29' => 'Yes'], ['cf_fH4hcx29' => 'No']],
-            'cf_ZmLsfxFI' => [['cf_fH4hcx29' => 'Yes'], ['cf_fH4hcx29' => 'No']],
+            'cf_B7rj01VE' => [['cf_sx8M50Pw' => 'Tyto Home', 'cf_fH4hcx29' => 'No']],
+            'cf_VTXfH4Wq' => [['cf_sx8M50Pw' => 'Tyto Home', 'cf_fH4hcx29' => 'Yes'], ['cf_sx8M50Pw' => 'Tyto Home', 'cf_fH4hcx29' => 'No']],
+            'cf_ZmLsfxFI' => [['cf_sx8M50Pw' => 'Tyto Home', 'cf_fH4hcx29' => 'Yes'], ['cf_sx8M50Pw' => 'Tyto Home', 'cf_fH4hcx29' => 'No']],
         ];
     }
 }
