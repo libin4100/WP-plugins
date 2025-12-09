@@ -301,6 +301,7 @@ JS;
             'cf_ZmLsfxFI',
             'cf_fH4hcx29',
             'cf_B7rj01VE',
+            'cf_6NqyuLpc',
         ], $prepend ? ['', 'cf_WFHtiGvf'] : []);
     }
 
@@ -308,10 +309,9 @@ JS;
     {
         return [
             'cf_nmfpde3f' => [['cf_sx8M50Pw' => 'Tyto Clinic']],
-            'cf_fH4hcx29' => [['cf_sx8M50Pw' => 'Tyto Home']],
-            'cf_B7rj01VE' => [['cf_sx8M50Pw' => 'Tyto Home', 'cf_fH4hcx29' => 'No']],
-            'cf_VTXfH4Wq' => [['cf_sx8M50Pw' => 'Tyto Home', 'cf_fH4hcx29' => 'Yes'], ['cf_sx8M50Pw' => 'Tyto Home', 'cf_fH4hcx29' => 'No']],
-            'cf_ZmLsfxFI' => [['cf_sx8M50Pw' => 'Tyto Home', 'cf_fH4hcx29' => 'Yes'], ['cf_sx8M50Pw' => 'Tyto Home', 'cf_fH4hcx29' => 'No']],
+            'cf_6NqyuLpc' => [['cf_6NqyuLpc' => '!='], ['cf_6NqyuLpc' => '!=']],
+            'cf_VTXfH4Wq' => [['cf_sx8M50Pw' => 'Tyto Home']],
+            'cf_ZmLsfxFI' => [['cf_sx8M50Pw' => 'Tyto Home']],
         ];
     }
 }
