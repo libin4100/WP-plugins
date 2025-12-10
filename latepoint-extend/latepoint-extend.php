@@ -1030,6 +1030,7 @@ jQuery(function($) {
     function showhide() {
         if($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_wfhtigvf').attr('type') != 'date') {
             $('#booking_custom_fields_cf_wfhtigvf').attr('type', 'date');
+            $('#booking_custom_fields_cf_wfhtigvf').parent('div.os-form-group').addClass('os-form-select-group').removeClass('os-form-textfield-group')
         }
         if($('#booking_custom_fields_cf_wfhtigvf').length && ($('#booking_custom_fields_cf_x18jr0vf').val() != 'Yes' && !alist.includes(aid))) {
             $('#booking_custom_fields_cf_wfhtigvf').closest('.os-form-group').hide();
