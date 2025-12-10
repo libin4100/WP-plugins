@@ -206,7 +206,12 @@ jQuery(document).ready(function($) {
             for (var key in rule) {
                 var value = rule[key];
                 var f = $('#' + fields[key]);
-                if (value.startsWith('!=')) {
+                if (value === '!empty') {
+                    if (!f.val() || f.val().trim() === '') {
+                        ruleMatch = false;
+                        break;
+                    }
+                } else if (value.startsWith('!=')) {
                     value = value.substring(2);
                     if (!f.val() || (f.val() === value)) {
                         ruleMatch = false;
@@ -309,7 +314,9 @@ JS;
     {
         return [
             'cf_nmfpde3f' => [['cf_sx8M50Pw' => 'Tyto Clinic']],
-            'cf_6NqyuLpc' => [['cf_6NqyuLpc' => '!='], ['cf_6NqyuLpc' => '!=']],
+            'cf_fH4hcx29' => [['cf_sx8M50Pw' => 'Tyto Home']],
+            'cf_B7rj01VE' => [['cf_sx8M50Pw' => 'Tyto Home']],
+            'cf_6NqyuLpc' => [['cf_6NqyuLpc' => '!empty'], ['cf_6NqyuLpc' => '!empty']],
             'cf_VTXfH4Wq' => [['cf_sx8M50Pw' => 'Tyto Home']],
             'cf_ZmLsfxFI' => [['cf_sx8M50Pw' => 'Tyto Home']],
         ];
