@@ -316,7 +316,7 @@ JS;
             'cf_nmfpde3f' => [['cf_sx8M50Pw' => 'Tyto Clinic']],
             'cf_fH4hcx29' => [['cf_sx8M50Pw' => 'Tyto Home']],
             'cf_B7rj01VE' => [['cf_sx8M50Pw' => 'Tyto Home']],
-            'cf_6NqyuLpc' => [['cf_6NqyuLpc' => '!empty'], ['cf_6NqyuLpc' => '!empty']],
+            'cf_6NqyuLpc' => [['cf_fH4hcx29' => '!empty'], ['cf_B7rj01VE' => '!empty']],
             'cf_VTXfH4Wq' => [['cf_sx8M50Pw' => 'Tyto Home']],
             'cf_ZmLsfxFI' => [['cf_sx8M50Pw' => 'Tyto Home']],
         ];
