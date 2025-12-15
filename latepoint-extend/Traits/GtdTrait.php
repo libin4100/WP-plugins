@@ -321,4 +321,58 @@ JS;
             'cf_ZmLsfxFI' => [['cf_sx8M50Pw' => 'Tyto Home']],
         ];
     }
+
+    public function wifiJs()
+    {
+        $customJs = <<<JS
+<script>
+jQuery(document).ready(function($) {
+    var tytoSelect = '#booking_custom_fields_cf_sx8m50pw';
+    var dobField = '#booking_custom_fields_cf_wfhtigvf';
+    var guardianFields = ['#booking_custom_fields_cf_fh4hcx29', '#booking_custom_fields_cf_b7rj01ve'];
+    var tytoHomeRequiredFields = ['#booking_custom_fields_cf_vtxfh4wq', '#booking_custom_fields_cf_zmlsfxfi'];
+
+    function calculateAge(birthDate) {
+        var today = new Date();
+        var birth = new Date(birthDate);
+        var age = today.getFullYear() - birth.getFullYear();
+        var m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    function updateRequiredFields() {
+        var tytoValue = $(tytoSelect).val();
+        var dobValue = $(dobField).val();
+        var isTytoHome = tytoValue === 'Tyto Home';
+        var isUnder18 = dobValue ? calculateAge(dobValue) < 18 : false;
+
+        guardianFields.forEach(function(field) {
+            $(field).prop('required', isTytoHome && isUnder18);
+        });
+
+        tytoHomeRequiredFields.forEach(function(field) {
+            $(field).prop('required', isTytoHome);
+        });
+
+        // cf_6NqyuLpc required if either guardian field has value
+        var hasGuardianValue = guardianFields.some(function(field) {
+            return $(field).val() && $(field).val().trim() !== '';
+        });
+        $('#booking_custom_fields_cf_6nqyulpc').prop('required', hasGuardianValue);
+    }
+
+    $(tytoSelect).on('change', updateRequiredFields);
+    $(dobField).on('change', updateRequiredFields);
+    guardianFields.forEach(function(field) {
+        $(field).on('change', updateRequiredFields);
+    });
+    updateRequiredFields();
+});
+</script>
+JS;
+        return $customJs . $this->rulesJs('wifiField', 'wifiRules');
+    }
 }

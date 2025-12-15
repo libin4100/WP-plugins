@@ -116,6 +116,47 @@ trait ProcessStepTrait
                         $errors = array_merge($errors, $_errors);
                     }
                 }
+                // Cleveland Clinic (agent_id == 21) wifi validation
+                if ($bookingObject->agent_id == 21) {
+                    $isTytoHome = ($custom_fields_data['cf_sx8M50Pw'] ?? '') === 'Tyto Home';
+
+                    // Calculate age from date of birth
+                    $isUnder18 = false;
+                    $dob = $custom_fields_data['cf_WFHtiGvf'] ?? '';
+                    if ($dob && preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
+                        $birthDate = new DateTime($dob);
+                        $today = new DateTime();
+                        $isUnder18 = $today->diff($birthDate)->y < 18;
+                    }
+
+                    // Guardian fields required when Tyto Home AND under 18
+                    if ($isTytoHome && $isUnder18) {
+                        foreach (['cf_fH4hcx29', 'cf_B7rj01VE'] as $field) {
+                            if (empty($custom_fields_data[$field])) {
+                                $label = $custom_fields_for_booking[$field]['label'] ?? $field;
+                                $errors[] = ['type' => 'validation', 'message' => $label . ' is required'];
+                            }
+                        }
+                    }
+
+                    // Tyto Home required fields
+                    if ($isTytoHome) {
+                        foreach (['cf_VTXfH4Wq', 'cf_ZmLsfxFI'] as $field) {
+                            if (empty($custom_fields_data[$field])) {
+                                $label = $custom_fields_for_booking[$field]['label'] ?? $field;
+                                $errors[] = ['type' => 'validation', 'message' => $label . ' is required'];
+                            }
+                        }
+                    }
+
+                    // cf_6NqyuLpc required if either guardian field has value
+                    if (!empty($custom_fields_data['cf_fH4hcx29']) || !empty($custom_fields_data['cf_B7rj01VE'])) {
+                        if (empty($custom_fields_data['cf_6NqyuLpc'])) {
+                            $label = $custom_fields_for_booking['cf_6NqyuLpc']['label'] ?? 'cf_6NqyuLpc';
+                            $errors[] = ['type' => 'validation', 'message' => $label . ' is required'];
+                        }
+                    }
+                }
                 $error_messages = [];
                 if ($errors) {
                     $is_valid = false;
