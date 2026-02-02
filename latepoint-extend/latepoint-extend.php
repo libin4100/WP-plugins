@@ -186,6 +186,9 @@ if (!class_exists('LatePointExt')) :
                 wp_send_json_error(['message' => 'Certificate number is required.'], 404);
             }
             $check = $this->checkCertPartner($id, 'cb_providers', 'services');
+            if ($check === true) {
+                $check = ['care' => true, 'eap' => true, 'op' => true];
+            }
             $care = $check['care'] ?? false;
             $eap = $check['eap'] ?? false;
             $op = $check['op'] ?? false;
