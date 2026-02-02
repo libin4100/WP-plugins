@@ -1798,7 +1798,8 @@ EOT;
                             $check = stripos($row->service, 'navigation') !== false;
                         elseif ($serviceId == 15)
                             $check = stripos($row->service, 'eap2') !== false;
-
+                        else
+                            $check = $row;
                         break;
                     default:
                         $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));
