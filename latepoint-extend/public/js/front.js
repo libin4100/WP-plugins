@@ -174,6 +174,9 @@ jQuery(function ($) {
             },
             ".wpcf7-form .wpcf7-response-output": {
                 "Thank you for submitting your EAP request. We have sent you an email with simple steps to get started on our digital wellness platform.": "Merci d’avoir soumis votre demande au programme d’aide aux employés (PAE). Nous vous avons envoyé un courriel contenant des étapes simples pour commencer à utiliser notre plateforme de bien-être numérique."
+            },
+            ".wpcf7-form .error": {
+                "This field is required.": "Ce champ est requis."
             }
         }
         for (let cls in replaces) {
