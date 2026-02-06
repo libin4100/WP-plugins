@@ -177,6 +177,9 @@ jQuery(function ($) {
             },
             ".wpcf7-form .error": {
                 "This field is required.": "Ce champ est requis."
+            },
+            ".wpcf7-form .wpcf7-not-valid-tip": {
+                "Please fill out this field.": "Veuillez remplir ce champ."
             }
         }
         for (let cls in replaces) {
