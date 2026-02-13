@@ -143,10 +143,28 @@ jQuery(function ($) {
             }
         }
         if ($('#booking_custom_fields_cf_edaxd83r').length && !$('#booking_custom_fields_cf_edaxd83r').hasClass('select2-hidden-accessible')) {
-            $('#booking_custom_fields_cf_edaxd83r').attr('multiple', 'multiple').select2({
-                placeholder: '---Select services---',
-                width: '100%',
-            });
+            var $el = $('#booking_custom_fields_cf_edaxd83r');
+            var services = [
+                'Addictions', 'Allergy and immunology', 'Audiology', 'Biopsy',
+                'Chiropody/foot care', 'Dental care and orthotics', 'Family doctor',
+                'Home health and community care', 'Internal medicine', 'Medical aesthetics',
+                'Medical diagnostics and imaging', 'Medical marijuana', 'Medical procedure/surgery',
+                'Mental health', 'Obstetrics and Gynecology', 'Orthopedic surgery',
+                'Paediatric care', 'Pain management', 'Rehab services', 'Respiratory care',
+                'Social and community support services', 'Specialist referral', 'Other'
+            ];
+            if (!$el.is('select')) {
+                var $select = $('<select></select>').attr({ id: $el.attr('id'), name: $el.attr('name'), multiple: 'multiple' });
+                $el.replaceWith($select);
+                $el = $select;
+            } else {
+                $el.attr('multiple', 'multiple');
+            }
+            if (!$el.find('option[value!=""]').length) {
+                $el.empty();
+                services.forEach(function(s) { $el.append($('<option>').val(s).text(s)); });
+            }
+            $el.select2({ placeholder: '---Select services---', width: '100%', dropdownParent: $el.closest('.latepoint-body') });
         }
         if ($('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').length && $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').is(':visible')) {
             $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').hide();
