@@ -142,6 +142,12 @@ jQuery(function ($) {
                 $('#booking_custom_fields_cf_cyhjctjz').parents('.os-form-group').parent('div').hide();
             }
         }
+        if ($('#booking_custom_fields_cf_edaxd83r').length && !$('#booking_custom_fields_cf_edaxd83r').hasClass('select2-hidden-accessible')) {
+            $('#booking_custom_fields_cf_edaxd83r').attr('multiple', 'multiple').select2({
+                placeholder: '---Select services---',
+                width: '100%',
+            });
+        }
         if ($('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').length && $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').is(':visible')) {
             $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').hide();
         }

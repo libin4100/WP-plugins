@@ -1483,7 +1483,9 @@ EOT;
         public function frontScripts()
         {
             $jsFolder = plugin_dir_url(__FILE__) . 'public/js/';
-            wp_enqueue_script('ajax-script',  $jsFolder . 'front.js', array('jquery'), $this->version);
+            wp_enqueue_style('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
+            wp_enqueue_script('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'));
+            wp_enqueue_script('ajax-script',  $jsFolder . 'front.js', array('jquery', 'select2'), $this->version);
             wp_localize_script('ajax-script', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
             wp_enqueue_style('latepoint-conditions',  plugin_dir_url(__FILE__) . 'public/css/' . 'front.css', false, $this->version);
         }

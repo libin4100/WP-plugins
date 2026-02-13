@@ -256,6 +256,13 @@ trait SetFieldTrait
                     'placeholder' => __('---Please Select---', 'latepoint'),
                     'required' => 'on',
                 ];
+            } elseif ($fieldId === 'cf_eDaxd83r') {
+                $extra = [
+                    'type' => 'select',
+                    'options' => implode("\n", $this->getServiceList()),
+                    'placeholder' => __('---Select services---', 'latepoint'),
+                    'required' => 'on',
+                ];
             }
 
             $ordered[$fieldId] = array_merge(
@@ -270,6 +277,38 @@ trait SetFieldTrait
         }
 
         OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($ordered);
+    }
+
+    /**
+     * Normal service list used by agent 30 and QHC service step.
+     */
+    protected function getServiceList()
+    {
+        return [
+            'Addictions',
+            'Allergy and immunology',
+            'Audiology',
+            'Biopsy',
+            'Chiropody/foot care',
+            'Dental care and orthotics',
+            'Family doctor',
+            'Home health and community care',
+            'Internal medicine',
+            'Medical aesthetics',
+            'Medical diagnostics and imaging',
+            'Medical marijuana',
+            'Medical procedure/surgery',
+            'Mental health',
+            'Obstetrics and Gynecology',
+            'Orthopedic surgery',
+            'Paediatric care',
+            'Pain management',
+            'Rehab services',
+            'Respiratory care',
+            'Social and community support services',
+            'Specialist referral',
+            'Other',
+        ];
     }
 
     /**
