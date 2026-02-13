@@ -126,20 +126,20 @@ jQuery(function ($) {
         }
         if ($('#booking_custom_fields_cf_khyzmswi').length) {
             if ($('#booking_custom_fields_cf_khyzmswi').is(':checked')) {
-                $('#booking_custom_fields_cf_fpu4ka1m').parents('.os-col-12').show();
-                $('#booking_custom_fields_cf_pfyxbffm').parents('.os-col-12').show();
-                $('#booking_custom_fields_cf_pil2uooe').parents('.os-col-12').show();
+                $('#booking_custom_fields_cf_fpu4ka1m').parents('.os-form-group').parent('div').show();
+                $('#booking_custom_fields_cf_pfyxbffm').parents('.os-form-group').parent('div').show();
+                $('#booking_custom_fields_cf_pil2uooe').parents('.os-form-group').parent('div').show();
             } else {
-                $('#booking_custom_fields_cf_fpu4ka1m').parents('.os-col-12').hide();
-                $('#booking_custom_fields_cf_pfyxbffm').parents('.os-col-12').hide();
-                $('#booking_custom_fields_cf_pil2uooe').parents('.os-col-12').hide();
+                $('#booking_custom_fields_cf_fpu4ka1m').parents('.os-form-group').parent('div').hide();
+                $('#booking_custom_fields_cf_pfyxbffm').parents('.os-form-group').parent('div').hide();
+                $('#booking_custom_fields_cf_pil2uooe').parents('.os-form-group').parent('div').hide();
             }
         }
         if ($('#booking_custom_fields_cf_quzqwcch').length) {
             if ($('#booking_custom_fields_cf_quzqwcch').val() == 'Family member') {
-                $('#booking_custom_fields_cf_cyhjctjz').parents('.os-col-12').show();
+                $('#booking_custom_fields_cf_cyhjctjz').parents('.os-form-group').parent('div').show();
             } else {
-                $('#booking_custom_fields_cf_cyhjctjz').parents('.os-col-12').hide();
+                $('#booking_custom_fields_cf_cyhjctjz').parents('.os-form-group').parent('div').hide();
             }
         }
         if ($('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').length && $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').is(':visible')) {
