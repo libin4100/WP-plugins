@@ -248,13 +248,24 @@ trait SetFieldTrait
                 continue;
             }
 
+            $extra = [];
+            if ($fieldId === 'cf_ipbMUSJA') {
+                $extra = [
+                    'type' => 'select',
+                    'options' => "Yes\nNo",
+                    'placeholder' => __('---Please Select---', 'latepoint'),
+                    'required' => 'on',
+                ];
+            }
+
             $ordered[$fieldId] = array_merge(
                 $values[$fieldId],
                 [
                     'id' => $fieldId,
                     'label' => __($label, 'latepoint'),
                     'visibility' => 'public',
-                ]
+                ],
+                $extra
             );
         }
 
