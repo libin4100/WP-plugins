@@ -107,6 +107,10 @@ trait SetFieldTrait
                 // SEB/BestBuy
                 $fields = $this->_fields($bookingObject->service_id == 13 ? 'bestbuyc' : 'bestbuy');
                 break;
+            case $bookingObject->agent_id == 30:
+                // GTD dedicated flow
+                $this->setAgent30Fields();
+                return;
             case in_array($bookingObject->service_id, [2, 3]):
                 $this->_fields('located');
                 break;
@@ -204,6 +208,57 @@ trait SetFieldTrait
                 }
             }
         }
+    }
+
+    /**
+     * Replace booking custom fields for agent 30 with a strict ordered list.
+     */
+    protected function setAgent30Fields()
+    {
+        // Start from original configured booking fields before any runtime mutations.
+        $this->_fields('', true);
+
+        $customFields = OsSettingsHelper::$loaded_values['custom_fields_for_booking'] ?? false;
+        $values = is_array($customFields) ? $customFields : json_decode($customFields, true);
+        if (!is_array($values)) {
+            return;
+        }
+
+        $agent30Fields = [
+            'cf_ipbMUSJA' => 'Are you experiencing a life-threatening emergency or require immediate medical attention?',
+            'cf_UCfp8qZF' => 'Request Type',
+            'cf_pv1s5ZMZ' => 'Employee ID',
+            'cf_QuZqWccH' => 'Who is this booking for?',
+            'cf_cYhjctjz' => 'Select relation',
+            'cf_SdFSk6Tv' => 'Patient First Name',
+            'cf_blm6LCcz' => 'Patient Last Name',
+            'cf_WFHtiGvf' => 'Date of Birth',
+            'cf_ZoXsdwEZ' => 'HIN',
+            'cf_eDaxd83r' => 'Please select the service(s) that you need (check all that apply)',
+            'cf_khYzMsWi' => 'Alternate Contact Information (if different from above)',
+            'cf_fPU4Ka1m' => 'Contact person name',
+            'cf_PfyXBFfM' => 'Preferred contact phone number',
+            'cf_PIl2UOoe' => 'Email address',
+            'cf_Fk9ih4Et' => 'Additional Info on your request.',
+        ];
+
+        $ordered = [];
+        foreach ($agent30Fields as $fieldId => $label) {
+            if (!isset($values[$fieldId]) || !is_array($values[$fieldId])) {
+                continue;
+            }
+
+            $ordered[$fieldId] = array_merge(
+                $values[$fieldId],
+                [
+                    'id' => $fieldId,
+                    'label' => __($label, 'latepoint'),
+                    'visibility' => 'public',
+                ]
+            );
+        }
+
+        OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($ordered);
     }
 
     /**
