@@ -277,23 +277,24 @@ EOT;
             //Steps for QHA appointment request
             case 'qha_time':
                 if (!in_array($bookingObject->service_id, [13, 15])) {
-                    $currentTime = date('H') * 60 + date('i');
-                    if ($_SESSION['earliest'] ?? false) {
-                        $currentTime += $_SESSION['earliest'];
-                    }
-                    $day = date('Y-m-d');
+                    $province = $this->getQhaProvince($bookingObject);
+                    $timezone = $this->getQhaTimezoneByProvince($province);
+                    $localNow = new DateTime('now', $timezone);
+                    $today = $this->isQhaBusinessHour($localNow);
+                    $nextDate = '';
+
+                    $day = $localNow->format('Y-m-d');
                     $args = [
                         'custom_date' => $day,
                         'service_id' => $bookingObject->service_id,
                         'location_id' => $bookingObject->location_id,
                         'agent_id' => $bookingObject->agent_id,
                     ];
-                    $range = OsBookingHelper::get_work_start_end_time_for_date($args);
-                    if (!$range[1] || ($currentTime > $range[1] - 120)) {
-                        $today = false;
+
+                    if (!$today) {
                         // Get the next available date
                         for ($i = 1; $i <= 7; $i++) {
-                            $day = date('Y-m-d', strtotime("+$i days"));
+                            $day = $localNow->modify("+$i days")->format('Y-m-d');
                             $args['custom_date'] = $day;
                             $range = OsBookingHelper::get_work_start_end_time_for_date($args);
                             if ($range[0]) {
@@ -301,9 +302,6 @@ EOT;
                                 break;
                             }
                         }
-                    } else {
-                        $today = true;
-                        $nextDate = '';
                     }
                     
                     $controller = new OsConditionsController();
@@ -436,5 +434,65 @@ EOT;
                 ));
                 break;
         }
+    }
+
+    protected function getQhaProvince($bookingObject)
+    {
+        $booking = OsParamsHelper::get_param('booking');
+        if (!empty($booking['custom_fields']['cf_6A3SfgET'])) {
+            return trim($booking['custom_fields']['cf_6A3SfgET']);
+        }
+        if (!empty($bookingObject->custom_fields['cf_6A3SfgET'])) {
+            return trim($bookingObject->custom_fields['cf_6A3SfgET']);
+        }
+        return '';
+    }
+
+    protected function getQhaTimezoneByProvince($province)
+    {
+        switch ($province) {
+            case 'British Columbia':
+                return new DateTimeZone('America/Vancouver');
+            case 'Alberta':
+                return new DateTimeZone('America/Edmonton');
+            case 'Saskatchewan':
+                return new DateTimeZone('America/Regina');
+            case 'Manitoba':
+                return new DateTimeZone('America/Winnipeg');
+            case 'Ontario':
+            case 'Quebec':
+            case 'Nunavut':
+            case 'Yes':
+                return new DateTimeZone('America/Toronto');
+            case 'New Brunswick':
+            case 'Nova Scotia':
+            case 'Prince Edward Island':
+                return new DateTimeZone('America/Halifax');
+            case 'Newfoundland and Labrador':
+                return new DateTimeZone('America/St_Johns');
+            case 'Yukon':
+                return new DateTimeZone('America/Whitehorse');
+            case 'Northwest Territories':
+                return new DateTimeZone('America/Yellowknife');
+            default:
+                if (function_exists('wp_timezone')) {
+                    return wp_timezone();
+                }
+                return new DateTimeZone(date_default_timezone_get());
+        }
+    }
+
+    protected function isQhaBusinessHour(DateTime $dateTime)
+    {
+        $dayOfWeek = (int) $dateTime->format('N'); // 1=Mon ... 7=Sun
+        $currentMinutes = ((int) $dateTime->format('G') * 60) + (int) $dateTime->format('i');
+
+        if ($dayOfWeek >= 1 && $dayOfWeek <= 5) {
+            return $currentMinutes >= 540 && $currentMinutes <= 1200; // 09:00-20:00
+        }
+        if ($dayOfWeek === 6) {
+            return $currentMinutes >= 540 && $currentMinutes <= 1140; // 09:00-19:00
+        }
+        return $currentMinutes >= 600 && $currentMinutes <= 900; // 10:00-15:00
     }
 }
