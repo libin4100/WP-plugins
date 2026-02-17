@@ -9,6 +9,40 @@ trait LoadStepTrait
         $this->setField($bookingObject);
 
         switch ($stepName) {
+            case 'login':
+                $restrictions = OsParamsHelper::get_param('restrictions');
+                $bookingParams = OsParamsHelper::get_param('booking');
+                $currentAgentId = intval($bookingObject->agent_id ?? 0);
+                $selectedAgentId = intval($restrictions['selected_agent'] ?? 0);
+                if ($currentAgentId === 30 || $selectedAgentId === 30) {
+                    $loginStatus = trim((string)($bookingParams['custom_fields']['gtd_login_status'] ?? ''));
+                    if ($loginStatus === '') {
+                        $loginStatus = 'not_login';
+                    }
+                    $controller = new OsConditionsController();
+                    $html = $controller->render($controller->get_view_uri('_step_login'), 'none', [
+                        'booking' => $bookingObject,
+                        'current_step' => $stepName,
+                        'gtd_login_status' => $loginStatus,
+                    ]);
+                    if ($format === 'json') {
+                        wp_send_json(array_merge(
+                            ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                            [
+                                'step_name'         => $stepName,
+                                'show_next_btn'     => true,
+                                'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
+                                'is_first_step'     => OsStepsHelper::is_first_step($stepName),
+                                'is_last_step'      => OsStepsHelper::is_last_step($stepName),
+                                'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                            ]
+                        ));
+                    } else {
+                        echo $html;
+                        remove_all_actions('latepoint_load_step');
+                    }
+                }
+                break;
             case 'services':
                 $locationSettings = (new OsConditionsController)->getLocationSettings();
                 if ($locationSettings) {

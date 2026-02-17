@@ -8,6 +8,24 @@ trait ProcessStepTrait
         $this->setField($bookingObject);
 
         switch ($stepName) {
+            case 'login':
+                if (intval($bookingObject->agent_id ?? 0) === 30) {
+                    $booking = OsParamsHelper::get_param('booking');
+                    $status = trim((string)($booking['custom_fields']['gtd_login_status'] ?? ''));
+                    if ($status === '') {
+                        $_POST['booking']['custom_fields']['gtd_login_status'] = 'not_login';
+                        $status = 'not_login';
+                    }
+                    if (!in_array($status, ['login', 'not_login'], true)) {
+                        remove_all_actions('latepoint_process_step');
+                        wp_send_json([
+                            'status' => LATEPOINT_STATUS_ERROR,
+                            'message' => ['Invalid login status. Please choose login or request without login.']
+                        ]);
+                        return;
+                    }
+                }
+                break;
             case 'custom_fields_for_booking':
                 if ($bookingObject->service_id == 14) {
                     remove_all_actions('latepoint_process_step');

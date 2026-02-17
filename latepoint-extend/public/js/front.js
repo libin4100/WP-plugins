@@ -136,13 +136,29 @@ jQuery(function ($) {
             }
         }
         if ($('#booking_custom_fields_cf_quzqwcch').length) {
+            var $bookingForWrapper = $('#booking_custom_fields_cf_quzqwcch').closest('.os-col-12, .os-col-6');
             if ($('#booking_custom_fields_cf_quzqwcch').val() == 'Family member') {
                 $('#booking_custom_fields_cf_cyhjctjz').parents('.os-form-group').parent('div').show();
+                if ($bookingForWrapper.length) {
+                    $bookingForWrapper.removeClass('os-col-12').addClass('os-col-6');
+                }
             } else {
                 $('#booking_custom_fields_cf_cyhjctjz').parents('.os-form-group').parent('div').hide();
+                if ($bookingForWrapper.length) {
+                    $bookingForWrapper.removeClass('os-col-6').addClass('os-col-12');
+                }
             }
         }
-        if ($('#booking_custom_fields_cf_edaxd83r').length && !$('#booking_custom_fields_cf_edaxd83r').hasClass('select2-hidden-accessible')) {
+        ['#booking_custom_fields_cf_wfhtigvf', '#booking_custom_fields_cf_zoxsdwez'].forEach(function(selector) {
+            var $field = $(selector);
+            if ($field.length) {
+                var $wrapper = $field.closest('.os-col-12, .os-col-6');
+                if ($wrapper.length) {
+                    $wrapper.removeClass('os-col-12').addClass('os-col-6');
+                }
+            }
+        });
+        if ($('#booking_custom_fields_cf_edaxd83r').length && !$('#booking_custom_fields_cf_edaxd83r').hasClass('gtd-services-ready')) {
             var $el = $('#booking_custom_fields_cf_edaxd83r');
             var services = [
                 'Addictions', 'Allergy and immunology', 'Audiology', 'Biopsy',
@@ -164,7 +180,160 @@ jQuery(function ($) {
                 $el.empty();
                 services.forEach(function(s) { $el.append($('<option>').val(s).text(s)); });
             }
-            $el.select2({ placeholder: '---Select services---', width: '100%', dropdownParent: $el.closest('.latepoint-body') });
+            var parseSelected = function(value) {
+                if (Array.isArray(value)) return value.filter(Boolean);
+                if (typeof value === 'string' && value.length) {
+                    return value
+                        .split(/\s*(?:\||,|\n)\s*/)
+                        .map(function(v) { return $.trim(v); })
+                        .filter(Boolean);
+                }
+                return [];
+            };
+
+            var hasExplicitSelected = $el.find('option[selected]').length > 0;
+            var selectedValues = parseSelected($el.val());
+            // Browsers can auto-select the first option for <select multiple> even when no saved data exists.
+            if (!hasExplicitSelected && selectedValues.length === 1 && selectedValues[0] === services[0]) {
+                selectedValues = [];
+                $el.val([]);
+            }
+            if (selectedValues.length) {
+                $el.val(selectedValues);
+            }
+
+            var pickerNs = '.gtdServicesPicker' + ($el.attr('id') || 'field');
+            var $picker = $('<div class="gtd-services-picker"></div>');
+            var $trigger = $('<input type="text" class="gtd-services-trigger os-form-control" readonly placeholder="---Select services---">');
+            var $panel = $('<div class="gtd-services-panel" style="display:none;"></div>');
+            var $search = $('<input type="text" class="gtd-services-search os-form-control" placeholder="Search services">');
+            var $actions = $('<div class="gtd-services-actions"><a href="#" class="gtd-services-select-all">Select all</a><a href="#" class="gtd-services-clear">Clear</a></div>');
+            var $options = $('<div class="gtd-services-options"></div>');
+
+            services.forEach(function(service, idx) {
+                var key = service.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                var cid = 'gtd-service-' + key + '-' + idx;
+                var $item = $('<label class="gtd-service-option" for="' + cid + '"></label>').attr('data-label', service.toLowerCase());
+                var $checkbox = $('<input type="checkbox" class="gtd-service-checkbox" id="' + cid + '">').val(service);
+                if (selectedValues.includes(service)) {
+                    $checkbox.prop('checked', true);
+                }
+                $item.append($checkbox).append('<span>' + service + '</span>');
+                $options.append($item);
+            });
+
+            $panel.append($search).append($actions).append($options);
+            $picker.append($trigger).append($panel);
+            $el
+                .after($picker)
+                .addClass('gtd-services-ready gtd-services-source')
+                .css('display', 'none')
+                .attr('aria-hidden', 'true');
+            if ($el.next('.select2').length) {
+                $el.next('.select2').hide();
+            }
+
+            var syncToSelect = function() {
+                var selected = [];
+                $options.find('.gtd-service-checkbox:checked').each(function() {
+                    selected.push($(this).val());
+                });
+                $el.val(selected).trigger('change');
+            };
+            var updateTriggerText = function() {
+                var selected = parseSelected($el.val());
+                if (!selected.length) {
+                    $trigger.val('');
+                    $trigger.attr('placeholder', '---Select services---');
+                } else {
+                    var text = selected.join(', ');
+                    $trigger.val(text);
+                    $trigger.attr('title', text);
+                }
+            };
+            var syncFromSelect = function() {
+                var selected = parseSelected($el.val());
+                $options.find('.gtd-service-checkbox').each(function() {
+                    $(this).prop('checked', selected.includes($(this).val()));
+                });
+                updateTriggerText();
+            };
+            var applySearchFilter = function(rawTerm) {
+                var term = $.trim(String(rawTerm || '')).toLowerCase();
+                $options.find('.gtd-service-option').each(function() {
+                    var text = String($(this).attr('data-label') || '').toLowerCase();
+                    $(this).toggleClass('gtd-hidden', !!term && text.indexOf(term) === -1);
+                });
+            };
+            var openPanel = function() {
+                $picker.addClass('is-open');
+                $panel.show();
+                setTimeout(function() {
+                    $search.trigger('focus');
+                }, 0);
+            };
+            var closePanel = function() {
+                $picker.removeClass('is-open');
+                $panel.hide();
+                $search.val('');
+                applySearchFilter('');
+            };
+
+            $options.on('change', '.gtd-service-checkbox', function() {
+                syncToSelect();
+                updateTriggerText();
+            });
+
+            $el.on('change.gtdServices', function() {
+                syncFromSelect();
+            });
+
+            $trigger.on('focus click', function(e) {
+                e.preventDefault();
+                openPanel();
+            });
+
+            $trigger.on('keydown', function(e) {
+                if (['Enter', ' ', 'ArrowDown'].includes(e.key)) {
+                    e.preventDefault();
+                    openPanel();
+                }
+            });
+
+            $search.on('input keyup change', function() {
+                applySearchFilter($(this).val());
+            });
+
+            $('body').off('input.gtdServicesSearch keyup.gtdServicesSearch change.gtdServicesSearch', '.gtd-services-picker .gtd-services-search');
+            $('body').on('input.gtdServicesSearch keyup.gtdServicesSearch change.gtdServicesSearch', '.gtd-services-picker .gtd-services-search', function() {
+                var $currentPicker = $(this).closest('.gtd-services-picker');
+                var term = $(this).val();
+                $currentPicker.find('.gtd-services-option, .gtd-service-option').each(function() {
+                    if (!$(this).hasClass('gtd-service-option')) return;
+                    var text = String($(this).attr('data-label') || '').toLowerCase();
+                    $(this).toggleClass('gtd-hidden', !!$.trim(String(term || '')).length && text.indexOf($.trim(String(term || '')).toLowerCase()) === -1);
+                });
+            });
+
+            $actions.on('click', '.gtd-services-select-all', function(e) {
+                e.preventDefault();
+                $options.find('.gtd-service-option:visible .gtd-service-checkbox').prop('checked', true);
+                syncToSelect();
+            });
+
+            $actions.on('click', '.gtd-services-clear', function(e) {
+                e.preventDefault();
+                $options.find('.gtd-service-checkbox').prop('checked', false);
+                syncToSelect();
+            });
+
+            $(document).off('mousedown' + pickerNs).on('mousedown' + pickerNs, function(e) {
+                if (!$(e.target).closest('.gtd-services-picker').length) {
+                    closePanel();
+                }
+            });
+
+            syncFromSelect();
         }
         if ($('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').length && $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').is(':visible')) {
             $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').hide();

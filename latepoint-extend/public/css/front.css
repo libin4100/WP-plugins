@@ -23,3 +23,71 @@
     font-size: 14px !important;
     opacity: 1 !important;
 }
+
+.gtd-services-source,
+#booking_custom_fields_cf_edaxd83r.gtd-services-source {
+    display: none !important;
+}
+
+.latepoint-w .gtd-services-picker {
+    position: relative;
+}
+
+.latepoint-w .gtd-services-picker .gtd-services-trigger {
+    cursor: pointer;
+    background: #fff !important;
+}
+
+.latepoint-w .gtd-services-picker .gtd-services-panel {
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    background: #fff;
+    margin-top: 8px;
+    padding: 10px;
+    box-shadow: 0 6px 18px rgba(16, 24, 40, 0.08);
+    z-index: 11;
+}
+
+.latepoint-w .gtd-services-picker .gtd-services-search {
+    margin-bottom: 8px;
+}
+
+.latepoint-w .gtd-services-picker .gtd-services-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.latepoint-w .gtd-services-picker .gtd-services-actions a {
+    color: #215681;
+    text-decoration: underline;
+}
+
+.latepoint-w .gtd-services-picker .gtd-services-options {
+    max-height: 220px;
+    overflow-y: auto;
+    border-top: 1px solid #eaecf0;
+    padding-top: 8px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 6px 12px;
+}
+
+.latepoint-w .gtd-services-picker .gtd-service-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.latepoint-w .gtd-services-picker .gtd-service-option input[type="checkbox"] {
+    margin-top: 3px;
+}
+
+.latepoint-w .gtd-services-picker .gtd-service-option.gtd-hidden {
+    display: none !important;
+}
