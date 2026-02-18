@@ -120,8 +120,12 @@ trait LoadStepTrait
             case 'custom_fields_for_booking':
                 $_SESSION['certCount'] = 0;
 
-                if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
-                    OsAuthHelper::logout_customer();
+                if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login')) {
+                    $agentId = intval($bookingObject->agent_id ?? 0);
+                    if ($agentId !== 30) {
+                        OsAuthHelper::logout_customer();
+                    }
+                }
                 if (
                     ($allowShortcode = OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) 
                     || $this->isGTD()

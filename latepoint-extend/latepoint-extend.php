@@ -1486,7 +1486,10 @@ EOT;
             wp_enqueue_style('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
             wp_enqueue_script('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'));
             wp_enqueue_script('ajax-script',  $jsFolder . 'front.js', array('jquery', 'select2'), $this->version);
-            wp_localize_script('ajax-script', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+            wp_localize_script('ajax-script', 'ajax_object', array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'file_upload_nonce' => wp_create_nonce('latepoint_file_upload'),
+            ));
             wp_enqueue_style('latepoint-conditions',  plugin_dir_url(__FILE__) . 'public/css/' . 'front.css', false, $this->version);
         }
 
@@ -1533,10 +1536,7 @@ EOT;
 
         public function steps($steps)
         {
-            $restrictions = OsParamsHelper::get_param('restrictions');
-            $currentAgentId = intval(OsStepsHelper::$booking_object->agent_id ?? 0);
-            $selectedAgentId = intval($restrictions['selected_agent'] ?? 0);
-            if ($currentAgentId === 30 || $selectedAgentId === 30) {
+            if ($this->resolveFlowAgentId() === 30) {
                 $steps['login'] = [
                     'title' => __('Access Link and Login', 'latepoint-extand-master'),
                     'order_number' => 1,
@@ -1633,7 +1633,9 @@ EOT;
         public function stepNames($steps, $show_all_steps)
         {
             $restrictions = OsParamsHelper::get_param('restrictions');
-            $booking = OsParamsHelper::get_param('booking');
+            if ($this->resolveFlowAgentId() === 30) {
+                return ['login', 'custom_fields_for_booking', 'confirmation'];
+            }
             if (
                 OsStepsHelper::$booking_object->service_id == 13
                 || ($restrictions['selected_service'] ?? false) == 13
@@ -1654,13 +1656,6 @@ EOT;
                 }
             }
             if (
-                intval(OsStepsHelper::$booking_object->agent_id ?? 0) === 30
-                || intval($restrictions['selected_agent'] ?? 0) === 30
-            ) {
-                $steps = array_values(array_diff($steps, ['login']));
-                array_unshift($steps, 'login');
-            }
-            if (
                 OsStepsHelper::$booking_object->service_id == 16
                 || ($restrictions['selected_service'] ?? false) == 16
             ) {
@@ -1673,6 +1668,10 @@ EOT;
         public function beSkipped($skip, $step, $booking_object)
         {
             $params = OsParamsHelper::get_param('booking');
+            $restrictions = OsParamsHelper::get_param('restrictions');
+            if ($this->resolveFlowAgentId($booking_object) === 30) {
+                return !in_array($step, ['login', 'custom_fields_for_booking', 'confirmation']);
+            }
             if (in_array($booking_object->service_id, [13, 15])) {
                 if (in_array($step, ['datepicker', 'contact']))
                     $skip = true;
@@ -1699,6 +1698,45 @@ EOT;
                 $skip = !in_array($step, ['pharmacy', 'pharmacy_additional', 'confirmation']);
             }
             return $skip;
+        }
+
+        protected function resolveFlowAgentId($bookingObject = null)
+        {
+            $booking = OsParamsHelper::get_param('booking');
+            $restrictions = OsParamsHelper::get_param('restrictions');
+            $presets = OsParamsHelper::get_param('presets');
+
+            $agentId = intval($bookingObject->agent_id ?? 0);
+            if (!$agentId) $agentId = intval(OsStepsHelper::$booking_object->agent_id ?? 0);
+            if (!$agentId && is_array($booking)) $agentId = intval($booking['agent_id'] ?? 0);
+            if (!$agentId && is_array($restrictions)) $agentId = intval($restrictions['selected_agent'] ?? ($restrictions['agent_id'] ?? 0));
+            if (!$agentId && is_array($presets)) $agentId = intval($presets['selected_agent'] ?? 0);
+            if ($agentId) return $agentId;
+
+            $serviceId = intval($bookingObject->service_id ?? 0);
+            if (!$serviceId) $serviceId = intval(OsStepsHelper::$booking_object->service_id ?? 0);
+            if (!$serviceId && is_array($booking)) $serviceId = intval($booking['service_id'] ?? 0);
+            if (!$serviceId && is_array($restrictions)) $serviceId = intval($restrictions['selected_service'] ?? 0);
+            if (!$serviceId && is_array($presets)) $serviceId = intval($presets['selected_service'] ?? 0);
+
+            $locationId = intval($bookingObject->location_id ?? 0);
+            if (!$locationId) $locationId = intval(OsStepsHelper::$booking_object->location_id ?? 0);
+            if (!$locationId && is_array($booking)) $locationId = intval($booking['location_id'] ?? 0);
+            if (!$locationId && is_array($restrictions)) $locationId = intval($restrictions['selected_location'] ?? 0);
+            if (!$locationId && is_array($presets)) $locationId = intval($presets['selected_location'] ?? 0);
+            if (!$locationId && method_exists('OsLocationHelper', 'count_locations') && OsLocationHelper::count_locations() == 1) {
+                $locationId = intval(OsLocationHelper::get_selected_location_id());
+            }
+
+            if ($serviceId && $locationId && method_exists('OsAgentHelper', 'get_agents_for_service_and_location')) {
+                $agents = OsAgentHelper::get_agents_for_service_and_location($serviceId, $locationId);
+                if (is_array($agents) && count($agents) === 1) {
+                    $singleAgentId = intval($agents[0]->id ?? 0);
+                    if ($singleAgentId) return $singleAgentId;
+                }
+            }
+
+            return 0;
         }
 
         /**

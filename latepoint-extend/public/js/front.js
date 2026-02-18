@@ -158,6 +158,89 @@ jQuery(function ($) {
                 }
             }
         });
+        if ($('#booking_custom_fields_cf_fk9ih4et').length && !$('#booking_custom_fields_cf_fk9ih4et').hasClass('gtd-upload-ready')) {
+            var $additionalField = $('#booking_custom_fields_cf_fk9ih4et');
+            var $additionalGroup = $additionalField.closest('.os-form-group');
+            if ($additionalGroup.length) {
+                var uploadHtml = [
+                    '<div class="gtd-additional-upload-wrap os-form-group os-form-group-transparent">',
+                        '<label for="gtd_additional_file_upload">',
+                            'Please upload all the relevent documents for our Employee Assistance Program staff to review',
+                            '<div class="btn btn-block latepoint-btn latepoint-btn-secondary">',
+                                '<strong>Add Files</strong>',
+                                '<input type="file" name="booking_file" value="" class="os-form-control" style="display:none" id="gtd_additional_file_upload">',
+                            '</div>',
+                        '</label>',
+                        '<h6 class="gtd-additional-file-help">If the file you need to attach is more than 5 MB, please email it to <a href="mailto:caresupport@gotodoctor.ca">caresupport@gotodoctor.ca</a> and add Employee Assistance Program in the subject line.</h6>',
+                    '</div>',
+                    '<div class="gtd-additional-loading latepoint-loading" style="display:none;">',
+                        '<div class="lds-dual-ring"></div>',
+                    '</div>',
+                    '<div class="gtd-uploaded-file-list"></div>',
+                    '<input type="hidden" name="booking[qhc][additional_file][]" class="gtd-additional-file-input" value="">'
+                ].join('');
+
+                $additionalGroup.after(uploadHtml);
+                $additionalField.addClass('gtd-upload-ready');
+
+                var $wrap = $additionalGroup.parent();
+                $wrap.off('change.gtdUpload', '#gtd_additional_file_upload').on('change.gtdUpload', '#gtd_additional_file_upload', function() {
+                    var $input = $(this);
+                    var file = $input.prop('files')[0];
+                    if (!file) return;
+                    $input.prop('disabled', true);
+                    $wrap.find('.gtd-additional-loading').show();
+
+                    var formData = new FormData();
+                    formData.append('additinal_file', file);
+                    formData.append('action', 'latepoint_file_upload');
+                    formData.append('security', ajax_object.file_upload_nonce || '');
+
+                    $.ajax({
+                        url: ajax_object.ajax_url,
+                        dataType: 'json',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        data: formData,
+                        type: 'post'
+                    }).done(function(response) {
+                        if (response && response.status === 'success') {
+                            var $last = $wrap.find('.gtd-additional-file-input').last();
+                            var $clone = $last.clone().val('');
+                            $last.val(response.file).after($clone);
+                            $input.val('');
+                            $wrap.find('.gtd-uploaded-file-list').append(
+                                '<div class="uploaded_file_name">' + response.original_name + ' <a href="#" class="gtd-delete-file" data-file="' + response.file + '">x</a></div>'
+                            );
+                        } else if (response && response.message) {
+                            alert(response.message);
+                        } else {
+                            alert('Error uploading file');
+                        }
+                    }).fail(function() {
+                        alert('Error uploading file');
+                    }).always(function() {
+                        $input.prop('disabled', false);
+                        $wrap.find('.gtd-additional-loading').hide();
+                    });
+                });
+
+                $wrap.off('click.gtdUpload', '.gtd-delete-file').on('click.gtdUpload', '.gtd-delete-file', function(e) {
+                    e.preventDefault();
+                    var file = $(this).data('file');
+                    $wrap.find('.gtd-additional-file-input').each(function() {
+                        if ($(this).val() === file) {
+                            $(this).remove();
+                        }
+                    });
+                    $(this).parent().remove();
+                    if (!$wrap.find('.gtd-additional-file-input').length) {
+                        $wrap.append('<input type="hidden" name="booking[qhc][additional_file][]" class="gtd-additional-file-input" value="">');
+                    }
+                });
+            }
+        }
         if ($('#booking_custom_fields_cf_edaxd83r').length && !$('#booking_custom_fields_cf_edaxd83r').hasClass('gtd-services-ready')) {
             var $el = $('#booking_custom_fields_cf_edaxd83r');
             var services = [

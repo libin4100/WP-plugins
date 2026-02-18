@@ -233,6 +233,8 @@ trait SetFieldTrait
             ? [
                 'cf_ipbMUSJA' => 'Are you experiencing a life-threatening emergency or require immediate medical attention?',
                 'cf_UCfp8qZF' => 'Request Type',
+                'email' => 'Email',
+                'phone' => 'Phone',
                 'cf_6A3SfgET' => 'Where are you or patient currently located?',
                 'cf_eDaxd83r' => 'Please select the service(s) that you need (check all that apply)',
             ]
@@ -246,6 +248,8 @@ trait SetFieldTrait
                 'cf_blm6LCcz' => 'Patient Last Name',
                 'cf_WFHtiGvf' => 'Date of Birth',
                 'cf_ZoXsdwEZ' => 'HIN',
+                'email' => 'Email',
+                'phone' => 'Phone',
                 'cf_6A3SfgET' => 'Where are you or patient currently located?',
                 'cf_eDaxd83r' => 'Please select the service(s) that you need (check all that apply)',
                 'cf_khYzMsWi' => 'Alternate Contact Information (if different from above)',
@@ -258,7 +262,19 @@ trait SetFieldTrait
         $ordered = [];
         foreach ($agent30Fields as $fieldId => $label) {
             if (!isset($values[$fieldId]) || !is_array($values[$fieldId])) {
-                continue;
+                if (in_array($fieldId, ['email', 'phone'], true)) {
+                    $values[$fieldId] = [
+                        'id' => $fieldId,
+                        'type' => 'text',
+                        'width' => 'os-col-6',
+                        'options' => '',
+                        'placeholder' => __($label, 'latepoint'),
+                        'required' => 'on',
+                        'visibility' => 'public',
+                    ];
+                } else {
+                    continue;
+                }
             }
 
             $extra = [];
@@ -292,6 +308,18 @@ trait SetFieldTrait
             } elseif ($fieldId === 'cf_6A3SfgET') {
                 $extra = [
                     'required' => 'on',
+                ];
+            } elseif ($fieldId === 'email') {
+                $extra = [
+                    'type' => 'text',
+                    'required' => 'on',
+                    'placeholder' => __('Email', 'latepoint'),
+                ];
+            } elseif ($fieldId === 'phone') {
+                $extra = [
+                    'type' => 'text',
+                    'required' => 'on',
+                    'placeholder' => __('Phone', 'latepoint'),
                 ];
             } elseif ($fieldId === 'cf_eDaxd83r') {
                 $extra = [

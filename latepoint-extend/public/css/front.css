@@ -91,3 +91,49 @@
 .latepoint-w .gtd-services-picker .gtd-service-option.gtd-hidden {
     display: none !important;
 }
+
+.latepoint-w .gtd-additional-file-help {
+    margin-top: 10px;
+    color: #8e97b3;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.latepoint-w .gtd-uploaded-file-list .uploaded_file_name {
+    margin-top: 6px;
+    font-size: 13px;
+}
+
+.latepoint-w .gtd-uploaded-file-list .uploaded_file_name .gtd-delete-file {
+    margin-left: 6px;
+    color: #b42318;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.latepoint-w .gtd-additional-loading .lds-dual-ring {
+    display: inline-block;
+    width: 46px;
+    height: 46px;
+}
+
+.latepoint-w .gtd-additional-loading .lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 32px;
+    height: 32px;
+    margin: 7px;
+    border-radius: 50%;
+    border: 4px solid #8e97b3;
+    border-color: #8e97b3 transparent #8e97b3 transparent;
+    animation: gtd-dual-ring 1.2s linear infinite;
+}
+
+@keyframes gtd-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -189,6 +189,15 @@ trait ProcessStepTrait
                     wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => $error_messages));
                     return;
                 }
+                if ($this->shouldAuthorizeAgent30WithoutLogin($bookingObject, $booking)) {
+                    $customerAuthError = $this->authorizeAgent30CustomerFromCustomFields($bookingObject, $custom_fields_data);
+                    if ($customerAuthError) {
+                        remove_all_actions('latepoint_process_step');
+                        wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => [$customerAuthError]));
+                        return;
+                    }
+                }
+                $this->ensureAgent30DefaultDateTime($bookingObject);
 
                 break;
             case 'contact':
@@ -316,6 +325,185 @@ trait ProcessStepTrait
             case 'datepicker2':
             case 'datepicker3':
                 break;
+        }
+    }
+
+    protected function shouldAuthorizeAgent30WithoutLogin($bookingObject, $booking)
+    {
+        if (intval($bookingObject->agent_id ?? 0) !== 30) {
+            return false;
+        }
+        $loggedInCustomerId = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
+        $bookingCustomerId = intval($bookingObject->customer_id ?? 0);
+        if ($loggedInCustomerId && $bookingCustomerId && ($loggedInCustomerId === $bookingCustomerId)) {
+            return false;
+        }
+
+        $status = '';
+        if (is_array($booking)) {
+            $status = trim(strtolower((string)($booking['custom_fields']['gtd_login_status'] ?? '')));
+        } elseif (is_object($booking) && isset($booking->custom_fields) && is_array($booking->custom_fields)) {
+            $status = trim(strtolower((string)($booking->custom_fields['gtd_login_status'] ?? '')));
+        }
+        if ($status === '' && isset($bookingObject->custom_fields['gtd_login_status'])) {
+            $status = trim(strtolower((string)$bookingObject->custom_fields['gtd_login_status']));
+        }
+        if ($status === '') {
+            $status = 'not_login';
+        }
+
+        // For agent 30, always recover customer session from submitted custom fields
+        // when current request does not have a valid logged-in customer context.
+        if (!$loggedInCustomerId || !$bookingCustomerId || ($loggedInCustomerId !== $bookingCustomerId)) {
+            return true;
+        }
+
+        return $status === 'not_login';
+    }
+
+    protected function authorizeAgent30CustomerFromCustomFields($bookingObject, $customFieldsData)
+    {
+        $bookingParams = OsParamsHelper::get_param('booking');
+        $customerInput = OsParamsHelper::get_param('customer');
+        $readValue = function ($payload, $key) {
+            if (is_array($payload)) {
+                return $payload[$key] ?? '';
+            }
+            if (is_object($payload)) {
+                return $payload->$key ?? '';
+            }
+            return '';
+        };
+
+        $email = trim((string)($customFieldsData['email'] ?? ''));
+        if ($email === '') {
+            $email = trim((string)$readValue($bookingParams, 'email'));
+        }
+        if ($email === '') {
+            $email = trim((string)$readValue($customerInput, 'email'));
+        }
+
+        $phone = trim((string)($customFieldsData['phone'] ?? ''));
+        if ($phone === '') {
+            $phone = trim((string)$readValue($bookingParams, 'phone'));
+        }
+        if ($phone === '') {
+            $phone = trim((string)$readValue($customerInput, 'phone'));
+        }
+        if (!$email && !$phone) {
+            return 'Email or phone is required to continue.';
+        }
+
+        $firstName = trim((string)($customFieldsData['cf_SdFSk6Tv'] ?? $customFieldsData['first_name'] ?? ''));
+        if ($firstName === '') {
+            $firstName = trim((string)$readValue($bookingParams, 'first_name'));
+        }
+        if ($firstName === '') {
+            $firstName = trim((string)$readValue($customerInput, 'first_name'));
+        }
+
+        $lastName = trim((string)($customFieldsData['cf_blm6LCcz'] ?? $customFieldsData['last_name'] ?? ''));
+        if ($lastName === '') {
+            $lastName = trim((string)$readValue($bookingParams, 'last_name'));
+        }
+        if ($lastName === '') {
+            $lastName = trim((string)$readValue($customerInput, 'last_name'));
+        }
+        if (!$firstName) {
+            $firstName = 'Client';
+        }
+        if (!$lastName) {
+            $lastName = 'EAP';
+        }
+
+        $customer = null;
+        if ($email) {
+            $exists = (new OsCustomerModel())->where(['email' => $email])->set_limit(1)->get_results_as_models();
+            if ($exists) {
+                if (is_array($exists)) {
+                    $customer = $exists[0] ?? null;
+                } elseif (is_object($exists)) {
+                    $customer = $exists;
+                }
+            }
+        }
+        if (!$customer && $phone) {
+            $exists = (new OsCustomerModel())->where(['phone' => $phone])->set_limit(1)->get_results_as_models();
+            if ($exists) {
+                if (is_array($exists)) {
+                    $customer = $exists[0] ?? null;
+                } elseif (is_object($exists)) {
+                    $customer = $exists;
+                }
+            }
+        }
+        if (!$customer) {
+            $customer = new OsCustomerModel();
+        }
+
+        $customerPayload = [
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'email' => $email,
+            'phone' => $phone,
+        ];
+        if (!$email) {
+            add_filter('latepoint_customer_model_validations', function ($validations) {
+                unset($validations['email']);
+                return $validations;
+            });
+        }
+        $customer->set_data($customerPayload);
+        $customer->save();
+
+        if (!($customer->id ?? false)) {
+            return 'Unable to create customer record. Please verify contact information and try again.';
+        }
+
+        OsAuthHelper::authorize_customer($customer->id);
+        OsStepsHelper::$booking_object->customer_id = $customer->id;
+        $bookingObject->customer_id = $customer->id;
+        $_POST['booking']['customer_id'] = $customer->id;
+        $_POST['customer_id'] = $customer->id;
+
+        return null;
+    }
+
+    protected function ensureAgent30DefaultDateTime($bookingObject)
+    {
+        if (intval($bookingObject->agent_id ?? 0) !== 30) {
+            return;
+        }
+
+        $today = OsTimeHelper::today_date('Y-m-d');
+
+        if (empty($bookingObject->start_date)) {
+            $bookingObject->start_date = $today;
+        }
+        if (!isset($bookingObject->start_time) || $bookingObject->start_time === '' || $bookingObject->start_time === null) {
+            $bookingObject->start_time = 0;
+        }
+        if (empty($bookingObject->end_date)) {
+            $bookingObject->end_date = $bookingObject->start_date;
+        }
+        if (!isset($bookingObject->end_time) || $bookingObject->end_time === '' || $bookingObject->end_time === null) {
+            $bookingObject->end_time = 0;
+        }
+
+        if (!isset($_POST['booking']) || !is_array($_POST['booking'])) {
+            $_POST['booking'] = [];
+        }
+        if (empty($_POST['booking']['start_date'])) {
+            $_POST['booking']['start_date'] = $bookingObject->start_date;
+        }
+        if (!isset($_POST['booking']['start_time']) || $_POST['booking']['start_time'] === '') {
+            $_POST['booking']['start_time'] = (string)$bookingObject->start_time;
+        }
+        if (empty($_POST['booking']['end_date'])) {
+            $_POST['booking']['end_date'] = $bookingObject->end_date;
+        }
+        if (!isset($_POST['booking']['end_time']) || $_POST['booking']['end_time'] === '') {
+            $_POST['booking']['end_time'] = (string)$bookingObject->end_time;
         }
     }
 }
