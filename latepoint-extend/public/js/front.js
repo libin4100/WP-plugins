@@ -19,6 +19,49 @@ jQuery(function ($) {
             }
         });
     };
+    var markRequiredLabels = function () {
+        var $customFieldsStep = $('.latepoint-body .step-custom-fields-for-booking-w.latepoint-step-content, .latepoint-body .latepoint-step-content[data-step-name="custom_fields_for_booking"]');
+        if (!$customFieldsStep.length) return;
+
+        $customFieldsStep.find('.os-form-group').each(function () {
+            var $group = $(this);
+            var hasRequiredField = $group.find('.required').filter(function () {
+                var $field = $(this);
+                if (!$field.is('input,select,textarea')) return false;
+                if ($field.is('input[type="hidden"]')) return false;
+                return true;
+            }).length > 0;
+
+            var $label = $group.children('label').first();
+            if (!$label.length) {
+                $label = $group.find('label').first();
+            }
+            if (!$label.length) return;
+
+            if (hasRequiredField) {
+                if (!$label.find('.gtd-required-asterisk').length) {
+                    $label.append('<span class="gtd-required-asterisk">*</span>');
+                }
+            } else {
+                $label.find('.gtd-required-asterisk').remove();
+            }
+
+            $group.find('input[type="text"]').each(function () {
+                var $input = $(this);
+                var originalPlaceholder = $input.attr('data-gtd-placeholder-original');
+                if (typeof originalPlaceholder === 'undefined') {
+                    originalPlaceholder = $input.attr('placeholder') || '';
+                    $input.attr('data-gtd-placeholder-original', originalPlaceholder);
+                }
+                var basePlaceholder = String(originalPlaceholder || '').replace(/\s*\*+\s*$/, '');
+                if ($input.hasClass('required')) {
+                    $input.attr('placeholder', basePlaceholder ? (basePlaceholder + ' *') : '*');
+                } else {
+                    $input.attr('placeholder', originalPlaceholder);
+                }
+            });
+        });
+    };
 
     var fields = {
         "qoqkhbly": { action: 'check_certificate', service_id: $('input[name="restrictions[selected_service]"').val() },
@@ -93,6 +136,7 @@ jQuery(function ($) {
             $('.latepoint-step-desc-library[data-step-name!="services"][data-step-name!="confirmation"] .latepoint-desc-title').text('');
         }
         markLastVisibleProgressItem();
+        markRequiredLabels();
         for (let key in fields) {
             let id = '#booking_custom_fields_cf_' + key;
             if ($(id).length) {
@@ -178,13 +222,13 @@ jQuery(function ($) {
                 var uploadHtml = [
                     '<div class="gtd-additional-upload-wrap os-form-group os-form-group-transparent">',
                         '<label for="gtd_additional_file_upload">',
-                            'Please upload all the relevent documents for our Employee Assistance Program staff to review',
+                            'Please upload all the relevent documents for our Employee Family Assistance Program staff to review',
                             '<div class="btn btn-block latepoint-btn latepoint-btn-secondary">',
                                 '<strong>Add Files</strong>',
                                 '<input type="file" name="booking_file" value="" class="os-form-control" style="display:none" id="gtd_additional_file_upload">',
                             '</div>',
                         '</label>',
-                        '<h6 class="gtd-additional-file-help">If the file you need to attach is more than 5 MB, please email it to <a href="mailto:caresupport@gotodoctor.ca">caresupport@gotodoctor.ca</a> and add Employee Assistance Program in the subject line.</h6>',
+                        '<h6 class="gtd-additional-file-help">If the file you need to attach is more than 5 MB, please email it to <a href="mailto:caresupport@gotodoctor.ca">caresupport@gotodoctor.ca</a> and add Employee Family Assistance Program in the subject line.</h6>',
                     '</div>',
                     '<div class="gtd-additional-loading latepoint-loading" style="display:none;">',
                         '<div class="lds-dual-ring"></div>',

@@ -1272,6 +1272,21 @@ EOT;
 
         public function confirmationInfoBefore($booking)
         {
+            if ($this->resolveFlowAgentId($booking) === 30)
+                echo <<<EOT
+<script>
+jQuery(function($) {
+    var \$appInfoItems = $('.latepoint-body .confirmation-app-info ul li');
+    if (\$appInfoItems.length > 1) {
+        \$appInfoItems.eq(1).remove();
+    }
+    if (\$appInfoItems.length > 0) {
+        \$appInfoItems.eq(0).remove();
+    }
+    $('.latepoint-body .confirmation-customer-info').hide();
+});
+</script>
+EOT;
             if ($this->covid || $this->others || $this->acorn)
                 echo <<<EOT
 <script>

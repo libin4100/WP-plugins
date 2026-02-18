@@ -97,6 +97,12 @@
     content: none !important;
 }
 
+.latepoint-w .gtd-required-asterisk {
+    color: #d92d20;
+    margin-left: 4px;
+    font-weight: 700;
+}
+
 .latepoint-w .gtd-additional-file-help {
     margin-top: 10px;
     color: #8e97b3;
