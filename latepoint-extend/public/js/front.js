@@ -62,6 +62,13 @@ jQuery(function ($) {
             });
         });
     };
+    var getSelectedAgentId = function () {
+        var agentId = $('input[name="restrictions[selected_agent]"]').val()
+            || $('input[name="booking[agent_id]"]').val()
+            || $('input[name="presets[selected_agent]"]').val()
+            || $('select[name="booking[agent_id]"]').val();
+        return parseInt(agentId, 10) || 0;
+    };
 
     var fields = {
         "qoqkhbly": { action: 'check_certificate', service_id: $('input[name="restrictions[selected_service]"').val() },
@@ -206,12 +213,17 @@ jQuery(function ($) {
                 }
             }
         }
+        var selectedAgentId = getSelectedAgentId();
         ['#booking_custom_fields_cf_wfhtigvf', '#booking_custom_fields_cf_zoxsdwez'].forEach(function(selector) {
             var $field = $(selector);
             if ($field.length) {
                 var $wrapper = $field.closest('.os-col-12, .os-col-6');
                 if ($wrapper.length) {
-                    $wrapper.removeClass('os-col-12').addClass('os-col-6');
+                    if (selectedAgentId === 30) {
+                        $wrapper.removeClass('os-col-12').addClass('os-col-6');
+                    } else {
+                        $wrapper.removeClass('os-col-6').addClass('os-col-12');
+                    }
                 }
             }
         });

@@ -95,8 +95,6 @@ trait GtdTrait
             'cf_NeRenew2',
             'cf_NeRenew3',
             'cf_NeRenew4',
-            'cf_NeRenew5',
-            'cf_NeRenew6',
         ], $prepend ? ['cf_x18jr0Vf', ''] : []);
     }
 
@@ -111,8 +109,6 @@ trait GtdTrait
             'cf_NeRenew2' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
             'cf_NeRenew3' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
             'cf_NeRenew4' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
-            'cf_NeRenew5' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
-            'cf_NeRenew6' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew5' => 'Enter Medication List Below']],
         ];
     }
 
