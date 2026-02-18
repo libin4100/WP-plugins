@@ -175,6 +175,7 @@ trait LoadStepTrait
                             . $this->noServiceJs('Outside Canada')
                             . '</div>';
                     }
+                    $html = $this->addGoogleTranslateAttrToFirstInput($html);
                     wp_send_json(array_merge(
                         ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
                         $extra
@@ -484,6 +485,24 @@ EOT;
             return trim($bookingObject->custom_fields['cf_6A3SfgET']);
         }
         return '';
+    }
+
+    protected function addGoogleTranslateAttrToFirstInput($html)
+    {
+        if (!is_string($html) || $html === '') {
+            return $html;
+        }
+
+        return preg_replace_callback('/<input\b[^>]*>/i', function ($matches) {
+            $inputTag = $matches[0];
+            if (stripos($inputTag, 'data-google-lang-translate=') !== false) {
+                return $inputTag;
+            }
+            if (preg_match('/\/>\s*$/', $inputTag)) {
+                return preg_replace('/\/>\s*$/', ' data-google-lang-translate="true" />', $inputTag, 1);
+            }
+            return preg_replace('/>\s*$/', ' data-google-lang-translate="true">', $inputTag, 1);
+        }, $html, 1);
     }
 
     protected function getQhaTimezoneByProvince($province)
