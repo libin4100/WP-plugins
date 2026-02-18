@@ -318,7 +318,7 @@ EOT;
                     $province = $this->getQhaProvince($bookingObject);
                     $timezone = $this->getQhaTimezoneByProvince($province);
                     $localNow = new DateTime('now', $timezone);
-                    $today = $this->isQhaBusinessHour($localNow);
+                    $today = $this->isWithinBusinessHours($localNow);
                     $nextDate = '';
 
                     $day = $localNow->format('Y-m-d');
@@ -520,17 +520,10 @@ EOT;
         }
     }
 
-    protected function isQhaBusinessHour(DateTime $dateTime)
+    protected function isWithinBusinessHours(DateTime $dateTime)
     {
-        $dayOfWeek = (int) $dateTime->format('N'); // 1=Mon ... 7=Sun
         $currentMinutes = ((int) $dateTime->format('G') * 60) + (int) $dateTime->format('i');
 
-        if ($dayOfWeek >= 1 && $dayOfWeek <= 5) {
-            return $currentMinutes >= 540 && $currentMinutes <= 1200; // 09:00-20:00
-        }
-        if ($dayOfWeek === 6) {
-            return $currentMinutes >= 540 && $currentMinutes <= 1140; // 09:00-19:00
-        }
-        return $currentMinutes >= 600 && $currentMinutes <= 900; // 10:00-15:00
+        return $currentMinutes >= 540 && $currentMinutes <= 1140; // 09:00-19:00
     }
 }
