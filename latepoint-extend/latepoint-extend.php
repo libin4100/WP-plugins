@@ -55,6 +55,8 @@ if (!class_exists('LatePointExt')) :
         public function hooks()
         {
             add_action('wp_loaded', [$this, 'route']);
+            add_action('wp_ajax_nopriv_latepoint_route_call', [$this, 'resetStepsCache'], 1);
+            add_action('wp_ajax_latepoint_route_call', [$this, 'resetStepsCache'], 1);
             add_action('wp_ajax_nopriv_check_certificate', [$this, 'checkCertificateSession']);
             add_action('wp_ajax_check_certificate', [$this, 'checkCertificate']);
             add_action('wp_ajax_nopriv_check_certificate_sb', [$this, 'checkCertificateSessionSB']);
@@ -115,6 +117,7 @@ if (!class_exists('LatePointExt')) :
             add_filter('latepoint_customer_model_validations', [$this, 'customerFilter']);
             add_filter('latepoint_step_names_in_order', [$this, 'stepNames'], 2, 2);
             add_filter('latepoint_should_step_be_skipped', [$this, 'beSkipped'], 20, 3);
+            add_filter('pre_do_shortcode_tag', [$this, 'resetStepsCacheBeforeShortcode'], 10, 4);
 
             register_activation_hook(__FILE__, [$this, 'onActivate']);
             register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
@@ -1665,6 +1668,24 @@ EOT;
             return $steps;
         }
 
+        public function resetStepsCache()
+        {
+            if (class_exists('OsStepsHelper')) {
+                OsStepsHelper::$step_names_in_order = false;
+                if ($this->resolveFlowAgentId() === 30) {
+                    OsStepsHelper::$step_names_in_order = ['login', 'custom_fields_for_booking', 'confirmation'];
+                }
+            }
+        }
+
+        public function resetStepsCacheBeforeShortcode($output, $tag, $attr, $m)
+        {
+            if ($tag === 'latepoint_book_form') {
+                $this->resetStepsCache();
+            }
+            return $output;
+        }
+
         public function beSkipped($skip, $step, $booking_object)
         {
             $params = OsParamsHelper::get_param('booking');
@@ -1702,15 +1723,36 @@ EOT;
 
         protected function resolveFlowAgentId($bookingObject = null)
         {
-            $booking = OsParamsHelper::get_param('booking');
-            $restrictions = OsParamsHelper::get_param('restrictions');
-            $presets = OsParamsHelper::get_param('presets');
+            $params = class_exists('OsParamsHelper') ? OsParamsHelper::get_params() : [];
+            $rawParams = $this->getRawRequestParams();
+
+            $booking = [];
+            if (is_array($params) && isset($params['booking']) && is_array($params['booking'])) {
+                $booking = $params['booking'];
+            } elseif (isset($rawParams['booking']) && is_array($rawParams['booking'])) {
+                $booking = $rawParams['booking'];
+            }
+
+            $restrictions = [];
+            if (is_array($params) && isset($params['restrictions']) && is_array($params['restrictions'])) {
+                $restrictions = $params['restrictions'];
+            } elseif (isset($rawParams['restrictions']) && is_array($rawParams['restrictions'])) {
+                $restrictions = $rawParams['restrictions'];
+            }
+
+            $presets = [];
+            if (is_array($params) && isset($params['presets']) && is_array($params['presets'])) {
+                $presets = $params['presets'];
+            } elseif (isset($rawParams['presets']) && is_array($rawParams['presets'])) {
+                $presets = $rawParams['presets'];
+            }
 
             $agentId = intval($bookingObject->agent_id ?? 0);
             if (!$agentId) $agentId = intval(OsStepsHelper::$booking_object->agent_id ?? 0);
             if (!$agentId && is_array($booking)) $agentId = intval($booking['agent_id'] ?? 0);
             if (!$agentId && is_array($restrictions)) $agentId = intval($restrictions['selected_agent'] ?? ($restrictions['agent_id'] ?? 0));
             if (!$agentId && is_array($presets)) $agentId = intval($presets['selected_agent'] ?? 0);
+            if (defined('LATEPOINT_ANY_AGENT') && $agentId === intval(LATEPOINT_ANY_AGENT)) $agentId = 0;
             if ($agentId) return $agentId;
 
             $serviceId = intval($bookingObject->service_id ?? 0);
@@ -1737,6 +1779,17 @@ EOT;
             }
 
             return 0;
+        }
+
+        protected function getRawRequestParams()
+        {
+            $rawParams = $_POST['params'] ?? [];
+            if (is_string($rawParams)) {
+                $parsed = [];
+                parse_str($rawParams, $parsed);
+                return is_array($parsed) ? $parsed : [];
+            }
+            return is_array($rawParams) ? $rawParams : [];
         }
 
         /**
