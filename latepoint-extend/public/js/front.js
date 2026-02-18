@@ -7,6 +7,18 @@ jQuery(function ($) {
     var show_notice = '<div class="os-row os-row-div"><div class="os-col-12"><h3>Please note that your request for the time interval will be processed. DO NOT COME IN, until you receive YOUR SPECIFIC appointment time.</h3></div></div>';
     var show_summary = '<div class="os-show-summary os-summary-line os-has-value" style="display: block;flex: 0 0 100%;"><div class="os-summary-value os-summary-value-notice" style="color:red">Please note that your request for the time interval will be processed. DO NOT COME IN, until you receive YOUR SPECIFIC appointment time. </div> </div>';
     first_payment = true;
+    var markLastVisibleProgressItem = function () {
+        $('.latepoint-w .latepoint-booking-form-element .latepoint-progress ul').each(function () {
+            var $items = $(this).children('li');
+            $items.removeClass('gtd-last-visible');
+            var $visibleItems = $items.filter(function () {
+                return $(this).css('display') !== 'none' && $(this).css('visibility') !== 'hidden';
+            });
+            if ($visibleItems.length) {
+                $visibleItems.last().addClass('gtd-last-visible');
+            }
+        });
+    };
 
     var fields = {
         "qoqkhbly": { action: 'check_certificate', service_id: $('input[name="restrictions[selected_service]"').val() },
@@ -80,6 +92,7 @@ jQuery(function ($) {
         if ($('.latepoint-step-desc-library[data-step-name!="services"] .latepoint-desc-title').length) {
             $('.latepoint-step-desc-library[data-step-name!="services"][data-step-name!="confirmation"] .latepoint-desc-title').text('');
         }
+        markLastVisibleProgressItem();
         for (let key in fields) {
             let id = '#booking_custom_fields_cf_' + key;
             if ($(id).length) {

@@ -92,6 +92,11 @@
     display: none !important;
 }
 
+.latepoint-w .latepoint-booking-form-element .latepoint-progress ul li.gtd-last-visible::after {
+    background: none !important;
+    content: none !important;
+}
+
 .latepoint-w .gtd-additional-file-help {
     margin-top: 10px;
     color: #8e97b3;

@@ -744,9 +744,9 @@ EOT;
                 echo <<<EOT
 <script>
 jQuery(function($) {
-    $('li[data-step-name="custom_fields_for_booking"] span').text('Client Details');
-    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').text('Client Details');
-    $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="custom_fields_for_booking"]').text('Client Details');
+    $('li[data-step-name="custom_fields_for_booking"] span').text('Patient Details');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').text('Patient Details');
+    $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="custom_fields_for_booking"]').text('Patient Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Request submitted');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('{$desc}');
     var cfb = $('.latepoint-side-panel .latepoint-step-desc-w .latepoint-step-desc .latepoint-desc-content').text() == $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-content').text();
@@ -763,9 +763,9 @@ EOT;
                 echo <<<EOT
 <script>
 jQuery(function($) {
-    $('li[data-step-name="custom_fields_for_booking"] span').text('Client Details');
-    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').text('Client Details');
-    $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="custom_fields_for_booking"]').text('Client Details');
+    $('li[data-step-name="custom_fields_for_booking"] span').text('Patient Details');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').text('Patient Details');
+    $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="custom_fields_for_booking"]').text('Patient Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text("Request received. We'll contact you soon");
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. Our team will review your request and contact you within the next 3 business days to collect any additional information required. If you do not hear from us, please call us to confirm your request was received.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*');
 });
@@ -776,9 +776,9 @@ EOT;
                 echo <<<EOT
 <script>
 jQuery(function($) {
-    $('li[data-step-name="custom_fields_for_booking"] span').text('Client Details');
-    $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Client Details');
-    $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
+    $('li[data-step-name="custom_fields_for_booking"] span').text('Patient Details');
+    $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Patient Details');
+    $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Patient Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text("Request received. We'll contact you soon");
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. <br>Our team will review your request and contact you within the next 3 business days to collect any additional information required. <br>If you do not hear from us, please call us to confirm your request was received.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*');
     setInterval(function() {
@@ -794,9 +794,9 @@ EOT;
                 echo <<<EOT
 <script>
 jQuery(function($) {
-    $('li[data-step-name="custom_fields_for_booking"] span').text('Client Details');
-    $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Client Details');
-    $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
+    $('li[data-step-name="custom_fields_for_booking"] span').text('Patient Details');
+    $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Patient Details');
+    $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Patient Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Request submitted');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. Our team will review your request and contact you within the next 3 business days to collect any additional information required. If you do not hear from us, please call us to confirm your request was received.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*');
     $('.latepoint-footer a.latepoint-btn.latepoint-next-btn').attr('data-os-success-action', 'redirect').attr('data-os-redirect-to', 'https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en').addClass('latepoint-btn-redirection');
