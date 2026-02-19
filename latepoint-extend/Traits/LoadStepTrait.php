@@ -175,7 +175,7 @@ trait LoadStepTrait
                             . $this->noServiceJs('Outside Canada')
                             . '</div>';
                     }
-                    $html = $this->addGoogleTranslateAttrToFirstInput($html);
+                    $html = $this->prepareCustomFieldsForGoogleTranslate($html);
                     wp_send_json(array_merge(
                         ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
                         $extra
@@ -487,22 +487,61 @@ EOT;
         return '';
     }
 
-    protected function addGoogleTranslateAttrToFirstInput($html)
+    protected function prepareCustomFieldsForGoogleTranslate($html)
     {
         if (!is_string($html) || $html === '') {
             return $html;
         }
 
-        return preg_replace_callback('/<input\b[^>]*>/i', function ($matches) {
-            $inputTag = $matches[0];
-            if (stripos($inputTag, 'data-google-lang-translate=') !== false) {
-                return $inputTag;
+        $html = preg_replace_callback('/<(input|textarea|select)\b[^>]*>/i', function ($matches) {
+            $fieldTag = $matches[0];
+            if (stripos($fieldTag, 'data-google-lang-translate=') !== false) {
+                return $fieldTag;
             }
-            if (preg_match('/\/>\s*$/', $inputTag)) {
-                return preg_replace('/\/>\s*$/', ' data-google-lang-translate="true" />', $inputTag, 1);
+            if (stripos($fieldTag, '<input') === 0 && preg_match('/\btype\s*=\s*([\'"]?)hidden\1/i', $fieldTag)) {
+                return $fieldTag;
             }
-            return preg_replace('/>\s*$/', ' data-google-lang-translate="true">', $inputTag, 1);
-        }, $html, 1);
+            if (preg_match('/\/>\s*$/', $fieldTag)) {
+                return preg_replace('/\/>\s*$/', ' data-google-lang-translate="true" />', $fieldTag, 1);
+            }
+            return preg_replace('/>\s*$/', ' data-google-lang-translate="true">', $fieldTag, 1);
+        }, $html);
+
+        $script = <<<EOT
+<script>
+jQuery(function($) {
+    var \$step = $('.latepoint-body .latepoint-step-content[data-step-name="custom_fields_for_booking"], .latepoint-body .step-custom-fields-for-booking-w');
+    if (\$step.length) {
+        \$step.find('input, textarea, select').not('[type="hidden"]').attr('data-google-lang-translate', 'true');
+    }
+
+    if (typeof window.doGTranslate !== 'function') return;
+
+    var target = '';
+    var cookieMatch = document.cookie.match(/(?:^|;\\s*)googtrans=([^;]+)/);
+    if (cookieMatch && cookieMatch[1]) {
+        try {
+            var decoded = decodeURIComponent(cookieMatch[1]);
+            var parts = decoded.split('/');
+            target = parts[parts.length - 1] || '';
+        } catch (e) {}
+    }
+
+    if (!target) {
+        var htmlLang = (document.documentElement.getAttribute('lang') || '').toLowerCase();
+        if (htmlLang.indexOf('fr') === 0) target = 'fr';
+    }
+
+    if (target && target !== 'en') {
+        setTimeout(function() {
+            window.doGTranslate('en|' + target);
+        }, 50);
+    }
+});
+</script>
+EOT;
+
+        return $html . $script;
     }
 
     protected function getQhaTimezoneByProvince($province)

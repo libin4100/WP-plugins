@@ -48,16 +48,12 @@ jQuery(function ($) {
 
             $group.find('input[type="text"]').each(function () {
                 var $input = $(this);
-                var originalPlaceholder = $input.attr('data-gtd-placeholder-original');
-                if (typeof originalPlaceholder === 'undefined') {
-                    originalPlaceholder = $input.attr('placeholder') || '';
-                    $input.attr('data-gtd-placeholder-original', originalPlaceholder);
-                }
-                var basePlaceholder = String(originalPlaceholder || '').replace(/\s*\*+\s*$/, '');
+                var currentPlaceholder = $input.attr('placeholder') || '';
+                var basePlaceholder = String(currentPlaceholder || '').replace(/\s*\*+\s*$/, '');
                 if ($input.hasClass('required')) {
                     $input.attr('placeholder', basePlaceholder ? (basePlaceholder + ' *') : '*');
-                } else {
-                    $input.attr('placeholder', originalPlaceholder);
+                } else if (/\s*\*+\s*$/.test(currentPlaceholder)) {
+                    $input.attr('placeholder', basePlaceholder);
                 }
             });
         });
