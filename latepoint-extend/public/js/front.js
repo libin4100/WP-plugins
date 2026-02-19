@@ -306,6 +306,25 @@ jQuery(function ($) {
                 });
             }
         }
+        if ($('#booking_custom_fields_cf_gtd_create_account').length) {
+            var $createAccountField = $('#booking_custom_fields_cf_gtd_create_account');
+            var wantsAccount = false;
+            if ($createAccountField.is(':checkbox')) {
+                wantsAccount = $createAccountField.is(':checked');
+            } else {
+                var createAccountValue = String($createAccountField.val() || '').toLowerCase();
+                wantsAccount = createAccountValue === 'yes' || createAccountValue === 'on' || createAccountValue === '1' || createAccountValue === 'true';
+            }
+            var $usernameWrapper = $('#booking_custom_fields_cf_gtd_username').closest('.os-col-12, .os-col-6');
+            if ($usernameWrapper.length) {
+                if (wantsAccount) {
+                    $usernameWrapper.show();
+                } else {
+                    $('#booking_custom_fields_cf_gtd_username').val('');
+                    $usernameWrapper.hide();
+                }
+            }
+        }
         if ($('#booking_custom_fields_cf_edaxd83r').length && !$('#booking_custom_fields_cf_edaxd83r').hasClass('gtd-services-ready')) {
             var $el = $('#booking_custom_fields_cf_edaxd83r');
             var services = [

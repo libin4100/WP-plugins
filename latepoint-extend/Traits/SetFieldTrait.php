@@ -257,19 +257,34 @@ trait SetFieldTrait
                 'cf_PfyXBFfM' => 'Preferred contact phone number',
                 'cf_PIl2UOoe' => 'Email address',
                 'cf_Fk9ih4Et' => 'Additional Info on your request.',
+                'cf_gtd_create_account' => 'Do you want to create an account?',
+                'cf_gtd_username' => 'Username',
             ];
 
         $ordered = [];
         foreach ($agent30Fields as $fieldId => $label) {
             if (!isset($values[$fieldId]) || !is_array($values[$fieldId])) {
-                if (in_array($fieldId, ['email', 'phone'], true)) {
+                if (in_array($fieldId, ['email', 'phone', 'cf_gtd_create_account', 'cf_gtd_username'], true)) {
+                    $fieldType = 'text';
+                    $fieldOptions = '';
+                    $required = 'on';
+                    $width = 'os-col-6';
+                    if ($fieldId === 'cf_gtd_create_account') {
+                        $fieldType = 'checkbox';
+                        $fieldOptions = '';
+                        $required = 'off';
+                        $width = 'os-col-12';
+                    } elseif ($fieldId === 'cf_gtd_username') {
+                        $required = 'off';
+                        $width = 'os-col-12';
+                    }
                     $values[$fieldId] = [
                         'id' => $fieldId,
-                        'type' => 'text',
-                        'width' => 'os-col-6',
-                        'options' => '',
+                        'type' => $fieldType,
+                        'width' => $width,
+                        'options' => $fieldOptions,
                         'placeholder' => __($label, 'latepoint'),
-                        'required' => 'on',
+                        'required' => $required,
                         'visibility' => 'public',
                     ];
                 } else {
@@ -320,6 +335,17 @@ trait SetFieldTrait
                     'type' => 'text',
                     'required' => 'on',
                     'placeholder' => __('Phone', 'latepoint'),
+                ];
+            } elseif ($fieldId === 'cf_gtd_create_account') {
+                $extra = [
+                    'type' => 'checkbox',
+                    'required' => 'off',
+                ];
+            } elseif ($fieldId === 'cf_gtd_username') {
+                $extra = [
+                    'type' => 'text',
+                    'required' => 'off',
+                    'placeholder' => __('Username', 'latepoint'),
                 ];
             } elseif ($fieldId === 'cf_eDaxd83r') {
                 $extra = [
