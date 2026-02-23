@@ -204,6 +204,7 @@ trait SetFieldTrait
                         if (isset($fields[$type]['merge'][$id]))
                             $values[$id] = array_merge($values[$id], $fields[$type]['merge'][$id]);
                     }
+                    $values = ($fields[$type]['addCustomer'] ?? []) + $values;
                     OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                 }
             }
@@ -424,10 +425,36 @@ trait SetFieldTrait
         $specialFieldDefs = [
             'located' => ['show' => ['cf_6A3SfgET']],
             'locatedOther' => ['show' => ['cf_6A3SfgET']],
-            'needRenew' => ['show' => ['cf_NeRenew0', 'cf_NeRenew1', 'cf_NeRenew2', 'cf_NeRenew3', 'cf_NeRenew4']],
+            'needRenew' => ['show' => ['cf_NeRenew0', 'cf_NeRenew1', 'cf_NeRenew2', 'cf_NeRenew3']],
             'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
             'returning' => ['show' => ['cf_WFHtiGvf', 'cf_ZoXsdwEZ']],
-            'returningOnly' => ['show' => ['cf_DrKevcqV', 'cf_4zkIbeeY', 'cf_NVByvyYw', 'cf_cVndXX2e', 'cf_iAoOucDc']],
+            'returningOnly' => [
+                'show' => [
+                    'cf_DrKevcqV',
+                    'cf_4zkIbeeY',
+                    'cf_NVByvyYw',
+                    'cf_cVndXX2e',
+                    'cf_pharmacy_phone',
+                    'cf_iAoOucDc',
+                    'cf_prescription_dosage',
+                ],
+                'add' => $this->getPrescriptionRenewalSplitFields(),
+                'addCustomer' => $this->getPrescriptionRenewalSplitFields(),
+                'merge' => [
+                    'cf_cVndXX2e' => [
+                        'label' => __('Enter your pharmacy name', 'latepoint'),
+                        'placeholder' => __('Enter your pharmacy name', 'latepoint'),
+                        'width' => 'os-col-6',
+                        'required' => 'off',
+                    ],
+                    'cf_iAoOucDc' => [
+                        'label' => __('Prescription name', 'latepoint'),
+                        'placeholder' => __('Prescription name', 'latepoint'),
+                        'width' => 'os-col-6',
+                        'required' => 'off',
+                    ],
+                ],
+            ],
             'careServices' => ['show' => ['cf_DQ70wnRG']],
             'isGTD' => ['show' => ['cf_Presc1_0', 'cf_Presc2_0', 'cf_Presc3_0', 'cf_Presc3_1', 'cf_Presc3_2']],
             'sp' => $this->getSpFields($options),
@@ -660,5 +687,36 @@ trait SetFieldTrait
         } else {
             return $this->createProviderField($options['certKey'] ?? '');
         }
+    }
+
+    /**
+     * Split prescription renewal fields for pharmacy and prescription details.
+     *
+     * @return array Field definitions
+     */
+    protected function getPrescriptionRenewalSplitFields()
+    {
+        return [
+            'cf_pharmacy_phone' => [
+                'label' => __('Phone Number', 'latepoint'),
+                'placeholder' => __('Phone Number', 'latepoint'),
+                'type' => 'text',
+                'width' => 'os-col-6',
+                'visibility' => 'public',
+                'options' => '',
+                'required' => 'off',
+                'id' => 'cf_pharmacy_phone',
+            ],
+            'cf_prescription_dosage' => [
+                'label' => __('Dosage', 'latepoint'),
+                'placeholder' => __('Dosage', 'latepoint'),
+                'type' => 'text',
+                'width' => 'os-col-6',
+                'visibility' => 'public',
+                'options' => '',
+                'required' => 'off',
+                'id' => 'cf_prescription_dosage',
+            ],
+        ];
     }
 }

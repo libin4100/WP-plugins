@@ -171,21 +171,50 @@ jQuery(function ($) {
             }
         }
         if ($('#customer_custom_fields_cf_4zkibeey').length) {
-            if ($('#customer_custom_fields_cf_4zkibeey').val() == 'Other') {
-                $('#customer_custom_fields_cf_nvbyvyyw').parents('.os-col-12').show()
-            } else {
-                $('#customer_custom_fields_cf_nvbyvyyw').parents('.os-col-12').hide()
-            }
-            if ($('#customer_custom_fields_cf_4zkibeey').val() == 'Prescription renewal') {
-                $('#customer_custom_fields_cf_cvndxx2e').parents('.os-col-12').show()
-                if (!$('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').find('.or').length) {
-                    $('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').prepend('<p class="or">Or</p>').show()
+            var getRenewalFieldWrapper = function(selector) {
+                return $(selector).closest('.os-col-12, .os-col-6');
+            };
+            var makeTwoColumnRow = function($leftWrapper, $rightWrapper) {
+                if (!$leftWrapper.length || !$rightWrapper.length) return;
+                $leftWrapper.removeClass('os-col-12').addClass('os-col-6');
+                $rightWrapper.removeClass('os-col-12').addClass('os-col-6');
+                if (!$leftWrapper.next().is($rightWrapper)) {
+                    $rightWrapper.insertAfter($leftWrapper);
                 }
+            };
+            var $otherReasonWrapper = getRenewalFieldWrapper('#customer_custom_fields_cf_nvbyvyyw');
+            var $pharmacyNameWrapper = getRenewalFieldWrapper('#customer_custom_fields_cf_cvndxx2e');
+            var $pharmacyPhoneWrapper = getRenewalFieldWrapper('#customer_custom_fields_cf_pharmacy_phone');
+            var $prescriptionNameWrapper = getRenewalFieldWrapper('#customer_custom_fields_cf_iaooucdc');
+            var $dosageWrapper = getRenewalFieldWrapper('#customer_custom_fields_cf_prescription_dosage');
+
+            if ($('#customer_custom_fields_cf_4zkibeey').val() == 'Other') {
+                $otherReasonWrapper.show()
             } else {
-                $('#customer_custom_fields_cf_cvndxx2e').parents('.os-col-12').hide()
-                $('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').hide();
-                if ($('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').find('.or').length) {
-                    $('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').find('.or').remove();
+                $otherReasonWrapper.hide()
+            }
+
+            makeTwoColumnRow($pharmacyNameWrapper, $pharmacyPhoneWrapper);
+            makeTwoColumnRow($prescriptionNameWrapper, $dosageWrapper);
+
+            if ($('#customer_custom_fields_cf_4zkibeey').val() == 'Prescription renewal') {
+                $pharmacyNameWrapper.show();
+                $pharmacyPhoneWrapper.show();
+                if ($prescriptionNameWrapper.length) {
+                    var $row = $prescriptionNameWrapper.parent('.os-row');
+                    if ($row.length && !$row.find('.renewal-or-label').length) {
+                        $('<div class="os-col-12 renewal-or-label"><p class="or">Or</p></div>').insertBefore($prescriptionNameWrapper);
+                    }
+                }
+                $prescriptionNameWrapper.show();
+                $dosageWrapper.show();
+            } else {
+                $pharmacyNameWrapper.hide();
+                $pharmacyPhoneWrapper.hide();
+                $prescriptionNameWrapper.hide();
+                $dosageWrapper.hide();
+                if ($prescriptionNameWrapper.length) {
+                    $prescriptionNameWrapper.parent('.os-row').find('.renewal-or-label').remove();
                 }
             }
         }

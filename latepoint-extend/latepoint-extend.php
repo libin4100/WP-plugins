@@ -1170,6 +1170,8 @@ EOT;
                         'region',
                         'language',
                         'group_id',
+                        'cf_pharmacy_phone',
+                        'cf_prescription_dosage',
                     ] as $key
                 ) {
                     if ($data['custom_fields'][$key] ?? false) {
@@ -1182,9 +1184,18 @@ EOT;
                     if ($booking['custom_fields']['cf_4zkIbeeY'] == 'Other' && ($booking['custom_fields']['cf_NVByvyYw'] ?? false)) {
                         $model->visit_reason .= ' (' . $booking['custom_fields']['cf_NVByvyYw'] . ')';
                     }
-                    if (($booking['custom_fields']['cf_4zkIbeeY'] == 'Prescription renewal') && ($booking['custom_fields']['cf_cVndXX2e'] ?? false)) {
-                        $model->visit_reason .= '||||prescription_renewal_pharmacy:' . $booking['custom_fields']['cf_cVndXX2e']
-                            . '||||prescription_renewal_pharmacy_phone:' . $booking['custom_fields']['cf_iAoOucDc'];
+                    if ($booking['custom_fields']['cf_4zkIbeeY'] == 'Prescription renewal') {
+                        $pharmacyName = trim((string)($booking['custom_fields']['cf_cVndXX2e'] ?? ''));
+                        $pharmacyPhone = trim((string)($booking['custom_fields']['cf_pharmacy_phone'] ?? ''));
+                        $prescriptionName = trim((string)($booking['custom_fields']['cf_iAoOucDc'] ?? ''));
+                        $dosage = trim((string)($booking['custom_fields']['cf_prescription_dosage'] ?? ''));
+
+                        if ($pharmacyName !== '' || $pharmacyPhone !== '' || $prescriptionName !== '' || $dosage !== '') {
+                            $model->visit_reason .= '||||prescription_renewal_pharmacy:' . $pharmacyName
+                                . '||||prescription_renewal_pharmacy_phone:' . $pharmacyPhone
+                                . '||||prescription_renewal_name:' . $prescriptionName
+                                . '||||prescription_renewal_dosage:' . $dosage;
+                        }
                     }
                 }
 

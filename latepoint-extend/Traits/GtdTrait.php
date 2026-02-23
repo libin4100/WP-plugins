@@ -94,7 +94,6 @@ trait GtdTrait
             'cf_NeRenew1',
             'cf_NeRenew2',
             'cf_NeRenew3',
-            'cf_NeRenew4',
         ], $prepend ? ['cf_x18jr0Vf', ''] : []);
     }
 
@@ -108,7 +107,6 @@ trait GtdTrait
             'cf_NeRenew1' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
             'cf_NeRenew2' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
             'cf_NeRenew3' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
-            'cf_NeRenew4' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
         ];
     }
 
@@ -147,10 +145,13 @@ JS;
         }, $keys);
         $fields = array_combine($keys, $ids);
         $init = array_slice($keys, 0, -2);
+        $initIds = array_map(function ($key) use ($fields) {
+            return $fields[$key] ?? $key;
+        }, $init);
         $rules = $this->$funcRules();
 
         $fieldsJs = json_encode($fields);
-        $initJs = json_encode(array_values($init));
+        $initJs = json_encode(array_values($initIds));
         $rulesJs = json_encode($rules);
         return <<<JS
 <script>
@@ -165,28 +166,49 @@ jQuery(document).ready(function($) {
 
         rules[key].forEach(function(rule) {
             for (var field in rule) {
-                bindRule('#' + fields[field], [key]);
+                bindRule(field, [key]);
             }
         });
+    }
+
+    function getFieldById(fieldId) {
+        var f = $('#' + fieldId);
+        if (!f.length && fieldId.indexOf('booking_custom_fields_') === 0) {
+            f = $('#' + fieldId.replace('booking_custom_fields_', 'customer_custom_fields_'));
+        }
+        return f;
     }
 
     function toggleFields(list, action) {
         list.forEach(function(field) {
-            var f = $('#' + field);
+            var f = getFieldById(field);
+            if (!f.length) {
+                return;
+            }
             if (action === 'hide') {
                 f.closest('.os-form-group').hide();
                 f.closest('.os-form-group').siblings('#preferred_pharamcy_label').hide();
                 f.prop('required', false);
+                f.removeClass('required');
             } else {
                 f.closest('.os-form-group').show();
                 f.closest('.os-form-group').siblings('#preferred_pharamcy_label').show();
                 f.prop('required', true);
+                f.addClass('required');
             }
         });
     }
 
-    function bindRule(selector, list) {
-        $('body').on('change', selector, function() {
+    function bindRule(field, list) {
+        var fieldId = fields[field];
+        if (!fieldId) {
+            return;
+        }
+        var selectors = ['#' + fieldId];
+        if (fieldId.indexOf('booking_custom_fields_') === 0) {
+            selectors.push('#' + fieldId.replace('booking_custom_fields_', 'customer_custom_fields_'));
+        }
+        $('body').on('change', selectors.join(', '), function() {
             list.forEach(function(field) {
                 checkRule(field);
             });
@@ -201,26 +223,27 @@ jQuery(document).ready(function($) {
             var ruleMatch = true;
             for (var key in rule) {
                 var value = rule[key];
-                var f = $('#' + fields[key]);
+                var f = getFieldById(fields[key]);
+                var fieldValue = f.length ? String(f.val() || '') : '';
                 if (value === '!empty') {
-                    if (!f.val() || f.val().trim() === '') {
+                    if (fieldValue.trim() === '') {
                         ruleMatch = false;
                         break;
                     }
                 } else if (value.startsWith('!=')) {
                     value = value.substring(2);
-                    if (!f.val() || (f.val() === value)) {
+                    if (fieldValue === '' || (fieldValue === value)) {
                         ruleMatch = false;
                         break;
                     }
                 } else if (value.startsWith('<')) {
                     value = value.substring(1);
-                    if (!f.val() || (f.val() >= value)) {
+                    if (fieldValue === '' || (fieldValue >= value)) {
                         ruleMatch = false;
                         break;
                     }
                 } else {
-                    if (f.val() !== value) {
+                    if (fieldValue !== value) {
                         ruleMatch = false;
                         break;
                     }
