@@ -759,7 +759,18 @@ jQuery(function($) {
 </script>
 EOT;
             }
-            if (in_array(OsStepsHelper::$booking_object->service_id, [15])) {
+            if (
+                (int) OsStepsHelper::$booking_object->agent_id === 30
+                || in_array(OsStepsHelper::$booking_object->service_id, [15])
+            ) {
+                $requestType = strtolower(trim((string)$this->getRequestTypeForConfirmation(OsStepsHelper::$booking_object)));
+                $isFollowup = in_array($requestType, ['followup', 'follow up', 'follow-up'], true);
+                if ($isFollowup) {
+                    $desc = "Thank you for your follow-up EFAP request. Our team will contact you shortly to set up your appointment.<br><br>You can continue your health journey by accessing the self-guided wellness platform in the meantime.<br><br>[link]";
+                } else {
+                    $desc = "Thank you for submitting your EFAP request. Your request has been received, and our team will connect with you shortly to guide you.<br><br>To get started health journey, you can connect to our self-guided digital wellness platform using the link and registration code below:<br><br>[link]<br>passcode";
+                }
+                $descJs = wp_json_encode($desc, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 echo <<<EOT
 <script>
 jQuery(function($) {
@@ -767,7 +778,7 @@ jQuery(function($) {
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').text('Patient Details');
     $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="custom_fields_for_booking"]').text('Patient Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text("Request received. We'll contact you soon");
-    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. Our team will review your request and contact you within the next 3 business days to collect any additional information required. If you do not hear from us, please call us to confirm your request was received.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html({$descJs});
 });
 </script>
 EOT;
@@ -1805,6 +1816,48 @@ EOT;
                 return is_array($parsed) ? $parsed : [];
             }
             return is_array($rawParams) ? $rawParams : [];
+        }
+
+        protected function getRequestTypeForConfirmation($bookingObject = null)
+        {
+            $keys = ['cf_UCfp8qZF', 'cf_ucfp8qzf'];
+
+            if ($bookingObject && is_object($bookingObject) && isset($bookingObject->custom_fields) && is_array($bookingObject->custom_fields)) {
+                foreach ($keys as $key) {
+                    if (!empty($bookingObject->custom_fields[$key])) {
+                        return (string)$bookingObject->custom_fields[$key];
+                    }
+                }
+            }
+
+            if ($bookingObject && is_object($bookingObject) && method_exists($bookingObject, 'get_meta_by_key')) {
+                foreach ($keys as $key) {
+                    $metaValue = $bookingObject->get_meta_by_key($key, '');
+                    if (!empty($metaValue)) {
+                        return (string)$metaValue;
+                    }
+                }
+            }
+
+            $params = class_exists('OsParamsHelper') ? OsParamsHelper::get_params() : [];
+            $rawParams = $this->getRawRequestParams();
+
+            $booking = [];
+            if (is_array($params) && isset($params['booking']) && is_array($params['booking'])) {
+                $booking = $params['booking'];
+            } elseif (isset($rawParams['booking']) && is_array($rawParams['booking'])) {
+                $booking = $rawParams['booking'];
+            }
+
+            if (isset($booking['custom_fields']) && is_array($booking['custom_fields'])) {
+                foreach ($keys as $key) {
+                    if (!empty($booking['custom_fields'][$key])) {
+                        return (string)$booking['custom_fields'][$key];
+                    }
+                }
+            }
+
+            return '';
         }
 
         /**
