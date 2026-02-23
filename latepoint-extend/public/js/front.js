@@ -178,10 +178,15 @@ jQuery(function ($) {
             }
             if ($('#customer_custom_fields_cf_4zkibeey').val() == 'Prescription renewal') {
                 $('#customer_custom_fields_cf_cvndxx2e').parents('.os-col-12').show()
-                $('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').show()
+                if (!$('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').find('.or').length) {
+                    $('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').prepend('<p class="or">Or</p>').show()
+                }
             } else {
                 $('#customer_custom_fields_cf_cvndxx2e').parents('.os-col-12').hide()
-                $('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').hide()
+                $('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').hide();
+                if ($('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').find('.or').length) {
+                    $('#customer_custom_fields_cf_iaooucdc').parents('.os-col-12').find('.or').remove();
+                }
             }
         }
         if ($('#booking_custom_fields_cf_khyzmswi').length) {

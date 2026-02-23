@@ -264,9 +264,9 @@ trait ProcessStepTrait
                     wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['Other Reason ( required ) can not be blank']));
                     return;
                 }
-                if ((($booking['custom_fields']['cf_4zkIbeeY'] ?? false) == 'Prescription renewal') && !(($booking['custom_fields']['cf_cVndXX2e'] ?? false) && ($booking['custom_fields']['cf_iAoOucDc'] ?? false))) {
+                if ((($booking['custom_fields']['cf_4zkIbeeY'] ?? false) == 'Prescription renewal') && !(($booking['custom_fields']['cf_cVndXX2e'] ?? false) || ($booking['custom_fields']['cf_iAoOucDc'] ?? false))) {
                     remove_all_actions('latepoint_process_step');
-                    wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['Pharmacy can not be blank']));
+                    wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['At least one of the fields (pharmacy name and phone number or Prescription name and dosage) is required for Prescription renewal.']));
                     return;
                 }
                 break;
