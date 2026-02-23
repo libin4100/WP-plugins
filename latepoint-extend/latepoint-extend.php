@@ -759,10 +759,7 @@ jQuery(function($) {
 </script>
 EOT;
             }
-            if (
-                (int) OsStepsHelper::$booking_object->agent_id === 30
-                || in_array(OsStepsHelper::$booking_object->service_id, [15])
-            ) {
+            if ((int) OsStepsHelper::$booking_object->agent_id === 30) {
                 $requestType = strtolower(trim((string)$this->getRequestTypeForConfirmation(OsStepsHelper::$booking_object)));
                 $isFollowup = in_array($requestType, ['followup', 'follow up', 'follow-up'], true);
                 if ($isFollowup) {
