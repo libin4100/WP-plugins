@@ -325,7 +325,6 @@ trait SetFieldTrait
             } elseif ($fieldId === 'cf_cYhjctjz') {
                 $extra = [
                     'type' => 'select',
-                    'options' => "Spouse\nChild\nParent\nSibling\nGrandparent\nOther",
                     'placeholder' => __('---Please Select---', 'latepoint'),
                 ];
             } elseif ($fieldId === 'cf_6A3SfgET') {
