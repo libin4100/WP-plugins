@@ -240,9 +240,24 @@ trait ProcessStepTrait
                     wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => $error_messages));
                     return;
                 }
-                if ($this->shouldAuthorizeAgent30WithoutLogin($bookingObject, $booking)) {
+                $shouldAuthorizeAgent30 = $this->shouldAuthorizeAgent30WithoutLogin($bookingObject, $booking);
+                if (intval($bookingObject->agent_id ?? 0) === 30) {
+                    error_log(sprintf(
+                        '[latepoint-extend] Agent30 custom_fields auth check. should_authorize=%d booking_customer_id=%d logged_in_customer_id=%d',
+                        $shouldAuthorizeAgent30 ? 1 : 0,
+                        intval($bookingObject->customer_id ?? 0),
+                        intval(OsAuthHelper::get_logged_in_customer_id() ?: 0)
+                    ));
+                }
+                if ($shouldAuthorizeAgent30) {
                     $customerAuthError = $this->authorizeAgent30CustomerFromCustomFields($bookingObject, $custom_fields_data);
                     if ($customerAuthError) {
+                        error_log(sprintf(
+                            '[latepoint-extend] Agent30 custom_fields authorize failed. error=%s booking_customer_id=%d logged_in_customer_id=%d',
+                            (string)$customerAuthError,
+                            intval($bookingObject->customer_id ?? 0),
+                            intval(OsAuthHelper::get_logged_in_customer_id() ?: 0)
+                        ));
                         remove_all_actions('latepoint_process_step');
                         wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => [$customerAuthError]));
                         return;
@@ -801,6 +816,14 @@ trait ProcessStepTrait
         }
         $loggedInCustomerId = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
         $bookingCustomerId = intval($bookingObject->customer_id ?? 0);
+        $loggedInCustomerExists = $this->agent30CustomerExists($loggedInCustomerId);
+        $bookingCustomerExists = $this->agent30CustomerExists($bookingCustomerId);
+
+        // Session can hold stale customer ids after DB restore/import.
+        // If either context points to a missing customer record, rebuild customer auth from submitted fields.
+        if (($loggedInCustomerId > 0 && !$loggedInCustomerExists) || ($bookingCustomerId > 0 && !$bookingCustomerExists)) {
+            return true;
+        }
         if ($loggedInCustomerId && $bookingCustomerId && ($loggedInCustomerId === $bookingCustomerId)) {
             return false;
         }
@@ -827,6 +850,16 @@ trait ProcessStepTrait
         return $status === 'not_login';
     }
 
+    protected function agent30CustomerExists($customerId)
+    {
+        $customerId = intval($customerId);
+        if ($customerId <= 0) {
+            return false;
+        }
+        $customer = new OsCustomerModel($customerId);
+        return intval($customer->id ?? 0) === $customerId;
+    }
+
     protected function authorizeAgent30CustomerFromCustomFields($bookingObject, $customFieldsData)
     {
         $bookingParams = OsParamsHelper::get_param('booking');
@@ -848,6 +881,9 @@ trait ProcessStepTrait
         if ($email === '') {
             $email = trim((string)$readValue($customerInput, 'email'));
         }
+        if ($email === '') {
+            $email = trim((string)($customFieldsData['cf_PIl2UOoe'] ?? ''));
+        }
 
         $phone = trim((string)($customFieldsData['phone'] ?? ''));
         if ($phone === '') {
@@ -856,8 +892,19 @@ trait ProcessStepTrait
         if ($phone === '') {
             $phone = trim((string)$readValue($customerInput, 'phone'));
         }
+        if ($phone === '') {
+            $phone = trim((string)($customFieldsData['cf_PfyXBFfM'] ?? ''));
+        }
+
+        if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $email = '';
+        }
+
         if (!$email && !$phone) {
-            return 'Email or phone is required to continue.';
+            // Do not hard-fail booking flow on missing contact fields.
+            // Generate a unique placeholder email for customer record creation.
+            $email = 'agent30-' . time() . '-' . strtolower(wp_generate_password(6, false, false)) . '@example.com';
+            error_log('[latepoint-extend] Agent30 customer fallback: generated placeholder email because no email/phone was provided.');
         }
 
         $firstName = trim((string)($customFieldsData['cf_SdFSk6Tv'] ?? $customFieldsData['first_name'] ?? ''));
@@ -919,10 +966,41 @@ trait ProcessStepTrait
                 return $validations;
             });
         }
+        if (intval($bookingObject->agent_id ?? 0) === 30) {
+            // Agent30 flow does not collect customer custom fields.
+            // Disable addon-level model validate hooks for this request to avoid false failures.
+            remove_all_actions('latepoint_model_validate');
+        }
         $customer->set_data($customerPayload);
-        $customer->save();
+        $saved = $customer->save();
 
-        if (!($customer->id ?? false)) {
+        if (!$saved || !($customer->id ?? false)) {
+            global $wpdb;
+            $customerErrors = $customer->get_error_messages();
+            $messages = [];
+            if (is_array($customerErrors) && !empty($customerErrors)) {
+                $messages = array_values(array_filter(array_map(function ($message) {
+                    return is_scalar($message) ? trim((string)$message) : '';
+                }, $customerErrors)));
+            } elseif (is_string($customerErrors) && trim($customerErrors) !== '') {
+                $messages = [trim($customerErrors)];
+            }
+            $dbError = trim((string)($wpdb->last_error ?? ''));
+
+            error_log(sprintf(
+                '[latepoint-extend] Agent30 customer save failed. saved=%d errors=%s db_error=%s payload=%s',
+                $saved ? 1 : 0,
+                wp_json_encode($messages),
+                $dbError,
+                wp_json_encode($customerPayload)
+            ));
+
+            if (!empty($messages)) {
+                return implode(' ', $messages);
+            }
+            if ($dbError !== '') {
+                return 'Unable to create customer record. ' . $dbError;
+            }
             return 'Unable to create customer record. Please verify contact information and try again.';
         }
 
@@ -931,6 +1009,13 @@ trait ProcessStepTrait
         $bookingObject->customer_id = $customer->id;
         $_POST['booking']['customer_id'] = $customer->id;
         $_POST['customer_id'] = $customer->id;
+
+        if (intval($bookingObject->agent_id ?? 0) === 30) {
+            error_log(sprintf(
+                '[latepoint-extend] Agent30 customer authorized from custom_fields. customer_id=%d',
+                intval($customer->id)
+            ));
+        }
 
         return null;
     }

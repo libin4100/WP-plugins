@@ -315,6 +315,111 @@ EOT;
                     $bookingObject->agent_id = array_shift($agents);
                     if ($agents) $bookingObject->agents = json_encode($agents);
                 }
+
+                // Agent 30 flow has only custom fields + confirmation. If booking save fails here,
+                // LatePoint core may return {"message": false}; return a concrete error instead.
+                if (intval($bookingObject->agent_id ?? 0) === 30 && $bookingObject->is_new_record()) {
+                    if (method_exists($this, 'ensureAgent30DefaultDateTime')) {
+                        $this->ensureAgent30DefaultDateTime($bookingObject);
+                    }
+
+                    // Safety net: if stale/missing customer session reaches confirmation,
+                    // recover customer from submitted custom fields before saving booking.
+                    $preLoggedInCustomerId = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
+                    $preBookingCustomerId = intval($bookingObject->customer_id ?? 0);
+                    $preLoggedInExists = method_exists($this, 'agent30CustomerExists') ? $this->agent30CustomerExists($preLoggedInCustomerId) : ($preLoggedInCustomerId > 0);
+                    $preBookingExists = method_exists($this, 'agent30CustomerExists') ? $this->agent30CustomerExists($preBookingCustomerId) : ($preBookingCustomerId > 0);
+                    if ((!$preLoggedInExists || !$preBookingExists) && method_exists($this, 'authorizeAgent30CustomerFromCustomFields')) {
+                        $bookingParams = OsParamsHelper::get_param('booking');
+                        $customFieldsData = [];
+                        if (is_array($bookingParams) && isset($bookingParams['custom_fields']) && is_array($bookingParams['custom_fields'])) {
+                            $customFieldsData = $bookingParams['custom_fields'];
+                        } elseif (isset($bookingObject->custom_fields) && is_array($bookingObject->custom_fields)) {
+                            $customFieldsData = $bookingObject->custom_fields;
+                        }
+                        $recoverError = $this->authorizeAgent30CustomerFromCustomFields($bookingObject, $customFieldsData);
+                        if (is_string($recoverError) && $recoverError !== '') {
+                            remove_all_actions('latepoint_load_step');
+                            wp_send_json([
+                                'status' => LATEPOINT_STATUS_ERROR,
+                                'message' => [$recoverError],
+                            ]);
+                            return;
+                        }
+                    }
+                    $loggedInCustomerId = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
+                    $bookingCustomerId = intval($bookingObject->customer_id ?? 0);
+
+                    // LatePoint save_from_booking_form requires booking.customer_id to match
+                    // currently authorized customer id. Reconcile stale session/customer mismatch.
+                    if ($bookingCustomerId > 0 && $loggedInCustomerId > 0 && $bookingCustomerId !== $loggedInCustomerId) {
+                        OsAuthHelper::authorize_customer($bookingCustomerId);
+                        $loggedInCustomerId = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
+                    }
+                    if ($bookingCustomerId <= 0 && $loggedInCustomerId > 0) {
+                        $bookingObject->customer_id = $loggedInCustomerId;
+                        $bookingCustomerId = $loggedInCustomerId;
+                    }
+                    if ($loggedInCustomerId <= 0 && $bookingCustomerId > 0) {
+                        OsAuthHelper::authorize_customer($bookingCustomerId);
+                        $loggedInCustomerId = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
+                    }
+                    if ($loggedInCustomerId > 0) {
+                        $bookingObject->customer_id = $loggedInCustomerId;
+                        if (!isset($_POST['booking']) || !is_array($_POST['booking'])) {
+                            $_POST['booking'] = [];
+                        }
+                        $_POST['booking']['customer_id'] = $loggedInCustomerId;
+                        $_POST['customer_id'] = $loggedInCustomerId;
+                    }
+
+                    $saved = $bookingObject->save_from_booking_form();
+                    if (!$saved) {
+                        global $wpdb;
+                        $errorMessages = $bookingObject->get_error_messages();
+                        $messages = [];
+
+                        if (is_array($errorMessages) && !empty($errorMessages)) {
+                            $messages = array_values(array_filter(array_map(function ($message) {
+                                return is_scalar($message) ? trim((string)$message) : '';
+                            }, $errorMessages)));
+                        } elseif (is_string($errorMessages) && trim($errorMessages) !== '') {
+                            $messages = [trim($errorMessages)];
+                        }
+
+                        if (empty($messages)) {
+                            $messages[] = 'Unable to submit request right now. Please refresh and try again.';
+                        }
+
+                        $dbError = trim((string)($wpdb->last_error ?? ''));
+                        $loggedInCustomerIdForLog = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
+                        $bookingCustomerIdForLog = intval($bookingObject->customer_id ?? 0);
+                        $loggedInExistsForLog = method_exists($this, 'agent30CustomerExists') ? $this->agent30CustomerExists($loggedInCustomerIdForLog) : ($loggedInCustomerIdForLog > 0);
+                        $bookingExistsForLog = method_exists($this, 'agent30CustomerExists') ? $this->agent30CustomerExists($bookingCustomerIdForLog) : ($bookingCustomerIdForLog > 0);
+                        error_log(sprintf(
+                            '[latepoint-extend] Agent30 confirmation save failed. booking=%s logged_in_customer_id=%d logged_in_exists=%d booking_exists=%d db_error=%s',
+                            wp_json_encode([
+                                'agent_id' => intval($bookingObject->agent_id ?? 0),
+                                'service_id' => intval($bookingObject->service_id ?? 0),
+                                'location_id' => intval($bookingObject->location_id ?? 0),
+                                'customer_id' => intval($bookingObject->customer_id ?? 0),
+                                'start_date' => (string)($bookingObject->start_date ?? ''),
+                                'start_time' => (string)($bookingObject->start_time ?? ''),
+                            ]),
+                            $loggedInCustomerIdForLog,
+                            $loggedInExistsForLog ? 1 : 0,
+                            $bookingExistsForLog ? 1 : 0,
+                            $dbError
+                        ));
+
+                        remove_all_actions('latepoint_load_step');
+                        wp_send_json([
+                            'status' => LATEPOINT_STATUS_ERROR,
+                            'message' => $messages,
+                        ]);
+                        return;
+                    }
+                }
                 break;
             //Steps for QHA appointment request
             case 'qha_time':
