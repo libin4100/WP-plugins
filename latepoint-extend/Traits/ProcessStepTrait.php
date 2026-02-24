@@ -516,15 +516,44 @@ trait ProcessStepTrait
         if (!empty($wpdb->prefix)) {
             $candidates[] = $wpdb->prefix . 'app_users';
         }
+        $candidates = array_values(array_unique(array_filter($candidates)));
 
         foreach ($candidates as $tableName) {
-            $exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $tableName));
-            if ($exists === $tableName) {
+            if ($this->agent30AppUsersTableExists($tableName)) {
                 return $tableName;
             }
         }
 
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log(sprintf(
+                '[latepoint-extend] resolveAgent30AppUsersTable failed. candidates=%s last_error=%s',
+                json_encode($candidates),
+                (string)$wpdb->last_error
+            ));
+        }
+
         return '';
+    }
+
+    protected function agent30AppUsersTableExists($tableName)
+    {
+        global $wpdb;
+
+        if (!is_string($tableName) || $tableName === '') {
+            return false;
+        }
+
+        $exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $tableName));
+        if ($exists === $tableName) {
+            return true;
+        }
+
+        $columns = $wpdb->get_results("SHOW COLUMNS FROM `{$tableName}`", ARRAY_A);
+        if (is_array($columns) && !empty($columns)) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function findAgent30AppUserByUsername($tableName, $username)
@@ -691,9 +720,65 @@ trait ProcessStepTrait
             if ($id > 0) {
                 return $id;
             }
+            if ($foreignKey === 'partner_id') {
+                $bootstrapId = $this->bootstrapAgent30DefaultPartner($tableName);
+                if ($bootstrapId > 0) {
+                    return $bootstrapId;
+                }
+            }
         }
 
         return 0;
+    }
+
+    protected function bootstrapAgent30DefaultPartner($tableName)
+    {
+        global $wpdb;
+
+        if (!is_string($tableName) || $tableName === '') {
+            return 0;
+        }
+
+        $columns = $wpdb->get_results("SHOW COLUMNS FROM `{$tableName}`", ARRAY_A);
+        if (!is_array($columns) || empty($columns)) {
+            return 0;
+        }
+
+        $columnMap = [];
+        foreach ($columns as $column) {
+            if (!isset($column['Field'])) continue;
+            $columnMap[$column['Field']] = $column;
+        }
+
+        if (!isset($columnMap['name']) || !isset($columnMap['code'])) {
+            return 0;
+        }
+
+        $data = [
+            'name' => 'Default Partner',
+            'code' => 'default-' . strtolower(wp_generate_password(8, false, false)),
+        ];
+        $formats = ['%s', '%s'];
+
+        if (isset($columnMap['is_active'])) {
+            $data['is_active'] = 1;
+            $formats[] = '%d';
+        }
+        if (isset($columnMap['created_at'])) {
+            $data['created_at'] = current_time('mysql');
+            $formats[] = '%s';
+        }
+        if (isset($columnMap['updated_at'])) {
+            $data['updated_at'] = current_time('mysql');
+            $formats[] = '%s';
+        }
+
+        $inserted = $wpdb->insert($tableName, $data, $formats);
+        if (!$inserted) {
+            return 0;
+        }
+
+        return intval($wpdb->insert_id);
     }
 
     protected function shouldAuthorizeAgent30WithoutLogin($bookingObject, $booking)
