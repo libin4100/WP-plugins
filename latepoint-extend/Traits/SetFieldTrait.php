@@ -226,6 +226,9 @@ trait SetFieldTrait
         }
 
         $isLoginPath = $this->isAgent30LoginPath($bookingObject);
+        $allowAccountCreation = method_exists($this, 'isAgent30CreateAccountEnabled')
+            ? $this->isAgent30CreateAccountEnabled()
+            : true;
 
         // flow.md:
         // - Login flow: show short list (emergency, request type, location, services).
@@ -261,6 +264,10 @@ trait SetFieldTrait
                 'cf_gtd_create_account' => 'Do you want to create an account?',
                 'cf_gtd_username' => 'Username',
             ];
+
+        if (!$allowAccountCreation) {
+            unset($agent30Fields['cf_gtd_create_account'], $agent30Fields['cf_gtd_username']);
+        }
 
         $ordered = [];
         foreach ($agent30Fields as $fieldId => $label) {
@@ -373,6 +380,9 @@ trait SetFieldTrait
 
     protected function isAgent30LoginPath($bookingObject = null)
     {
+        if (method_exists($this, 'isAgent30LoginPageEnabled') && !$this->isAgent30LoginPageEnabled()) {
+            return false;
+        }
         $booking = OsParamsHelper::get_param('booking');
         $loginStatus = trim((string)($booking['custom_fields']['gtd_login_status'] ?? ''));
         if ($loginStatus === '' && $bookingObject && isset($bookingObject->custom_fields['gtd_login_status'])) {

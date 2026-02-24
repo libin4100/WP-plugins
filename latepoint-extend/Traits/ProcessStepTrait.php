@@ -10,6 +10,16 @@ trait ProcessStepTrait
         switch ($stepName) {
             case 'login':
                 if (intval($bookingObject->agent_id ?? 0) === 30) {
+                    if (method_exists($this, 'isAgent30LoginPageEnabled') && !$this->isAgent30LoginPageEnabled()) {
+                        if (!isset($_POST['booking']) || !is_array($_POST['booking'])) {
+                            $_POST['booking'] = [];
+                        }
+                        if (!isset($_POST['booking']['custom_fields']) || !is_array($_POST['booking']['custom_fields'])) {
+                            $_POST['booking']['custom_fields'] = [];
+                        }
+                        $_POST['booking']['custom_fields']['gtd_login_status'] = 'not_login';
+                        break;
+                    }
                     $booking = OsParamsHelper::get_param('booking');
                     $status = trim((string)($booking['custom_fields']['gtd_login_status'] ?? ''));
                     if ($status === '') {
@@ -420,6 +430,9 @@ trait ProcessStepTrait
     protected function maybeCreateAgent30AppUser($bookingObject, $booking, $customFieldsData)
     {
         if (intval($bookingObject->agent_id ?? 0) !== 30) {
+            return null;
+        }
+        if (method_exists($this, 'isAgent30CreateAccountEnabled') && !$this->isAgent30CreateAccountEnabled()) {
             return null;
         }
 

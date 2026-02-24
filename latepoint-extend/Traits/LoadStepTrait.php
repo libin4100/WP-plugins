@@ -15,6 +15,9 @@ trait LoadStepTrait
                 $currentAgentId = intval($bookingObject->agent_id ?? 0);
                 $selectedAgentId = intval($restrictions['selected_agent'] ?? 0);
                 if ($currentAgentId === 30 || $selectedAgentId === 30) {
+                    if (method_exists($this, 'isAgent30LoginPageEnabled') && !$this->isAgent30LoginPageEnabled()) {
+                        break;
+                    }
                     $loginStatus = trim((string)($bookingParams['custom_fields']['gtd_login_status'] ?? ''));
                     if ($loginStatus === '') {
                         $loginStatus = 'not_login';

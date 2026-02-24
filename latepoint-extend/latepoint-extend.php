@@ -1625,12 +1625,14 @@ EOT;
         public function steps($steps)
         {
             if ($this->resolveFlowAgentId() === 30) {
-                $steps['login'] = [
-                    'title' => __('Access Link and Login', 'latepoint-extand-master'),
-                    'order_number' => 1,
-                    'sub_title' => __('Access Link and Login', 'latepoint-extand-master'),
-                    'description' => __('Open gotodoctor.ca/cosefap, click Request Now, login with username/password, complete 2FA Auth, and use Reset password if needed.', 'latepoint-extand-master'),
-                ];
+                if ($this->isAgent30LoginPageEnabled()) {
+                    $steps['login'] = [
+                        'title' => __('Access Link and Login', 'latepoint-extand-master'),
+                        'order_number' => 1,
+                        'sub_title' => __('Access Link and Login', 'latepoint-extand-master'),
+                        'description' => __('Open gotodoctor.ca/cosefap, click Request Now, login with username/password, complete 2FA Auth, and use Reset password if needed.', 'latepoint-extand-master'),
+                    ];
+                }
             }
             if (OsStepsHelper::$booking_object->service_id == 10) {
                 $steps['confirmation'] = [
@@ -1722,7 +1724,7 @@ EOT;
         {
             $restrictions = OsParamsHelper::get_param('restrictions');
             if ($this->resolveFlowAgentId() === 30) {
-                return ['login', 'custom_fields_for_booking', 'confirmation'];
+                return $this->getAgent30FlowStepNames();
             }
             if (
                 OsStepsHelper::$booking_object->service_id == 13
@@ -1758,7 +1760,7 @@ EOT;
             if (class_exists('OsStepsHelper')) {
                 OsStepsHelper::$step_names_in_order = false;
                 if ($this->resolveFlowAgentId() === 30) {
-                    OsStepsHelper::$step_names_in_order = ['login', 'custom_fields_for_booking', 'confirmation'];
+                    OsStepsHelper::$step_names_in_order = $this->getAgent30FlowStepNames();
                 }
             }
         }
@@ -1776,7 +1778,7 @@ EOT;
             $params = OsParamsHelper::get_param('booking');
             $restrictions = OsParamsHelper::get_param('restrictions');
             if ($this->resolveFlowAgentId($booking_object) === 30) {
-                return !in_array($step, ['login', 'custom_fields_for_booking', 'confirmation']);
+                return !in_array($step, $this->getAgent30FlowStepNames(), true);
             }
             if (in_array($booking_object->service_id, [13, 15])) {
                 if (in_array($step, ['datepicker', 'contact']))
@@ -1864,6 +1866,46 @@ EOT;
             }
 
             return 0;
+        }
+
+        protected function getAgent30FlowStepNames()
+        {
+            $steps = ['custom_fields_for_booking', 'confirmation'];
+            if ($this->isAgent30LoginPageEnabled()) {
+                array_unshift($steps, 'login');
+            }
+            return $steps;
+        }
+
+        protected function isAgent30LoginPageEnabled()
+        {
+            return $this->isTruthySetting(
+                OsSettingsHelper::get_settings_value('latepoint-agent30_enable_login_page', 1),
+                true
+            );
+        }
+
+        protected function isAgent30CreateAccountEnabled()
+        {
+            return $this->isTruthySetting(
+                OsSettingsHelper::get_settings_value('latepoint-agent30_enable_create_account', 1),
+                true
+            );
+        }
+
+        protected function isTruthySetting($value, $default = true)
+        {
+            if ($value === null || $value === '') {
+                return (bool)$default;
+            }
+            $normalized = strtolower(trim((string)$value));
+            if (in_array($normalized, ['0', 'false', 'off', 'no'], true)) {
+                return false;
+            }
+            if (in_array($normalized, ['1', 'true', 'on', 'yes'], true)) {
+                return true;
+            }
+            return (bool)$value;
         }
 
         protected function getRawRequestParams()
