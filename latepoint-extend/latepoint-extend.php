@@ -1342,7 +1342,11 @@ EOT;
 
         public function confirmationInfoBefore($booking)
         {
-            if ($this->resolveFlowAgentId($booking) === 30)
+            if ($this->resolveFlowAgentId($booking) === 30) {
+                $accessLinkSentence = 'Access link: <br><a href="https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en">https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en</a>';
+                $passcodeSentence = 'Passcode: <br><span style="font-size: 18px; font-weight: bold;">GTDGROUP3368</span>';
+                $accessLinkSentenceJs = wp_json_encode($accessLinkSentence);
+                $passcodeSentenceJs = wp_json_encode($passcodeSentence);
                 echo <<<EOT
 <script>
 jQuery(function($) {
@@ -1354,9 +1358,28 @@ jQuery(function($) {
         \$appInfoItems.eq(0).remove();
     }
     $('.latepoint-body .confirmation-customer-info').hide();
+    var \$appInfoList = $('.latepoint-body .confirmation-app-info ul').first();
+    var \$appInfoWrapper = $('.latepoint-body .confirmation-app-info').first();
+    \$appInfoWrapper.find('.agent30-access-passcode-block').remove();
+    if (\$appInfoList.length) {
+        \$appInfoList.after(
+            '<div class="agent30-access-passcode-block" style="width:100%;margin-top:12px;">'
+            + '<div class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</div>'
+            + '<div class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</div>'
+            + '</div>'
+        );
+    } else if (\$appInfoWrapper.length) {
+        \$appInfoWrapper.append(
+            '<div class="agent30-access-passcode-block" style="width:100%;margin-top:12px;">'
+            + '<div class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</div>'
+            + '<div class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</div>'
+            + '</div>'
+        );
+    }
 });
 </script>
 EOT;
+            }
             if ($this->covid || $this->others || $this->acorn)
                 echo <<<EOT
 <script>
