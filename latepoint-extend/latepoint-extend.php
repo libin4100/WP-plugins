@@ -1347,6 +1347,10 @@ EOT;
                 $passcodeSentence = 'Passcode: <br><span style="font-size: 18px; font-weight: bold;">GTDGROUP3368</span>';
                 $accessLinkSentenceJs = wp_json_encode($accessLinkSentence);
                 $passcodeSentenceJs = wp_json_encode($passcodeSentence);
+                $requestTypeRaw = strtolower(trim((string)$this->getRequestTypeForConfirmation($booking)));
+                $requestTypeNormalized = str_replace(' ', '', $requestTypeRaw);
+                $showPasscode = ($requestTypeNormalized !== 'followup');
+                $showPasscodeJs = $showPasscode ? 'true' : 'false';
                 echo <<<EOT
 <script>
 jQuery(function($) {
@@ -1365,14 +1369,14 @@ jQuery(function($) {
         \$appInfoList.after(
             '<div class="agent30-access-passcode-block" style="width:100%;margin-top:12px;">'
             + '<div class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</div>'
-            + '<div class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</div>'
+            + ({$showPasscodeJs} ? '<div class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</div>' : '')
             + '</div>'
         );
     } else if (\$appInfoWrapper.length) {
         \$appInfoWrapper.append(
             '<div class="agent30-access-passcode-block" style="width:100%;margin-top:12px;">'
             + '<div class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</div>'
-            + '<div class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</div>'
+            + ({$showPasscodeJs} ? '<div class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</div>' : '')
             + '</div>'
         );
     }
