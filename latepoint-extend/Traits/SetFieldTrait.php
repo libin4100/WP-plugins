@@ -237,7 +237,7 @@ trait SetFieldTrait
                 'email' => 'Email',
                 'phone' => 'Phone',
                 'cf_6A3SfgET' => 'Where are you or patient currently located?',
-                'cf_eDaxd83r' => 'Start typing to select or enter',
+                'cf_eDaxd83r' => 'Type to select an option or enter a new value',
             ]
             : [
                 'cf_ipbMUSJA' => 'Are you experiencing a life-threatening emergency or require immediate medical attention?',
@@ -252,7 +252,7 @@ trait SetFieldTrait
                 'email' => 'Email',
                 'phone' => 'Phone',
                 'cf_6A3SfgET' => 'Where are you or patient currently located?',
-                'cf_eDaxd83r' => 'Start typing to select or enter',
+                'cf_eDaxd83r' => 'Type to select an option or enter a new value',
                 'cf_khYzMsWi' => 'Alternate Contact Information (if different from above)',
                 'cf_fPU4Ka1m' => 'Contact person name',
                 'cf_PfyXBFfM' => 'Preferred contact phone number',

@@ -359,18 +359,20 @@ jQuery(function ($) {
                 }
             }
         }
-        if ($('#booking_custom_fields_cf_edaxd83r').length && !$('#booking_custom_fields_cf_edaxd83r').hasClass('gtd-services-ready')) {
-            var $el = $('#booking_custom_fields_cf_edaxd83r');
+        var serviceFieldSelectors = '#booking_custom_fields_cf_eDaxd83r, #booking_custom_fields_cf_edaxd83r';
+        if ($(serviceFieldSelectors).length && !$(serviceFieldSelectors).first().hasClass('gtd-services-ready')) {
+            var $el = $(serviceFieldSelectors).first();
             var initialRawValue = $el.val();
-            var services = [
-                'Addictions', 'Allergy and immunology', 'Audiology', 'Biopsy',
-                'Chiropody/foot care', 'Dental care and orthotics', 'Family doctor',
-                'Home health and community care', 'Internal medicine', 'Medical aesthetics',
-                'Medical diagnostics and imaging', 'Medical marijuana', 'Medical procedure/surgery',
-                'Mental health', 'Obstetrics and Gynecology', 'Orthopedic surgery',
-                'Paediatric care', 'Pain management', 'Rehab services', 'Respiratory care',
-                'Social and community support services', 'Specialist referral', 'Other'
-            ];
+            var services = [];
+            $el.find('option').each(function() {
+                var value = $.trim(String($(this).val() || $(this).text() || ''));
+                if (!value) return;
+                if (!services.some(function(existing) {
+                    return String(existing || '').toLowerCase() === value.toLowerCase();
+                })) {
+                    services.push(value);
+                }
+            });
             if (!$el.is('select')) {
                 var $select = $('<select></select>').attr({ id: $el.attr('id'), name: $el.attr('name'), multiple: 'multiple' });
                 $el.replaceWith($select);
@@ -378,7 +380,7 @@ jQuery(function ($) {
             } else {
                 $el.attr('multiple', 'multiple');
             }
-            if (!$el.find('option[value!=""]').length) {
+            if (services.length && !$el.find('option[value!=""]').length) {
                 $el.empty();
                 services.forEach(function(s) { $el.append($('<option>').val(s).text(s)); });
             }
@@ -405,7 +407,7 @@ jQuery(function ($) {
                 }) === idx;
             });
             // Browsers can auto-select the first option for <select multiple> even when no saved data exists.
-            if (!hasExplicitSelected && selectedValues.length === 1 && selectedValues[0] === services[0]) {
+            if (services.length && !hasExplicitSelected && selectedValues.length === 1 && selectedValues[0] === services[0]) {
                 selectedValues = [];
                 $el.val([]);
             }
@@ -590,7 +592,7 @@ jQuery(function ($) {
                 }
             });
 
-            $search.on('input keyup change', function() {
+            $search.on('input keyup', function() {
                 applySearchFilter($(this).val());
             });
 

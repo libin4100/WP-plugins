@@ -761,21 +761,72 @@ EOT;
             }
             if ((int) OsStepsHelper::$booking_object->agent_id === 30) {
                 $requestType = strtolower(trim((string)$this->getRequestTypeForConfirmation(OsStepsHelper::$booking_object)));
-                $isFollowup = in_array($requestType, ['followup', 'follow up', 'follow-up'], true);
-                if ($isFollowup) {
-                    $desc = "Thank you for your follow-up EFAP request. Our team will contact you shortly to set up your appointment.<br><br>You can continue your health journey by accessing the self-guided wellness platform in the meantime.<br><br>https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en";
-                } else {
-                    $desc = "Thank you for submitting your EFAP request. Your request has been received, and our team will connect with you shortly to guide you.<br><br>To get started health journey, you can connect to our self-guided digital wellness platform using the link and registration code below:<br><br>https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en<br>GTDGROUP3368";
-                }
-                $descJs = wp_json_encode($desc, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $newRequestDesc = "Thank you for submitting your EFAP request. Your request has been received, and our team will connect with you shortly to guide you.<br><br>To get started health journey, you can connect to our self-guided digital wellness platform using the link and registration code below:<br><br>https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en<br>GTDGROUP3368";
+                $followupDesc = "Thank you for your follow-up EFAP request. Our team will contact you shortly to set up your appointment.<br><br>You can continue your health journey by accessing the self-guided wellness platform in the meantime.<br><br>https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en";
+                $requestTypeJs = wp_json_encode($requestType, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $newRequestDescJs = wp_json_encode($newRequestDesc, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $followupDescJs = wp_json_encode($followupDesc, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 echo <<<EOT
 <script>
 jQuery(function($) {
-    $('li[data-step-name="custom_fields_for_booking"] span').text('Patient Details');
-    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').text('Patient Details');
-    $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="custom_fields_for_booking"]').text('Patient Details');
-    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text("Request received. We'll contact you soon");
-    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html({$descJs});
+    var agent30RequestTypeSelectors = [
+        '[name="booking[custom_fields][cf_UCfp8qZF]"]',
+        '[name="booking[custom_fields][cf_ucfp8qzf]"]',
+        '#booking_custom_fields_cf_UCfp8qZF',
+        '#booking_custom_fields_cf_ucfp8qzf'
+    ].join(', ');
+    var agent30ServerRequestType = {$requestTypeJs};
+    var agent30NewRequestDesc = {$newRequestDescJs};
+    var agent30FollowupDesc = {$followupDescJs};
+    var agent30ConfirmationTitle = "Request received. We'll contact you soon";
+
+    var getAgent30RequestType = function() {
+        var value = '';
+        var \$field = $(agent30RequestTypeSelectors).first();
+        if (\$field.length) {
+            value = $.trim(String(\$field.val() || ''));
+        }
+        if (!value) {
+            var \$paramsField = $('.latepoint-booking-params-w').find('input[name="booking[custom_fields][cf_UCfp8qZF]"], input[name="booking[custom_fields][cf_ucfp8qzf]"]').first();
+            if (\$paramsField.length) {
+                value = $.trim(String(\$paramsField.val() || ''));
+            }
+        }
+        if (!value) {
+            value = $.trim(String(agent30ServerRequestType || ''));
+        }
+        return value;
+    };
+
+    var isAgent30FollowupRequest = function(value) {
+        var normalized = $.trim(String(value || '')).toLowerCase();
+        return normalized === 'followup' || normalized === 'follow up' || normalized === 'follow-up';
+    };
+
+    var applyAgent30ConfirmationDescription = function() {
+        var requestType = getAgent30RequestType();
+        var desc = isAgent30FollowupRequest(requestType) ? agent30FollowupDesc : agent30NewRequestDesc;
+
+        $('li[data-step-name="custom_fields_for_booking"] span').text('Patient Details');
+        $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').text('Patient Details');
+        $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="custom_fields_for_booking"]').text('Patient Details');
+        $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text(agent30ConfirmationTitle);
+        $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html(desc);
+
+        if ($('.latepoint-progress li.active[data-step-name="confirmation"]').length) {
+            $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text(agent30ConfirmationTitle);
+            $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-content').html(desc);
+            $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text(agent30ConfirmationTitle);
+        }
+    };
+
+    applyAgent30ConfirmationDescription();
+    $(document).off('change.agent30Confirmation input.agent30Confirmation', agent30RequestTypeSelectors);
+    $(document).on('change.agent30Confirmation input.agent30Confirmation', agent30RequestTypeSelectors, applyAgent30ConfirmationDescription);
+    $(document).off('click.agent30Confirmation', '.latepoint-next-btn');
+    $(document).on('click.agent30Confirmation', '.latepoint-next-btn', applyAgent30ConfirmationDescription);
+    $(document).off('latepoint:initStep.agent30Confirmation latepoint:initStep:custom_fields_for_booking.agent30Confirmation latepoint:initStep:confirmation.agent30Confirmation', '.latepoint-booking-form-element');
+    $(document).on('latepoint:initStep.agent30Confirmation latepoint:initStep:custom_fields_for_booking.agent30Confirmation latepoint:initStep:confirmation.agent30Confirmation', '.latepoint-booking-form-element', applyAgent30ConfirmationDescription);
 });
 </script>
 EOT;
