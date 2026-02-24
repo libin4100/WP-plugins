@@ -1364,6 +1364,7 @@ jQuery(function($) {
         \$appInfoItems.eq(0).remove();
     }
     $('.latepoint-body .confirmation-customer-info').hide();
+    $('.latepoint-body .confirmation-info-w > .confirmation-app-info:first .confirmation-section-heading').text('Summary');
     var \$appInfoList = $('.latepoint-body .confirmation-app-info ul').first();
     var \$appInfoWrapper = $('.latepoint-body .confirmation-app-info').first();
     \$appInfoWrapper.find('.agent30-access-passcode-block').remove();
