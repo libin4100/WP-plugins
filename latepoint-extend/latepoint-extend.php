@@ -759,6 +759,7 @@ jQuery(function($) {
 </script>
 EOT;
             }
+            /*
             if ((int) OsStepsHelper::$booking_object->agent_id === 30) {
                 $requestType = strtolower(trim((string)$this->getRequestTypeForConfirmation(OsStepsHelper::$booking_object)));
                 $newRequestDesc = "Thank you for submitting your EFAP request. Your request has been received, and our team will connect with you shortly to guide you.<br><br>To get started health journey, you can connect to our self-guided digital wellness platform using the link and registration code below:<br><br>https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en<br>GTDGROUP3368";
@@ -831,6 +832,7 @@ jQuery(function($) {
 </script>
 EOT;
             }
+            */
             if (OsStepsHelper::$booking_object->agent_id == 12) {
                 echo <<<EOT
 <script>
@@ -1344,7 +1346,7 @@ EOT;
         {
             if ($this->resolveFlowAgentId($booking) === 30) {
                 $accessLinkSentence = 'Access link: <br><a href="https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en">https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en</a>';
-                $passcodeSentence = 'Passcode: <br><span style="font-size: 18px; font-weight: bold;">GTDGROUP3368</span>';
+                $passcodeSentence = 'Passcode: <br><span style="color: #1f222b; font-weight: bold;">GTDGROUP3368</span>';
                 $accessLinkSentenceJs = wp_json_encode($accessLinkSentence);
                 $passcodeSentenceJs = wp_json_encode($passcodeSentence);
                 $requestTypeRaw = strtolower(trim((string)$this->getRequestTypeForConfirmation($booking)));
@@ -1368,15 +1370,15 @@ jQuery(function($) {
     if (\$appInfoList.length) {
         \$appInfoList.after(
             '<div class="agent30-access-passcode-block" style="width:100%;margin-top:12px;">'
-            + '<div class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</div>'
-            + ({$showPasscodeJs} ? '<div class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</div>' : '')
+            + '<p class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</p>'
+            + ({$showPasscodeJs} ? '<p class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</p>' : '')
             + '</div>'
         );
     } else if (\$appInfoWrapper.length) {
         \$appInfoWrapper.append(
             '<div class="agent30-access-passcode-block" style="width:100%;margin-top:12px;">'
-            + '<div class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</div>'
-            + ({$showPasscodeJs} ? '<div class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</div>' : '')
+            + '<p class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</p>'
+            + ({$showPasscodeJs} ? '<p class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</p>' : '')
             + '</div>'
         );
     }
