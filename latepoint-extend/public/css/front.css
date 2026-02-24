@@ -92,6 +92,23 @@
     display: none !important;
 }
 
+.latepoint-w .gtd-services-picker .gtd-services-no-match {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #475467;
+}
+
+.latepoint-w .gtd-services-picker .gtd-services-no-match .gtd-services-add-custom {
+    margin-left: 6px;
+    border: 0;
+    background: transparent;
+    color: #215681;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+}
+
 .latepoint-w .latepoint-booking-form-element .latepoint-progress ul li.gtd-last-visible::after {
     background: none !important;
     content: none !important;

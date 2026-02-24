@@ -361,6 +361,7 @@ jQuery(function ($) {
         }
         if ($('#booking_custom_fields_cf_edaxd83r').length && !$('#booking_custom_fields_cf_edaxd83r').hasClass('gtd-services-ready')) {
             var $el = $('#booking_custom_fields_cf_edaxd83r');
+            var initialRawValue = $el.val();
             var services = [
                 'Addictions', 'Allergy and immunology', 'Audiology', 'Biopsy',
                 'Chiropody/foot care', 'Dental care and orthotics', 'Family doctor',
@@ -394,11 +395,43 @@ jQuery(function ($) {
 
             var hasExplicitSelected = $el.find('option[selected]').length > 0;
             var selectedValues = parseSelected($el.val());
+            if (!selectedValues.length) {
+                selectedValues = parseSelected(initialRawValue);
+            }
+            selectedValues = selectedValues.filter(function(value, idx, list) {
+                var lower = String(value || '').toLowerCase();
+                return !!value && list.findIndex(function(item) {
+                    return String(item || '').toLowerCase() === lower;
+                }) === idx;
+            });
             // Browsers can auto-select the first option for <select multiple> even when no saved data exists.
             if (!hasExplicitSelected && selectedValues.length === 1 && selectedValues[0] === services[0]) {
                 selectedValues = [];
                 $el.val([]);
             }
+            var hasSelectedValue = function(value) {
+                var lower = String(value || '').toLowerCase();
+                return selectedValues.some(function(item) {
+                    return String(item || '').toLowerCase() === lower;
+                });
+            };
+            var ensureSelectOption = function(value, isSelected) {
+                var cleanValue = $.trim(String(value || ''));
+                if (!cleanValue) return;
+                var $option = $el.find('option').filter(function() {
+                    return String($(this).val() || '').toLowerCase() === cleanValue.toLowerCase();
+                }).first();
+                if (!$option.length) {
+                    $option = $('<option></option>').val(cleanValue).text(cleanValue);
+                    $el.append($option);
+                }
+                if (isSelected) {
+                    $option.prop('selected', true);
+                }
+            };
+            selectedValues.forEach(function(value) {
+                ensureSelectOption(value, true);
+            });
             if (selectedValues.length) {
                 $el.val(selectedValues);
             }
@@ -410,20 +443,57 @@ jQuery(function ($) {
             var $search = $('<input type="text" class="gtd-services-search os-form-control" placeholder="Search services">');
             var $actions = $('<div class="gtd-services-actions"><a href="#" class="gtd-services-select-all">Select all</a><a href="#" class="gtd-services-clear">Clear</a></div>');
             var $options = $('<div class="gtd-services-options"></div>');
-
-            services.forEach(function(service, idx) {
-                var key = service.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-                var cid = 'gtd-service-' + key + '-' + idx;
-                var $item = $('<label class="gtd-service-option" for="' + cid + '"></label>').attr('data-label', service.toLowerCase());
-                var $checkbox = $('<input type="checkbox" class="gtd-service-checkbox" id="' + cid + '">').val(service);
-                if (selectedValues.includes(service)) {
+            var $noMatch = $('<div class="gtd-services-no-match" style="display:none;"></div>');
+            var optionCounter = 0;
+            var findServiceOption = function(value) {
+                var lower = String(value || '').toLowerCase();
+                return $options.find('.gtd-service-option').filter(function() {
+                    return String($(this).attr('data-value') || '').toLowerCase() === lower;
+                }).first();
+            };
+            var ensureServiceOption = function(value, checked, isCustom) {
+                var cleanValue = $.trim(String(value || ''));
+                if (!cleanValue) return null;
+                var $existing = findServiceOption(cleanValue);
+                if ($existing.length) {
+                    if (checked) {
+                        $existing.find('.gtd-service-checkbox').prop('checked', true);
+                    }
+                    return $existing;
+                }
+                var key = cleanValue.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                var cid = 'gtd-service-' + key + '-' + (optionCounter++);
+                var $item = $('<label class="gtd-service-option" for="' + cid + '"></label>')
+                    .attr('data-label', cleanValue.toLowerCase())
+                    .attr('data-value', cleanValue);
+                if (isCustom) {
+                    $item.addClass('gtd-service-option-custom');
+                }
+                var $checkbox = $('<input type="checkbox" class="gtd-service-checkbox" id="' + cid + '">').val(cleanValue);
+                if (checked) {
                     $checkbox.prop('checked', true);
                 }
-                $item.append($checkbox).append('<span>' + service + '</span>');
+                $item.append($checkbox).append('<span>' + cleanValue + '</span>');
                 $options.append($item);
+                return $item;
+            };
+            var hasBaseService = function(value) {
+                var lower = String(value || '').toLowerCase();
+                return services.some(function(service) {
+                    return String(service || '').toLowerCase() === lower;
+                });
+            };
+
+            services.forEach(function(service) {
+                ensureServiceOption(service, hasSelectedValue(service), false);
+            });
+            selectedValues.forEach(function(value) {
+                if (!hasBaseService(value)) {
+                    ensureServiceOption(value, true, true);
+                }
             });
 
-            $panel.append($search).append($actions).append($options);
+            $panel.append($search).append($actions).append($options).append($noMatch);
             $picker.append($trigger).append($panel);
             $el
                 .after($picker)
@@ -438,6 +508,10 @@ jQuery(function ($) {
                 var selected = [];
                 $options.find('.gtd-service-checkbox:checked').each(function() {
                     selected.push($(this).val());
+                });
+                $el.find('option').prop('selected', false);
+                selected.forEach(function(value) {
+                    ensureSelectOption(value, true);
                 });
                 $el.val(selected).trigger('change');
             };
@@ -460,15 +534,30 @@ jQuery(function ($) {
                 updateTriggerText();
             };
             var applySearchFilter = function(rawTerm) {
-                var term = $.trim(String(rawTerm || '')).toLowerCase();
+                var cleanTerm = $.trim(String(rawTerm || ''));
+                var term = cleanTerm.toLowerCase();
+                var visibleCount = 0;
                 $options.find('.gtd-service-option').each(function() {
                     var text = String($(this).attr('data-label') || '').toLowerCase();
-                    $(this).toggleClass('gtd-hidden', !!term && text.indexOf(term) === -1);
+                    var showOption = !!term && text.indexOf(term) !== -1;
+                    $(this).toggleClass('gtd-hidden', !showOption);
+                    if (showOption) {
+                        visibleCount++;
+                    }
                 });
+                if (term && visibleCount === 0) {
+                    $noMatch.empty()
+                        .append($('<span class="gtd-services-no-match-text"></span>').text('No matching service found. '))
+                        .append($('<button type="button" class="gtd-services-add-custom"></button>').text('Use "' + cleanTerm + '"'))
+                        .show();
+                } else {
+                    $noMatch.hide().empty();
+                }
             };
             var openPanel = function() {
                 $picker.addClass('is-open');
                 $panel.show();
+                applySearchFilter($search.val());
                 setTimeout(function() {
                     $search.trigger('focus');
                 }, 0);
@@ -505,15 +594,14 @@ jQuery(function ($) {
                 applySearchFilter($(this).val());
             });
 
-            $('body').off('input.gtdServicesSearch keyup.gtdServicesSearch change.gtdServicesSearch', '.gtd-services-picker .gtd-services-search');
-            $('body').on('input.gtdServicesSearch keyup.gtdServicesSearch change.gtdServicesSearch', '.gtd-services-picker .gtd-services-search', function() {
-                var $currentPicker = $(this).closest('.gtd-services-picker');
-                var term = $(this).val();
-                $currentPicker.find('.gtd-services-option, .gtd-service-option').each(function() {
-                    if (!$(this).hasClass('gtd-service-option')) return;
-                    var text = String($(this).attr('data-label') || '').toLowerCase();
-                    $(this).toggleClass('gtd-hidden', !!$.trim(String(term || '')).length && text.indexOf($.trim(String(term || '')).toLowerCase()) === -1);
-                });
+            $panel.on('click', '.gtd-services-add-custom', function(e) {
+                e.preventDefault();
+                var customValue = $.trim(String($search.val() || ''));
+                if (!customValue) return;
+                ensureSelectOption(customValue, true);
+                ensureServiceOption(customValue, true, true);
+                syncToSelect();
+                closePanel();
             });
 
             $actions.on('click', '.gtd-services-select-all', function(e) {
@@ -535,6 +623,7 @@ jQuery(function ($) {
             });
 
             syncFromSelect();
+            applySearchFilter('');
         }
         if ($('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').length && $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').is(':visible')) {
             $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').hide();

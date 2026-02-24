@@ -763,9 +763,9 @@ EOT;
                 $requestType = strtolower(trim((string)$this->getRequestTypeForConfirmation(OsStepsHelper::$booking_object)));
                 $isFollowup = in_array($requestType, ['followup', 'follow up', 'follow-up'], true);
                 if ($isFollowup) {
-                    $desc = "Thank you for your follow-up EFAP request. Our team will contact you shortly to set up your appointment.<br><br>You can continue your health journey by accessing the self-guided wellness platform in the meantime.<br><br>[link]";
+                    $desc = "Thank you for your follow-up EFAP request. Our team will contact you shortly to set up your appointment.<br><br>You can continue your health journey by accessing the self-guided wellness platform in the meantime.<br><br>https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en";
                 } else {
-                    $desc = "Thank you for submitting your EFAP request. Your request has been received, and our team will connect with you shortly to guide you.<br><br>To get started health journey, you can connect to our self-guided digital wellness platform using the link and registration code below:<br><br>[link]<br>passcode";
+                    $desc = "Thank you for submitting your EFAP request. Your request has been received, and our team will connect with you shortly to guide you.<br><br>To get started health journey, you can connect to our self-guided digital wellness platform using the link and registration code below:<br><br>https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en<br>GTDGROUP3368";
                 }
                 $descJs = wp_json_encode($desc, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 echo <<<EOT
