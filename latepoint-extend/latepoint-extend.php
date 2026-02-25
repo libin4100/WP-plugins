@@ -55,6 +55,8 @@ if (!class_exists('LatePointExt')) :
         public function hooks()
         {
             add_action('wp_loaded', [$this, 'route']);
+            add_action('wp_ajax_nopriv_latepoint_route_call', [$this, 'resetStepsCache'], 1);
+            add_action('wp_ajax_latepoint_route_call', [$this, 'resetStepsCache'], 1);
             add_action('wp_ajax_nopriv_check_certificate', [$this, 'checkCertificateSession']);
             add_action('wp_ajax_check_certificate', [$this, 'checkCertificate']);
             add_action('wp_ajax_nopriv_check_certificate_sb', [$this, 'checkCertificateSessionSB']);
@@ -115,6 +117,7 @@ if (!class_exists('LatePointExt')) :
             add_filter('latepoint_customer_model_validations', [$this, 'customerFilter']);
             add_filter('latepoint_step_names_in_order', [$this, 'stepNames'], 2, 2);
             add_filter('latepoint_should_step_be_skipped', [$this, 'beSkipped'], 20, 3);
+            add_filter('pre_do_shortcode_tag', [$this, 'resetStepsCacheBeforeShortcode'], 10, 4);
 
             register_activation_hook(__FILE__, [$this, 'onActivate']);
             register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
@@ -186,6 +189,9 @@ if (!class_exists('LatePointExt')) :
                 wp_send_json_error(['message' => 'Certificate number is required.'], 404);
             }
             $check = $this->checkCertPartner($id, 'cb_providers', 'services');
+            if ($check === true) {
+                $check = ['care' => true, 'eap' => true, 'op' => true];
+            }
             $care = $check['care'] ?? false;
             $eap = $check['eap'] ?? false;
             $op = $check['op'] ?? false;
@@ -738,9 +744,9 @@ EOT;
                 echo <<<EOT
 <script>
 jQuery(function($) {
-    $('li[data-step-name="custom_fields_for_booking"] span').text('Client Details');
-    $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Client Details');
-    $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
+    $('li[data-step-name="custom_fields_for_booking"] span').text('Patient Details');
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-title').text('Patient Details');
+    $('.latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="custom_fields_for_booking"]').text('Patient Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Request submitted');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('{$desc}');
     var cfb = $('.latepoint-side-panel .latepoint-step-desc-w .latepoint-step-desc .latepoint-desc-content').text() == $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="custom_fields_for_booking"] .latepoint-desc-content').text();
@@ -754,25 +760,34 @@ jQuery(function($) {
 EOT;
             }
             if (in_array(OsStepsHelper::$booking_object->service_id, [15])) {
-                echo <<<EOT
-<script>
-jQuery(function($) {
+                 echo <<<EOT
+ <script>
+ jQuery(function($) {
     $('li[data-step-name="custom_fields_for_booking"] span').text('Client Details');
     $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Client Details');
     $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text("Request received. We'll contact you soon");
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. Our team will review your request and contact you within the next 3 business days to collect any additional information required. If you do not hear from us, please call us to confirm your request was received.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*');
-});
-</script>
-EOT;
+ });
+ </script>
+ EOT;
+            }
+            if ((int) OsStepsHelper::$booking_object->agent_id === 30) {
+                 echo <<<EOT
+ <script>
+ jQuery(function($) {
+    $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('');
+ });
+ </script>
+ EOT;
             }
             if (OsStepsHelper::$booking_object->agent_id == 12) {
                 echo <<<EOT
 <script>
 jQuery(function($) {
-    $('li[data-step-name="custom_fields_for_booking"] span').text('Client Details');
-    $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Client Details');
-    $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
+    $('li[data-step-name="custom_fields_for_booking"] span').text('Patient Details');
+    $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Patient Details');
+    $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Patient Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text("Request received. We'll contact you soon");
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. <br>Our team will review your request and contact you within the next 3 business days to collect any additional information required. <br>If you do not hear from us, please call us to confirm your request was received.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*');
     setInterval(function() {
@@ -788,9 +803,9 @@ EOT;
                 echo <<<EOT
 <script>
 jQuery(function($) {
-    $('li[data-step-name="custom_fields_for_booking"] span').text('Client Details');
-    $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Client Details');
-    $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Client Details');
+    $('li[data-step-name="custom_fields_for_booking"] span').text('Patient Details');
+    $('.latepoint-side-panel .latepoint-step-desc .latepoint-desc-title').text('Patient Details');
+    $('.latepoint-form-w .latepoint-heading-w .os-heading-text').text('Patient Details');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-title').text('Request submitted');
     $('.latepoint-side-panel .latepoint-step-desc-w div[data-step-name="confirmation"] .latepoint-desc-content').html('Thank you for choosing Gotodoctor.ca. Our team will review your request and contact you within the next 3 business days to collect any additional information required. If you do not hear from us, please call us to confirm your request was received.<br><br>* If this is an emergency please go to the nearest hospital or call 911.*');
     $('.latepoint-footer a.latepoint-btn.latepoint-next-btn').attr('data-os-success-action', 'redirect').attr('data-os-redirect-to', 'https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en').addClass('latepoint-btn-redirection');
@@ -1030,6 +1045,7 @@ jQuery(function($) {
     function showhide() {
         if($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_wfhtigvf').attr('type') != 'date') {
             $('#booking_custom_fields_cf_wfhtigvf').attr('type', 'date');
+            $('#booking_custom_fields_cf_wfhtigvf').parent('div.os-form-group').addClass('os-form-select-group').removeClass('os-form-textfield-group')
         }
         if($('#booking_custom_fields_cf_wfhtigvf').length && ($('#booking_custom_fields_cf_x18jr0vf').val() != 'Yes' && !alist.includes(aid))) {
             $('#booking_custom_fields_cf_wfhtigvf').closest('.os-form-group').hide();
@@ -1155,6 +1171,8 @@ EOT;
                         'region',
                         'language',
                         'group_id',
+                        'cf_pharmacy_phone',
+                        'cf_prescription_dosage',
                     ] as $key
                 ) {
                     if ($data['custom_fields'][$key] ?? false) {
@@ -1167,9 +1185,18 @@ EOT;
                     if ($booking['custom_fields']['cf_4zkIbeeY'] == 'Other' && ($booking['custom_fields']['cf_NVByvyYw'] ?? false)) {
                         $model->visit_reason .= ' (' . $booking['custom_fields']['cf_NVByvyYw'] . ')';
                     }
-                    if (($booking['custom_fields']['cf_4zkIbeeY'] == 'Prescription renewal') && ($booking['custom_fields']['cf_cVndXX2e'] ?? false)) {
-                        $model->visit_reason .= '||||prescription_renewal_pharmacy:' . $booking['custom_fields']['cf_cVndXX2e']
-                            . '||||prescription_renewal_pharmacy_phone:' . $booking['custom_fields']['cf_iAoOucDc'];
+                    if ($booking['custom_fields']['cf_4zkIbeeY'] == 'Prescription renewal') {
+                        $pharmacyName = trim((string)($booking['custom_fields']['cf_cVndXX2e'] ?? ''));
+                        $pharmacyPhone = trim((string)($booking['custom_fields']['cf_pharmacy_phone'] ?? ''));
+                        $prescriptionName = trim((string)($booking['custom_fields']['cf_iAoOucDc'] ?? ''));
+                        $dosage = trim((string)($booking['custom_fields']['cf_prescription_dosage'] ?? ''));
+
+                        if ($pharmacyName !== '' || $pharmacyPhone !== '' || $prescriptionName !== '' || $dosage !== '') {
+                            $model->visit_reason .= '||||prescription_renewal_pharmacy:' . $pharmacyName
+                                . '||||prescription_renewal_pharmacy_phone:' . $pharmacyPhone
+                                . '||||prescription_renewal_name:' . $prescriptionName
+                                . '||||prescription_renewal_dosage:' . $dosage;
+                        }
                     }
                 }
 
@@ -1265,6 +1292,46 @@ EOT;
 
         public function confirmationInfoBefore($booking)
         {
+            if ($this->resolveFlowAgentId($booking) === 30) {
+                $requestTypeRaw = strtolower(trim((string)$this->getRequestTypeForConfirmation($booking)));
+                $requestTypeNormalized = str_replace(' ', '', $requestTypeRaw);
+                $followup = ($requestTypeNormalized === 'followup');
+                $accessLinkSentence = $followup
+                    ? 'Thank you for your follow-up EFAP request. <br>Our team will contact you shortly to set up your appointment. '
+                    : 'Thank you for submitting your EFAP request. <br>Your request has been received, and our team will connect with you shortly to guide you.';
+                $accessLinkSentenceJs = wp_json_encode($accessLinkSentence);
+                echo <<<EOT
+<script>
+jQuery(function($) {
+    var \$appInfoItems = $('.latepoint-body .confirmation-app-info ul li');
+    if (\$appInfoItems.length > 1) {
+        \$appInfoItems.eq(1).remove();
+    }
+    if (\$appInfoItems.length > 0) {
+        \$appInfoItems.eq(0).remove();
+    }
+    $('.latepoint-body .confirmation-customer-info').hide();
+    $('.latepoint-body .confirmation-info-w > .confirmation-app-info:first .confirmation-section-heading').text('Summary');
+    var \$appInfoList = $('.latepoint-body .confirmation-app-info ul').first();
+    var \$appInfoWrapper = $('.latepoint-body .confirmation-app-info').first();
+    \$appInfoWrapper.find('.agent30-access-passcode-block').remove();
+    if (\$appInfoList.length) {
+        \$appInfoList.after(
+            '<div class="agent30-access-passcode-block" style="width:100%;margin-top:12px;">'
+            + '<p class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</p>'
+            + '</div>'
+        );
+    } else if (\$appInfoWrapper.length) {
+        \$appInfoWrapper.append(
+            '<div class="agent30-access-passcode-block" style="width:100%;margin-top:12px;">'
+            + '<p class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</p>'
+            + '</div>'
+        );
+    }
+});
+</script>
+EOT;
+            }
             if ($this->covid || $this->others || $this->acorn)
                 echo <<<EOT
 <script>
@@ -1479,8 +1546,13 @@ EOT;
         public function frontScripts()
         {
             $jsFolder = plugin_dir_url(__FILE__) . 'public/js/';
-            wp_enqueue_script('ajax-script',  $jsFolder . 'front.js', array('jquery'), $this->version);
-            wp_localize_script('ajax-script', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+            wp_enqueue_style('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
+            wp_enqueue_script('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'));
+            wp_enqueue_script('ajax-script',  $jsFolder . 'front.js', array('jquery', 'select2'), $this->version);
+            wp_localize_script('ajax-script', 'ajax_object', array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'file_upload_nonce' => wp_create_nonce('latepoint_file_upload'),
+            ));
             wp_enqueue_style('latepoint-conditions',  plugin_dir_url(__FILE__) . 'public/css/' . 'front.css', false, $this->version);
         }
 
@@ -1527,6 +1599,16 @@ EOT;
 
         public function steps($steps)
         {
+            if ($this->resolveFlowAgentId() === 30) {
+                if ($this->isAgent30LoginPageEnabled()) {
+                    $steps['login'] = [
+                        'title' => __('Access Link and Login', 'latepoint-extand-master'),
+                        'order_number' => 1,
+                        'sub_title' => __('Access Link and Login', 'latepoint-extand-master'),
+                        'description' => __('Open gotodoctor.ca/cosefap, click Request Now, login with username/password, complete 2FA Auth, and use Reset password if needed.', 'latepoint-extand-master'),
+                    ];
+                }
+            }
             if (OsStepsHelper::$booking_object->service_id == 10) {
                 $steps['confirmation'] = [
                     'title' => __('Your appointment request was received', 'latepoint-extand-master'),
@@ -1616,7 +1698,9 @@ EOT;
         public function stepNames($steps, $show_all_steps)
         {
             $restrictions = OsParamsHelper::get_param('restrictions');
-            $booking = OsParamsHelper::get_param('booking');
+            if ($this->resolveFlowAgentId() === 30) {
+                return $this->getAgent30FlowStepNames();
+            }
             if (
                 OsStepsHelper::$booking_object->service_id == 13
                 || ($restrictions['selected_service'] ?? false) == 13
@@ -1646,9 +1730,31 @@ EOT;
             return $steps;
         }
 
+        public function resetStepsCache()
+        {
+            if (class_exists('OsStepsHelper')) {
+                OsStepsHelper::$step_names_in_order = false;
+                if ($this->resolveFlowAgentId() === 30) {
+                    OsStepsHelper::$step_names_in_order = $this->getAgent30FlowStepNames();
+                }
+            }
+        }
+
+        public function resetStepsCacheBeforeShortcode($output, $tag, $attr, $m)
+        {
+            if ($tag === 'latepoint_book_form') {
+                $this->resetStepsCache();
+            }
+            return $output;
+        }
+
         public function beSkipped($skip, $step, $booking_object)
         {
             $params = OsParamsHelper::get_param('booking');
+            $restrictions = OsParamsHelper::get_param('restrictions');
+            if ($this->resolveFlowAgentId($booking_object) === 30) {
+                return !in_array($step, $this->getAgent30FlowStepNames(), true);
+            }
             if (in_array($booking_object->service_id, [13, 15])) {
                 if (in_array($step, ['datepicker', 'contact']))
                     $skip = true;
@@ -1675,6 +1781,159 @@ EOT;
                 $skip = !in_array($step, ['pharmacy', 'pharmacy_additional', 'confirmation']);
             }
             return $skip;
+        }
+
+        protected function resolveFlowAgentId($bookingObject = null)
+        {
+            $params = class_exists('OsParamsHelper') ? OsParamsHelper::get_params() : [];
+            $rawParams = $this->getRawRequestParams();
+
+            $booking = [];
+            if (is_array($params) && isset($params['booking']) && is_array($params['booking'])) {
+                $booking = $params['booking'];
+            } elseif (isset($rawParams['booking']) && is_array($rawParams['booking'])) {
+                $booking = $rawParams['booking'];
+            }
+
+            $restrictions = [];
+            if (is_array($params) && isset($params['restrictions']) && is_array($params['restrictions'])) {
+                $restrictions = $params['restrictions'];
+            } elseif (isset($rawParams['restrictions']) && is_array($rawParams['restrictions'])) {
+                $restrictions = $rawParams['restrictions'];
+            }
+
+            $presets = [];
+            if (is_array($params) && isset($params['presets']) && is_array($params['presets'])) {
+                $presets = $params['presets'];
+            } elseif (isset($rawParams['presets']) && is_array($rawParams['presets'])) {
+                $presets = $rawParams['presets'];
+            }
+
+            $agentId = intval($bookingObject->agent_id ?? 0);
+            if (!$agentId) $agentId = intval(OsStepsHelper::$booking_object->agent_id ?? 0);
+            if (!$agentId && is_array($booking)) $agentId = intval($booking['agent_id'] ?? 0);
+            if (!$agentId && is_array($restrictions)) $agentId = intval($restrictions['selected_agent'] ?? ($restrictions['agent_id'] ?? 0));
+            if (!$agentId && is_array($presets)) $agentId = intval($presets['selected_agent'] ?? 0);
+            if (defined('LATEPOINT_ANY_AGENT') && $agentId === intval(LATEPOINT_ANY_AGENT)) $agentId = 0;
+            if ($agentId) return $agentId;
+
+            $serviceId = intval($bookingObject->service_id ?? 0);
+            if (!$serviceId) $serviceId = intval(OsStepsHelper::$booking_object->service_id ?? 0);
+            if (!$serviceId && is_array($booking)) $serviceId = intval($booking['service_id'] ?? 0);
+            if (!$serviceId && is_array($restrictions)) $serviceId = intval($restrictions['selected_service'] ?? 0);
+            if (!$serviceId && is_array($presets)) $serviceId = intval($presets['selected_service'] ?? 0);
+
+            $locationId = intval($bookingObject->location_id ?? 0);
+            if (!$locationId) $locationId = intval(OsStepsHelper::$booking_object->location_id ?? 0);
+            if (!$locationId && is_array($booking)) $locationId = intval($booking['location_id'] ?? 0);
+            if (!$locationId && is_array($restrictions)) $locationId = intval($restrictions['selected_location'] ?? 0);
+            if (!$locationId && is_array($presets)) $locationId = intval($presets['selected_location'] ?? 0);
+            if (!$locationId && method_exists('OsLocationHelper', 'count_locations') && OsLocationHelper::count_locations() == 1) {
+                $locationId = intval(OsLocationHelper::get_selected_location_id());
+            }
+
+            if ($serviceId && $locationId && method_exists('OsAgentHelper', 'get_agents_for_service_and_location')) {
+                $agents = OsAgentHelper::get_agents_for_service_and_location($serviceId, $locationId);
+                if (is_array($agents) && count($agents) === 1) {
+                    $singleAgentId = intval($agents[0]->id ?? 0);
+                    if ($singleAgentId) return $singleAgentId;
+                }
+            }
+
+            return 0;
+        }
+
+        protected function getAgent30FlowStepNames()
+        {
+            $steps = ['custom_fields_for_booking', 'confirmation'];
+            if ($this->isAgent30LoginPageEnabled()) {
+                array_unshift($steps, 'login');
+            }
+            return $steps;
+        }
+
+        protected function isAgent30LoginPageEnabled()
+        {
+            return $this->isTruthySetting(
+                OsSettingsHelper::get_settings_value('latepoint-agent30_enable_login_page', 1),
+                true
+            );
+        }
+
+        protected function isAgent30CreateAccountEnabled()
+        {
+            return $this->isTruthySetting(
+                OsSettingsHelper::get_settings_value('latepoint-agent30_enable_create_account', 1),
+                true
+            );
+        }
+
+        protected function isTruthySetting($value, $default = true)
+        {
+            if ($value === null || $value === '') {
+                return (bool)$default;
+            }
+            $normalized = strtolower(trim((string)$value));
+            if (in_array($normalized, ['0', 'false', 'off', 'no'], true)) {
+                return false;
+            }
+            if (in_array($normalized, ['1', 'true', 'on', 'yes'], true)) {
+                return true;
+            }
+            return (bool)$value;
+        }
+
+        protected function getRawRequestParams()
+        {
+            $rawParams = $_POST['params'] ?? [];
+            if (is_string($rawParams)) {
+                $parsed = [];
+                parse_str($rawParams, $parsed);
+                return is_array($parsed) ? $parsed : [];
+            }
+            return is_array($rawParams) ? $rawParams : [];
+        }
+
+        protected function getRequestTypeForConfirmation($bookingObject = null)
+        {
+            $keys = ['cf_UCfp8qZF', 'cf_ucfp8qzf'];
+
+            if ($bookingObject && is_object($bookingObject) && isset($bookingObject->custom_fields) && is_array($bookingObject->custom_fields)) {
+                foreach ($keys as $key) {
+                    if (!empty($bookingObject->custom_fields[$key])) {
+                        return (string)$bookingObject->custom_fields[$key];
+                    }
+                }
+            }
+
+            if ($bookingObject && is_object($bookingObject) && method_exists($bookingObject, 'get_meta_by_key')) {
+                foreach ($keys as $key) {
+                    $metaValue = $bookingObject->get_meta_by_key($key, '');
+                    if (!empty($metaValue)) {
+                        return (string)$metaValue;
+                    }
+                }
+            }
+
+            $params = class_exists('OsParamsHelper') ? OsParamsHelper::get_params() : [];
+            $rawParams = $this->getRawRequestParams();
+
+            $booking = [];
+            if (is_array($params) && isset($params['booking']) && is_array($params['booking'])) {
+                $booking = $params['booking'];
+            } elseif (isset($rawParams['booking']) && is_array($rawParams['booking'])) {
+                $booking = $rawParams['booking'];
+            }
+
+            if (isset($booking['custom_fields']) && is_array($booking['custom_fields'])) {
+                foreach ($keys as $key) {
+                    if (!empty($booking['custom_fields'][$key])) {
+                        return (string)$booking['custom_fields'][$key];
+                    }
+                }
+            }
+
+            return '';
         }
 
         /**
@@ -1794,7 +2053,8 @@ EOT;
                             $check = stripos($row->service, 'navigation') !== false;
                         elseif ($serviceId == 15)
                             $check = stripos($row->service, 'eap2') !== false;
-
+                        else
+                            $check = $row;
                         break;
                     default:
                         $check = $wpdb->get_var($wpdb->prepare("select id from {$wpdb->prefix}partner_members where concat('a', certificate) = '%s' and partner = '%s'", 'a' . $cert, $partner));

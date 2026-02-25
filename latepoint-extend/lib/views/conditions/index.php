@@ -20,6 +20,28 @@
 	</form>
 </div>
 
+<div class="os-form-sub-header"><h3><?php _e('Agent 30 Login Page', 'latepoint-extends'); ?></h3></div>
+<div class="os-default-fields" data-route="<?php echo OsRouterHelper::build_route_name('conditions', 'settings') ?>">
+	<form>
+		<div class="os-default-field <?php echo $agent30LoginPageEnabled ? '' : 'is-disabled'; ?>">
+            <div class="os-toggler<?php echo $agent30LoginPageEnabled ? '' : ' off' ?>" data-for="agent30_enable_login_page"><div class="toggler-rail"><div class="toggler-pill"></div></div></div>
+            <?php echo OsFormHelper::hidden_field('agent30_enable_login_page', $agent30LoginPageEnabled); ?>
+			<div class="os-field-name"><?php _e('Enable Agent 30 Login Page', 'latepoint-extends'); ?></div>
+		</div>
+	</form>
+</div>
+
+<div class="os-form-sub-header"><h3><?php _e('Agent 30 Account Creation', 'latepoint-extends'); ?></h3></div>
+<div class="os-default-fields" data-route="<?php echo OsRouterHelper::build_route_name('conditions', 'settings') ?>">
+	<form>
+		<div class="os-default-field <?php echo $agent30CreateAccountEnabled ? '' : 'is-disabled'; ?>">
+            <div class="os-toggler<?php echo $agent30CreateAccountEnabled ? '' : ' off' ?>" data-for="agent30_enable_create_account"><div class="toggler-rail"><div class="toggler-pill"></div></div></div>
+            <?php echo OsFormHelper::hidden_field('agent30_enable_create_account', $agent30CreateAccountEnabled); ?>
+			<div class="os-field-name"><?php _e('Enable "Do you want to create an account?"', 'latepoint-extends'); ?></div>
+		</div>
+	</form>
+</div>
+
 <div class="os-form-sub-header"><h3><?php _e('Button on Confirmation', 'latepoint-extends'); ?></h3></div>
 <div class="os-conditions-ordering-w os-conditions-button-w">
     <?php foreach($buttonConfirms as $buttonConfirm): ?>

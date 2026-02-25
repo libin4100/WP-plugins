@@ -9,6 +9,43 @@ trait LoadStepTrait
         $this->setField($bookingObject);
 
         switch ($stepName) {
+            case 'login':
+                $restrictions = OsParamsHelper::get_param('restrictions');
+                $bookingParams = OsParamsHelper::get_param('booking');
+                $currentAgentId = intval($bookingObject->agent_id ?? 0);
+                $selectedAgentId = intval($restrictions['selected_agent'] ?? 0);
+                if ($currentAgentId === 30 || $selectedAgentId === 30) {
+                    if (method_exists($this, 'isAgent30LoginPageEnabled') && !$this->isAgent30LoginPageEnabled()) {
+                        break;
+                    }
+                    $loginStatus = trim((string)($bookingParams['custom_fields']['gtd_login_status'] ?? ''));
+                    if ($loginStatus === '') {
+                        $loginStatus = 'not_login';
+                    }
+                    $controller = new OsConditionsController();
+                    $html = $controller->render($controller->get_view_uri('_step_login'), 'none', [
+                        'booking' => $bookingObject,
+                        'current_step' => $stepName,
+                        'gtd_login_status' => $loginStatus,
+                    ]);
+                    if ($format === 'json') {
+                        wp_send_json(array_merge(
+                            ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
+                            [
+                                'step_name'         => $stepName,
+                                'show_next_btn'     => true,
+                                'show_prev_btn'     => OsStepsHelper::can_step_show_prev_btn($stepName),
+                                'is_first_step'     => OsStepsHelper::is_first_step($stepName),
+                                'is_last_step'      => OsStepsHelper::is_last_step($stepName),
+                                'is_pre_last_step'  => OsStepsHelper::is_pre_last_step($stepName)
+                            ]
+                        ));
+                    } else {
+                        echo $html;
+                        remove_all_actions('latepoint_load_step');
+                    }
+                }
+                break;
             case 'services':
                 $locationSettings = (new OsConditionsController)->getLocationSettings();
                 if ($locationSettings) {
@@ -86,8 +123,12 @@ trait LoadStepTrait
             case 'custom_fields_for_booking':
                 $_SESSION['certCount'] = 0;
 
-                if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login'))
-                    OsAuthHelper::logout_customer();
+                if (OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login')) {
+                    $agentId = intval($bookingObject->agent_id ?? 0);
+                    if ($agentId !== 30) {
+                        OsAuthHelper::logout_customer();
+                    }
+                }
                 if (
                     ($allowShortcode = OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields')) 
                     || $this->isGTD()
@@ -129,6 +170,7 @@ trait LoadStepTrait
                     }
                     if ($bookingObject->agent_id == 21) {
                         $html = substr($html, 0, -6)
+                            . $this->wifiJs()
                             . $this->noServiceJs('No', 'in', ['message' => 'If you are connecting for care outside of Quebec, please call 1-844-338-3355 or email expresscarecanada@ccf.org.'])
                             . '</div>';
                     } else {
@@ -136,6 +178,7 @@ trait LoadStepTrait
                             . $this->noServiceJs('Outside Canada')
                             . '</div>';
                     }
+                    $html = $this->prepareCustomFieldsForGoogleTranslate($html);
                     wp_send_json(array_merge(
                         ['status' => LATEPOINT_STATUS_SUCCESS, 'message' => $html],
                         $extra
@@ -272,15 +315,121 @@ EOT;
                     $bookingObject->agent_id = array_shift($agents);
                     if ($agents) $bookingObject->agents = json_encode($agents);
                 }
+
+                // Agent 30 flow has only custom fields + confirmation. If booking save fails here,
+                // LatePoint core may return {"message": false}; return a concrete error instead.
+                if (intval($bookingObject->agent_id ?? 0) === 30 && $bookingObject->is_new_record()) {
+                    if (method_exists($this, 'ensureAgent30DefaultDateTime')) {
+                        $this->ensureAgent30DefaultDateTime($bookingObject);
+                    }
+
+                    // Safety net: if stale/missing customer session reaches confirmation,
+                    // recover customer from submitted custom fields before saving booking.
+                    $preLoggedInCustomerId = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
+                    $preBookingCustomerId = intval($bookingObject->customer_id ?? 0);
+                    $preLoggedInExists = method_exists($this, 'agent30CustomerExists') ? $this->agent30CustomerExists($preLoggedInCustomerId) : ($preLoggedInCustomerId > 0);
+                    $preBookingExists = method_exists($this, 'agent30CustomerExists') ? $this->agent30CustomerExists($preBookingCustomerId) : ($preBookingCustomerId > 0);
+                    if ((!$preLoggedInExists || !$preBookingExists) && method_exists($this, 'authorizeAgent30CustomerFromCustomFields')) {
+                        $bookingParams = OsParamsHelper::get_param('booking');
+                        $customFieldsData = [];
+                        if (is_array($bookingParams) && isset($bookingParams['custom_fields']) && is_array($bookingParams['custom_fields'])) {
+                            $customFieldsData = $bookingParams['custom_fields'];
+                        } elseif (isset($bookingObject->custom_fields) && is_array($bookingObject->custom_fields)) {
+                            $customFieldsData = $bookingObject->custom_fields;
+                        }
+                        $recoverError = $this->authorizeAgent30CustomerFromCustomFields($bookingObject, $customFieldsData);
+                        if (is_string($recoverError) && $recoverError !== '') {
+                            remove_all_actions('latepoint_load_step');
+                            wp_send_json([
+                                'status' => LATEPOINT_STATUS_ERROR,
+                                'message' => [$recoverError],
+                            ]);
+                            return;
+                        }
+                    }
+                    $loggedInCustomerId = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
+                    $bookingCustomerId = intval($bookingObject->customer_id ?? 0);
+
+                    // LatePoint save_from_booking_form requires booking.customer_id to match
+                    // currently authorized customer id. Reconcile stale session/customer mismatch.
+                    if ($bookingCustomerId > 0 && $loggedInCustomerId > 0 && $bookingCustomerId !== $loggedInCustomerId) {
+                        OsAuthHelper::authorize_customer($bookingCustomerId);
+                        $loggedInCustomerId = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
+                    }
+                    if ($bookingCustomerId <= 0 && $loggedInCustomerId > 0) {
+                        $bookingObject->customer_id = $loggedInCustomerId;
+                        $bookingCustomerId = $loggedInCustomerId;
+                    }
+                    if ($loggedInCustomerId <= 0 && $bookingCustomerId > 0) {
+                        OsAuthHelper::authorize_customer($bookingCustomerId);
+                        $loggedInCustomerId = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
+                    }
+                    if ($loggedInCustomerId > 0) {
+                        $bookingObject->customer_id = $loggedInCustomerId;
+                        if (!isset($_POST['booking']) || !is_array($_POST['booking'])) {
+                            $_POST['booking'] = [];
+                        }
+                        $_POST['booking']['customer_id'] = $loggedInCustomerId;
+                        $_POST['customer_id'] = $loggedInCustomerId;
+                    }
+
+                    $saved = $bookingObject->save_from_booking_form();
+                    if (!$saved) {
+                        global $wpdb;
+                        $errorMessages = $bookingObject->get_error_messages();
+                        $messages = [];
+
+                        if (is_array($errorMessages) && !empty($errorMessages)) {
+                            $messages = array_values(array_filter(array_map(function ($message) {
+                                return is_scalar($message) ? trim((string)$message) : '';
+                            }, $errorMessages)));
+                        } elseif (is_string($errorMessages) && trim($errorMessages) !== '') {
+                            $messages = [trim($errorMessages)];
+                        }
+
+                        if (empty($messages)) {
+                            $messages[] = 'Unable to submit request right now. Please refresh and try again.';
+                        }
+
+                        $dbError = trim((string)($wpdb->last_error ?? ''));
+                        $loggedInCustomerIdForLog = intval(OsAuthHelper::get_logged_in_customer_id() ?: 0);
+                        $bookingCustomerIdForLog = intval($bookingObject->customer_id ?? 0);
+                        $loggedInExistsForLog = method_exists($this, 'agent30CustomerExists') ? $this->agent30CustomerExists($loggedInCustomerIdForLog) : ($loggedInCustomerIdForLog > 0);
+                        $bookingExistsForLog = method_exists($this, 'agent30CustomerExists') ? $this->agent30CustomerExists($bookingCustomerIdForLog) : ($bookingCustomerIdForLog > 0);
+                        error_log(sprintf(
+                            '[latepoint-extend] Agent30 confirmation save failed. booking=%s logged_in_customer_id=%d logged_in_exists=%d booking_exists=%d db_error=%s',
+                            wp_json_encode([
+                                'agent_id' => intval($bookingObject->agent_id ?? 0),
+                                'service_id' => intval($bookingObject->service_id ?? 0),
+                                'location_id' => intval($bookingObject->location_id ?? 0),
+                                'customer_id' => intval($bookingObject->customer_id ?? 0),
+                                'start_date' => (string)($bookingObject->start_date ?? ''),
+                                'start_time' => (string)($bookingObject->start_time ?? ''),
+                            ]),
+                            $loggedInCustomerIdForLog,
+                            $loggedInExistsForLog ? 1 : 0,
+                            $bookingExistsForLog ? 1 : 0,
+                            $dbError
+                        ));
+
+                        remove_all_actions('latepoint_load_step');
+                        wp_send_json([
+                            'status' => LATEPOINT_STATUS_ERROR,
+                            'message' => $messages,
+                        ]);
+                        return;
+                    }
+                }
                 break;
             //Steps for QHA appointment request
             case 'qha_time':
                 if (!in_array($bookingObject->service_id, [13, 15])) {
-                    $currentTime = date('H') * 60 + date('i');
-                    if ($_SESSION['earliest'] ?? false) {
-                        $currentTime += $_SESSION['earliest'];
-                    }
-                    $day = date('Y-m-d');
+                    $province = $this->getQhaProvince($bookingObject);
+                    $timezone = $this->getQhaTimezoneByProvince($province);
+                    $localNow = new DateTime('now', $timezone);
+                    $nextDate = '';
+
+                    $day = $localNow->format('Y-m-d');
                     $args = [
                         'custom_date' => $day,
                         'service_id' => $bookingObject->service_id,
@@ -288,21 +437,27 @@ EOT;
                         'agent_id' => $bookingObject->agent_id,
                     ];
                     $range = OsBookingHelper::get_work_start_end_time_for_date($args);
-                    if (!$range[1] || ($currentTime > $range[1] - 120)) {
-                        $today = false;
+
+                    $currentTime = ((int) $localNow->format('G') * 60) + (int) $localNow->format('i');
+                    if ($_SESSION['earliest'] ?? false) {
+                        $currentTime += intval($_SESSION['earliest']);
+                    }
+
+                    $today = $this->isWithinBusinessHours($localNow)
+                        && !empty($range[1])
+                        && ($currentTime <= (intval($range[1]) - 120));
+
+                    if (!$today) {
                         // Get the next available date
                         for ($i = 1; $i <= 7; $i++) {
-                            $day = date('Y-m-d', strtotime("+$i days"));
-                            $args['custom_date'] = $day;
-                            $range = OsBookingHelper::get_work_start_end_time_for_date($args);
-                            if ($range[0]) {
-                                $nextDate = $day;
+                            $candidateDate = (clone $localNow)->modify("+{$i} days")->format('Y-m-d');
+                            $args['custom_date'] = $candidateDate;
+                            $candidateRange = OsBookingHelper::get_work_start_end_time_for_date($args);
+                            if (!empty($candidateRange[0])) {
+                                $nextDate = $candidateDate;
                                 break;
                             }
                         }
-                    } else {
-                        $today = true;
-                        $nextDate = '';
                     }
                     
                     $controller = new OsConditionsController();
@@ -435,5 +590,115 @@ EOT;
                 ));
                 break;
         }
+    }
+
+    protected function getQhaProvince($bookingObject)
+    {
+        $booking = OsParamsHelper::get_param('booking');
+        if (!empty($booking['custom_fields']['cf_6A3SfgET'])) {
+            return trim($booking['custom_fields']['cf_6A3SfgET']);
+        }
+        if (!empty($bookingObject->custom_fields['cf_6A3SfgET'])) {
+            return trim($bookingObject->custom_fields['cf_6A3SfgET']);
+        }
+        return '';
+    }
+
+    protected function prepareCustomFieldsForGoogleTranslate($html)
+    {
+        if (!is_string($html) || $html === '') {
+            return $html;
+        }
+
+        $html = preg_replace_callback('/<(input|textarea|select)\b[^>]*>/i', function ($matches) {
+            $fieldTag = $matches[0];
+            if (stripos($fieldTag, 'data-google-lang-translate=') !== false) {
+                return $fieldTag;
+            }
+            if (stripos($fieldTag, '<input') === 0 && preg_match('/\btype\s*=\s*([\'"]?)hidden\1/i', $fieldTag)) {
+                return $fieldTag;
+            }
+            if (preg_match('/\/>\s*$/', $fieldTag)) {
+                return preg_replace('/\/>\s*$/', ' data-google-lang-translate="true" />', $fieldTag, 1);
+            }
+            return preg_replace('/>\s*$/', ' data-google-lang-translate="true">', $fieldTag, 1);
+        }, $html);
+
+        $script = <<<EOT
+<script>
+jQuery(function($) {
+    var \$step = $('.latepoint-body .latepoint-step-content[data-step-name="custom_fields_for_booking"], .latepoint-body .step-custom-fields-for-booking-w');
+    if (\$step.length) {
+        \$step.find('input, textarea, select').not('[type="hidden"]').attr('data-google-lang-translate', 'true');
+    }
+
+    if (typeof window.doGTranslate !== 'function') return;
+
+    var target = '';
+    var cookieMatch = document.cookie.match(/(?:^|;\\s*)googtrans=([^;]+)/);
+    if (cookieMatch && cookieMatch[1]) {
+        try {
+            var decoded = decodeURIComponent(cookieMatch[1]);
+            var parts = decoded.split('/');
+            target = parts[parts.length - 1] || '';
+        } catch (e) {}
+    }
+
+    if (!target) {
+        var htmlLang = (document.documentElement.getAttribute('lang') || '').toLowerCase();
+        if (htmlLang.indexOf('fr') === 0) target = 'fr';
+    }
+
+    if (target && target !== 'en') {
+        setTimeout(function() {
+            window.doGTranslate('en|' + target);
+        }, 50);
+    }
+});
+</script>
+EOT;
+
+        return $html . $script;
+    }
+
+    protected function getQhaTimezoneByProvince($province)
+    {
+        switch ($province) {
+            case 'British Columbia':
+                return new DateTimeZone('America/Vancouver');
+            case 'Alberta':
+                return new DateTimeZone('America/Edmonton');
+            case 'Saskatchewan':
+                return new DateTimeZone('America/Regina');
+            case 'Manitoba':
+                return new DateTimeZone('America/Winnipeg');
+            case 'Ontario':
+            case 'Quebec':
+            case 'Nunavut':
+            case 'Yes':
+                return new DateTimeZone('America/Toronto');
+            case 'New Brunswick':
+            case 'Nova Scotia':
+            case 'Prince Edward Island':
+                return new DateTimeZone('America/Halifax');
+            case 'Newfoundland and Labrador':
+                return new DateTimeZone('America/St_Johns');
+            case 'Yukon':
+                return new DateTimeZone('America/Whitehorse');
+            case 'Northwest Territories':
+                return new DateTimeZone('America/Yellowknife');
+            default:
+                if (function_exists('wp_timezone')) {
+                    return wp_timezone();
+                }
+                return new DateTimeZone(date_default_timezone_get());
+        }
+    }
+
+    protected function isWithinBusinessHours(DateTime $dateTime)
+    {
+        $currentMinutes = ((int) $dateTime->format('G') * 60) + (int) $dateTime->format('i');
+
+        return $currentMinutes >= 540 && $currentMinutes <= 1140; // 09:00-19:00
     }
 }

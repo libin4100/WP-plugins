@@ -23,6 +23,8 @@ if (!class_exists('OsConditionsController')) :
             $this->vars['conditions'] = $conditions;
             $this->vars['disabledCustomer'] = OsSettingsHelper::get_settings_value('latepoint-disabled_customer_login', 0);
             $this->vars['allowShortcode'] = OsSettingsHelper::get_settings_value('latepoint-allow_shortcode_custom_fields', 0);
+            $this->vars['agent30LoginPageEnabled'] = OsSettingsHelper::get_settings_value('latepoint-agent30_enable_login_page', 1);
+            $this->vars['agent30CreateAccountEnabled'] = OsSettingsHelper::get_settings_value('latepoint-agent30_enable_create_account', 1);
             $this->vars['buttonConfirms'] = $buttons;
             $this->format_render(__FUNCTION__);
         }

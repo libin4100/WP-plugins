@@ -107,6 +107,10 @@ trait SetFieldTrait
                 // SEB/BestBuy
                 $fields = $this->_fields($bookingObject->service_id == 13 ? 'bestbuyc' : 'bestbuy');
                 break;
+            case $bookingObject->agent_id == 30:
+                // GTD dedicated flow
+                $this->setAgent30Fields($bookingObject);
+                return;
             case in_array($bookingObject->service_id, [2, 3]):
                 $this->_fields('located');
                 break;
@@ -200,10 +204,257 @@ trait SetFieldTrait
                         if (isset($fields[$type]['merge'][$id]))
                             $values[$id] = array_merge($values[$id], $fields[$type]['merge'][$id]);
                     }
+                    $values = ($fields[$type]['addCustomer'] ?? []) + $values;
                     OsSettingsHelper::$loaded_values['custom_fields_for_customer'] = json_encode($values);
                 }
             }
         }
+    }
+
+    /**
+     * Replace booking custom fields for agent 30 with a strict ordered list.
+     */
+    protected function setAgent30Fields($bookingObject = null)
+    {
+        // Start from original configured booking fields before any runtime mutations.
+        $this->_fields('', true);
+
+        $customFields = OsSettingsHelper::$loaded_values['custom_fields_for_booking'] ?? false;
+        $values = is_array($customFields) ? $customFields : json_decode($customFields, true);
+        if (!is_array($values)) {
+            return;
+        }
+
+        $isLoginPath = $this->isAgent30LoginPath($bookingObject);
+        $allowAccountCreation = method_exists($this, 'isAgent30CreateAccountEnabled')
+            ? $this->isAgent30CreateAccountEnabled()
+            : true;
+
+        // flow.md:
+        // - Login flow: show short list (emergency, request type, location, services).
+        // - Not login: show full EAP field list.
+        $agent30Fields = $isLoginPath
+            ? [
+                'cf_ipbMUSJA' => 'Are you experiencing a life-threatening emergency or require immediate medical attention?',
+                'cf_UCfp8qZF' => 'Request Type',
+                'email' => 'Email',
+                'phone' => 'Phone',
+                'cf_6A3SfgET' => 'Where are you or patient currently located?',
+                'cf_eDaxd83r' => 'Type to select an option or enter a new value',
+            ]
+            : [
+                'cf_ipbMUSJA' => 'Are you experiencing a life-threatening emergency or require immediate medical attention?',
+                'cf_UCfp8qZF' => 'Request Type',
+                'cf_pv1s5ZMZ' => 'Employee ID',
+                'cf_QuZqWccH' => 'Who is this booking for?',
+                'cf_cYhjctjz' => 'Select relation',
+                'cf_SdFSk6Tv' => 'Patient First Name',
+                'cf_blm6LCcz' => 'Patient Last Name',
+                'cf_WFHtiGvf' => 'Date of Birth',
+                'cf_ZoXsdwEZ' => 'HIN',
+                'email' => 'Email',
+                'phone' => 'Phone',
+                'cf_6A3SfgET' => 'Where are you or patient currently located?',
+                'cf_eDaxd83r' => 'Type to select an option or enter a new value',
+                'cf_khYzMsWi' => 'Alternate Contact Information (if different from above)',
+                'cf_fPU4Ka1m' => 'Contact person name',
+                'cf_PfyXBFfM' => 'Preferred contact phone number',
+                'cf_PIl2UOoe' => 'Email address',
+                'cf_Fk9ih4Et' => 'Additional Info on your request.',
+                'cf_gtd_create_account' => 'Do you want to create an account?',
+                'cf_gtd_username' => 'Username',
+            ];
+
+        if (!$allowAccountCreation) {
+            unset($agent30Fields['cf_gtd_create_account'], $agent30Fields['cf_gtd_username']);
+        }
+
+        $ordered = [];
+        foreach ($agent30Fields as $fieldId => $label) {
+            if (!isset($values[$fieldId]) || !is_array($values[$fieldId])) {
+                if (in_array($fieldId, ['email', 'phone', 'cf_gtd_create_account', 'cf_gtd_username'], true)) {
+                    $fieldType = 'text';
+                    $fieldOptions = '';
+                    $required = 'on';
+                    $width = 'os-col-6';
+                    if ($fieldId === 'cf_gtd_create_account') {
+                        $fieldType = 'checkbox';
+                        $fieldOptions = '';
+                        $required = 'off';
+                        $width = 'os-col-12';
+                    } elseif ($fieldId === 'cf_gtd_username') {
+                        $required = 'off';
+                        $width = 'os-col-12';
+                    }
+                    $values[$fieldId] = [
+                        'id' => $fieldId,
+                        'type' => $fieldType,
+                        'width' => $width,
+                        'options' => $fieldOptions,
+                        'placeholder' => __($label, 'latepoint'),
+                        'required' => $required,
+                        'visibility' => 'public',
+                    ];
+                } else {
+                    continue;
+                }
+            }
+
+            $extra = [];
+            if ($fieldId === 'cf_ipbMUSJA') {
+                $extra = [
+                    'type' => 'select',
+                    'options' => "Yes\nNo",
+                    'placeholder' => __('---Please Select---', 'latepoint'),
+                    'required' => 'on',
+                ];
+            } elseif ($fieldId === 'cf_UCfp8qZF') {
+                $extra = [
+                    'type' => 'select',
+                    'options' => "New Request\nFollowup",
+                    'placeholder' => __('---Please Select---', 'latepoint'),
+                    'required' => 'on',
+                ];
+            } elseif ($fieldId === 'cf_QuZqWccH') {
+                $extra = [
+                    'type' => 'select',
+                    'options' => "Myself\nFamily member",
+                    'placeholder' => __('---Please Select---', 'latepoint'),
+                    'required' => 'on',
+                ];
+            } elseif ($fieldId === 'cf_cYhjctjz') {
+                $extra = [
+                    'type' => 'select',
+                    'placeholder' => __('---Please Select---', 'latepoint'),
+                ];
+            } elseif ($fieldId === 'cf_6A3SfgET') {
+                $extra = [
+                    'required' => 'on',
+                ];
+            } elseif ($fieldId === 'email') {
+                $extra = [
+                    'type' => 'text',
+                    'required' => 'on',
+                    'placeholder' => __('Email', 'latepoint'),
+                ];
+            } elseif ($fieldId === 'phone') {
+                $extra = [
+                    'type' => 'text',
+                    'required' => 'on',
+                    'placeholder' => __('Phone', 'latepoint'),
+                ];
+            } elseif ($fieldId === 'cf_gtd_create_account') {
+                $extra = [
+                    'type' => 'checkbox',
+                    'required' => 'off',
+                ];
+            } elseif ($fieldId === 'cf_gtd_username') {
+                $extra = [
+                    'type' => 'text',
+                    'required' => 'off',
+                    'placeholder' => __('Username', 'latepoint'),
+                ];
+            } elseif ($fieldId === 'cf_eDaxd83r') {
+                $extra = [
+                    'type' => 'select',
+                    'options' => implode("\n", $this->getServiceList()),
+                    'placeholder' => __('---Select services---', 'latepoint'),
+                    'required' => 'on',
+                ];
+            }
+
+            $ordered[$fieldId] = array_merge(
+                $values[$fieldId],
+                [
+                    'id' => $fieldId,
+                    'label' => __($label, 'latepoint'),
+                    'visibility' => 'public',
+                ],
+                $extra
+            );
+        }
+
+        OsSettingsHelper::$loaded_values['custom_fields_for_booking'] = json_encode($ordered);
+    }
+
+    protected function isAgent30LoginPath($bookingObject = null)
+    {
+        if (method_exists($this, 'isAgent30LoginPageEnabled') && !$this->isAgent30LoginPageEnabled()) {
+            return false;
+        }
+        $booking = OsParamsHelper::get_param('booking');
+        $loginStatus = trim((string)($booking['custom_fields']['gtd_login_status'] ?? ''));
+        if ($loginStatus === '' && $bookingObject && isset($bookingObject->custom_fields['gtd_login_status'])) {
+            $loginStatus = trim((string)$bookingObject->custom_fields['gtd_login_status']);
+        }
+
+        return in_array(strtolower($loginStatus), ['login', 'logged_in', 'yes', 'true', '1'], true);
+    }
+
+    /**
+     * Normal service list used by agent 30 and QHC service step.
+     */
+    protected function getServiceList()
+    {
+        return [
+            "Abuse",
+            "Addiction - Sex",
+            "Addiction - Alcohol / Drugs",
+            "Addiction - Gambling",
+            "Anger management",
+            "Anxiety",
+            "Autism Spectrum Disorder / Developmental Concerns",
+            "Attachment",
+            "Behaviour management",
+            "Brain injuries",
+            "Bullying",
+            "Burnout",
+            "Communication concerns",
+            "Complex trauma",
+            "Conflict resolution",
+            "Co-parenting",
+            "Cultural concerns",
+            "Depression",
+            "Disability Management and understanding new diagnosis",
+            "Domestic violence",
+            "Elderly care",
+            "Eating disorders",
+            "Emotional regulation",
+            "Finances",
+            "Grief and loss",
+            "Guilt / Shame",
+            "Gender",
+            "General Support",
+            "Health issues",
+            "Residential School survivors",
+            "Intergenerational trauma",
+            "Immigration and refugee",
+            "Mediation / Divorce",
+            "Medical Diagnosis",
+            "Men's issues",
+            "Mental health diagnosis incl. bipolar, schizophrenia, OCD, ODD, BPD",
+            "Pain management",
+            "Panic attacks",
+            "Parent/ teen/ child conflict",
+            "Parenting",
+            "Phobias",
+            "Post partem",
+            "Problem solving",
+            "PTSD",
+            "Post traumatic stress disorder",
+            "Religion / spiritual",
+            "Relationships",
+            "Self-esteem",
+            "Suicide",
+            "Self Harm",
+            "Sexuality",
+            "Sexual abuse",
+            "Stress",
+            "Sport and performance",
+            "Women's issues (incl. menopause)",
+            "Work life balance",
+            "Work related issues",
+        ];
     }
 
     /**
@@ -217,10 +468,36 @@ trait SetFieldTrait
         $specialFieldDefs = [
             'located' => ['show' => ['cf_6A3SfgET']],
             'locatedOther' => ['show' => ['cf_6A3SfgET']],
-            'needRenew' => ['show' => ['cf_NeRenew0', 'cf_NeRenew1', 'cf_NeRenew2', 'cf_NeRenew3', 'cf_NeRenew4', 'cf_NeRenew5', 'cf_NeRenew6']],
+            'needRenew' => ['show' => ['cf_NeRenew0', 'cf_NeRenew1', 'cf_NeRenew2', 'cf_NeRenew3']],
             'covid' => ['show' => ['cf_GiVH6tot', 'cf_7MZNhPC6', 'cf_4aFGjt5V', 'cf_E6XolZDI']],
             'returning' => ['show' => ['cf_WFHtiGvf', 'cf_ZoXsdwEZ']],
-            'returningOnly' => ['show' => ['cf_DrKevcqV', 'cf_4zkIbeeY', 'cf_NVByvyYw', 'cf_cVndXX2e', 'cf_iAoOucDc']],
+            'returningOnly' => [
+                'show' => [
+                    'cf_DrKevcqV',
+                    'cf_4zkIbeeY',
+                    'cf_NVByvyYw',
+                    'cf_cVndXX2e',
+                    'cf_pharmacy_phone',
+                    'cf_iAoOucDc',
+                    'cf_prescription_dosage',
+                ],
+                'add' => $this->getPrescriptionRenewalSplitFields(),
+                'addCustomer' => $this->getPrescriptionRenewalSplitFields(),
+                'merge' => [
+                    'cf_cVndXX2e' => [
+                        'label' => __('Enter your pharmacy name', 'latepoint'),
+                        'placeholder' => __('Enter your pharmacy name', 'latepoint'),
+                        'width' => 'os-col-6',
+                        'required' => 'off',
+                    ],
+                    'cf_iAoOucDc' => [
+                        'label' => __('Prescription name', 'latepoint'),
+                        'placeholder' => __('Prescription name', 'latepoint'),
+                        'width' => 'os-col-6',
+                        'required' => 'off',
+                    ],
+                ],
+            ],
             'careServices' => ['show' => ['cf_DQ70wnRG']],
             'isGTD' => ['show' => ['cf_Presc1_0', 'cf_Presc2_0', 'cf_Presc3_0', 'cf_Presc3_1', 'cf_Presc3_2']],
             'sp' => $this->getSpFields($options),
@@ -254,7 +531,7 @@ trait SetFieldTrait
             'ubc' => $this->createCareProviderField('cf_QBLBYjS8'),
             'lg' => $this->createProviderField('cf_AYVpjhpP'),
             'vpi' => $this->createProviderField('cf_9OaDIkYh'),
-            'cc' => $this->createProviderField('cf_yjnZIZ1D', false, ['cf_6A3SfgET' => ['label' => __('Are you located in Quebec?', 'latepoint'), 'options' => "Yes\nNo"]]),
+            'cc' => $this->createProviderField(['cf_yjnZIZ1D', 'cf_sx8M50Pw', 'cf_VTXfH4Wq', 'cf_ZmLsfxFI', 'cf_fH4hcx29', 'cf_B7rj01VE', 'cf_nmfpde3f', 'cf_6NqyuLpc'], false, ['cf_6A3SfgET' => ['label' => __('Are you located in Quebec?', 'latepoint'), 'options' => "Yes\nNo"]]),
             'bestbuy' => $this->createProviderField('cf_ryf56IpW'),
             'bestbuyc' => $this->createCareProviderField('cf_ryf56IpW'),
         ];
@@ -453,5 +730,36 @@ trait SetFieldTrait
         } else {
             return $this->createProviderField($options['certKey'] ?? '');
         }
+    }
+
+    /**
+     * Split prescription renewal fields for pharmacy and prescription details.
+     *
+     * @return array Field definitions
+     */
+    protected function getPrescriptionRenewalSplitFields()
+    {
+        return [
+            'cf_pharmacy_phone' => [
+                'label' => __('Phone Number', 'latepoint'),
+                'placeholder' => __('Phone Number', 'latepoint'),
+                'type' => 'text',
+                'width' => 'os-col-6',
+                'visibility' => 'public',
+                'options' => '',
+                'required' => 'off',
+                'id' => 'cf_pharmacy_phone',
+            ],
+            'cf_prescription_dosage' => [
+                'label' => __('Dosage', 'latepoint'),
+                'placeholder' => __('Dosage', 'latepoint'),
+                'type' => 'text',
+                'width' => 'os-col-6',
+                'visibility' => 'public',
+                'options' => '',
+                'required' => 'off',
+                'id' => 'cf_prescription_dosage',
+            ],
+        ];
     }
 }

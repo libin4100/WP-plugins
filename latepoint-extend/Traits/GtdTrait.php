@@ -94,10 +94,7 @@ trait GtdTrait
             'cf_NeRenew1',
             'cf_NeRenew2',
             'cf_NeRenew3',
-            'cf_NeRenew4',
-            'cf_NeRenew5',
-            'cf_NeRenew6',
-        ], $prepend ? ['cf_x18jr0Vf'] : []);
+        ], $prepend ? ['cf_x18jr0Vf', ''] : []);
     }
 
     public function needRenewRules()
@@ -110,9 +107,6 @@ trait GtdTrait
             'cf_NeRenew1' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
             'cf_NeRenew2' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
             'cf_NeRenew3' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
-            'cf_NeRenew4' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
-            'cf_NeRenew5' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew0' => 'No']],
-            'cf_NeRenew6' => [['cf_x18jr0Vf' => 'Yes', 'cf_NeRenew5' => 'Enter Medication List Below']],
         ];
     }
 
@@ -151,10 +145,13 @@ JS;
         }, $keys);
         $fields = array_combine($keys, $ids);
         $init = array_slice($keys, 0, -2);
+        $initIds = array_map(function ($key) use ($fields) {
+            return $fields[$key] ?? $key;
+        }, $init);
         $rules = $this->$funcRules();
 
         $fieldsJs = json_encode($fields);
-        $initJs = json_encode(array_values($init));
+        $initJs = json_encode(array_values($initIds));
         $rulesJs = json_encode($rules);
         return <<<JS
 <script>
@@ -169,28 +166,49 @@ jQuery(document).ready(function($) {
 
         rules[key].forEach(function(rule) {
             for (var field in rule) {
-                bindRule('#' + fields[field], [key]);
+                bindRule(field, [key]);
             }
         });
+    }
+
+    function getFieldById(fieldId) {
+        var f = $('#' + fieldId);
+        if (!f.length && fieldId.indexOf('booking_custom_fields_') === 0) {
+            f = $('#' + fieldId.replace('booking_custom_fields_', 'customer_custom_fields_'));
+        }
+        return f;
     }
 
     function toggleFields(list, action) {
         list.forEach(function(field) {
-            var f = $('#' + field);
+            var f = getFieldById(field);
+            if (!f.length) {
+                return;
+            }
             if (action === 'hide') {
                 f.closest('.os-form-group').hide();
                 f.closest('.os-form-group').siblings('#preferred_pharamcy_label').hide();
                 f.prop('required', false);
+                f.removeClass('required');
             } else {
                 f.closest('.os-form-group').show();
                 f.closest('.os-form-group').siblings('#preferred_pharamcy_label').show();
                 f.prop('required', true);
+                f.addClass('required');
             }
         });
     }
 
-    function bindRule(selector, list) {
-        $('body').on('change', selector, function() {
+    function bindRule(field, list) {
+        var fieldId = fields[field];
+        if (!fieldId) {
+            return;
+        }
+        var selectors = ['#' + fieldId];
+        if (fieldId.indexOf('booking_custom_fields_') === 0) {
+            selectors.push('#' + fieldId.replace('booking_custom_fields_', 'customer_custom_fields_'));
+        }
+        $('body').on('change', selectors.join(', '), function() {
             list.forEach(function(field) {
                 checkRule(field);
             });
@@ -205,15 +223,27 @@ jQuery(document).ready(function($) {
             var ruleMatch = true;
             for (var key in rule) {
                 var value = rule[key];
-                var f = $('#' + fields[key]);
-                if (value.startsWith('!=')) {
+                var f = getFieldById(fields[key]);
+                var fieldValue = f.length ? String(f.val() || '') : '';
+                if (value === '!empty') {
+                    if (fieldValue.trim() === '') {
+                        ruleMatch = false;
+                        break;
+                    }
+                } else if (value.startsWith('!=')) {
                     value = value.substring(2);
-                    if (!f.val() || (f.val() === value)) {
+                    if (fieldValue === '' || (fieldValue === value)) {
+                        ruleMatch = false;
+                        break;
+                    }
+                } else if (value.startsWith('<')) {
+                    value = value.substring(1);
+                    if (fieldValue === '' || (fieldValue >= value)) {
                         ruleMatch = false;
                         break;
                     }
                 } else {
-                    if (f.val() !== value) {
+                    if (fieldValue !== value) {
                         ruleMatch = false;
                         break;
                     }
@@ -284,5 +314,84 @@ jQuery(document).ready(function($) {
 </script>
 JS;
         return $js;
+    }
+
+    public function wifiField($prepend = false)
+    {
+        return array_merge([
+            'cf_sx8M50Pw',
+            'cf_nmfpde3f',
+            'cf_VTXfH4Wq',
+            'cf_ZmLsfxFI',
+            'cf_fH4hcx29',
+            'cf_B7rj01VE',
+            'cf_6NqyuLpc',
+        ], $prepend ? ['', 'cf_WFHtiGvf'] : []);
+    }
+
+    public function wifiRules()
+    {
+        return [
+            'cf_nmfpde3f' => [['cf_sx8M50Pw' => 'Tyto Clinic']],
+            'cf_fH4hcx29' => [['cf_sx8M50Pw' => 'Tyto Home']],
+            'cf_B7rj01VE' => [['cf_sx8M50Pw' => 'Tyto Home']],
+            'cf_6NqyuLpc' => [['cf_fH4hcx29' => '!empty'], ['cf_B7rj01VE' => '!empty']],
+            'cf_VTXfH4Wq' => [['cf_sx8M50Pw' => 'Tyto Home']],
+            'cf_ZmLsfxFI' => [['cf_sx8M50Pw' => 'Tyto Home']],
+        ];
+    }
+
+    public function wifiJs()
+    {
+        $customJs = <<<JS
+<script>
+jQuery(document).ready(function($) {
+    var tytoSelect = '#booking_custom_fields_cf_sx8m50pw';
+    var dobField = '#booking_custom_fields_cf_wfhtigvf';
+    var guardianFields = ['#booking_custom_fields_cf_fh4hcx29', '#booking_custom_fields_cf_b7rj01ve'];
+    var tytoHomeRequiredFields = ['#booking_custom_fields_cf_vtxfh4wq', '#booking_custom_fields_cf_zmlsfxfi'];
+
+    function calculateAge(birthDate) {
+        var today = new Date();
+        var birth = new Date(birthDate);
+        var age = today.getFullYear() - birth.getFullYear();
+        var m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    function updateRequiredFields() {
+        var tytoValue = $(tytoSelect).val();
+        var dobValue = $(dobField).val();
+        var isTytoHome = tytoValue === 'Tyto Home';
+        var isUnder18 = dobValue ? calculateAge(dobValue) < 18 : false;
+
+        guardianFields.forEach(function(field) {
+            $(field).prop('required', isTytoHome && isUnder18);
+        });
+
+        tytoHomeRequiredFields.forEach(function(field) {
+            $(field).prop('required', isTytoHome);
+        });
+
+        // cf_6NqyuLpc required if either guardian field has value
+        var hasGuardianValue = guardianFields.some(function(field) {
+            return $(field).val() && $(field).val().trim() !== '';
+        });
+        $('#booking_custom_fields_cf_6nqyulpc').prop('required', hasGuardianValue);
+    }
+
+    $(tytoSelect).on('change', updateRequiredFields);
+    $(dobField).on('change', updateRequiredFields);
+    guardianFields.forEach(function(field) {
+        $(field).on('change', updateRequiredFields);
+    });
+    updateRequiredFields();
+});
+</script>
+JS;
+        return $customJs . $this->rulesJs('wifiField', 'wifiRules');
     }
 }
