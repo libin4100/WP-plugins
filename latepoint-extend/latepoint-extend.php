@@ -1347,7 +1347,7 @@ EOT;
             if ($this->resolveFlowAgentId($booking) === 30) {
                 $requestTypeRaw = strtolower(trim((string)$this->getRequestTypeForConfirmation($booking)));
                 $requestTypeNormalized = str_replace(' ', '', $requestTypeRaw);
-                $followup = ($requestTypeNormalized !== 'followup');
+                $followup = ($requestTypeNormalized === 'followup');
                 $accessLinkSentence = $followup
                     ? 'Thank you for your follow-up EFAP request. <br>Our team will contact you shortly to set up your appointment. '
                     : 'Thank you for submitting your EFAP request. <br>Your request has been received, and our team will connect with you shortly to guide you.';

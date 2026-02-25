@@ -427,7 +427,6 @@ EOT;
                     $province = $this->getQhaProvince($bookingObject);
                     $timezone = $this->getQhaTimezoneByProvince($province);
                     $localNow = new DateTime('now', $timezone);
-                    $today = $this->isWithinBusinessHours($localNow);
                     $nextDate = '';
 
                     $day = $localNow->format('Y-m-d');
@@ -437,15 +436,25 @@ EOT;
                         'location_id' => $bookingObject->location_id,
                         'agent_id' => $bookingObject->agent_id,
                     ];
+                    $range = OsBookingHelper::get_work_start_end_time_for_date($args);
+
+                    $currentTime = ((int) $localNow->format('G') * 60) + (int) $localNow->format('i');
+                    if ($_SESSION['earliest'] ?? false) {
+                        $currentTime += intval($_SESSION['earliest']);
+                    }
+
+                    $today = $this->isWithinBusinessHours($localNow)
+                        && !empty($range[1])
+                        && ($currentTime <= (intval($range[1]) - 120));
 
                     if (!$today) {
                         // Get the next available date
                         for ($i = 1; $i <= 7; $i++) {
-                            $day = $localNow->modify("+$i days")->format('Y-m-d');
-                            $args['custom_date'] = $day;
-                            $range = OsBookingHelper::get_work_start_end_time_for_date($args);
-                            if ($range[0]) {
-                                $nextDate = $day;
+                            $candidateDate = (clone $localNow)->modify("+{$i} days")->format('Y-m-d');
+                            $args['custom_date'] = $candidateDate;
+                            $candidateRange = OsBookingHelper::get_work_start_end_time_for_date($args);
+                            if (!empty($candidateRange[0])) {
+                                $nextDate = $candidateDate;
                                 break;
                             }
                         }

@@ -87,7 +87,12 @@ trait ProcessStepTrait
                 $this->_timezone($bookingObject);
 
                 $booking = OsParamsHelper::get_param('booking');
-                $custom_fields_data = $booking['custom_fields'];
+                $custom_fields_data = is_array($booking['custom_fields'] ?? null) ? $booking['custom_fields'] : [];
+                $this->normalizeAgent30ServicesCustomField($custom_fields_data);
+                if (!isset($_POST['booking']) || !is_array($_POST['booking'])) {
+                    $_POST['booking'] = [];
+                }
+                $_POST['booking']['custom_fields'] = $custom_fields_data;
                 $custom_fields_for_booking = OsCustomFieldsHelper::get_custom_fields_arr('booking', 'customer');
 
                 $is_valid = true;
@@ -966,13 +971,11 @@ trait ProcessStepTrait
                 return $validations;
             });
         }
-        if (intval($bookingObject->agent_id ?? 0) === 30) {
-            // Agent30 flow does not collect customer custom fields.
-            // Disable addon-level model validate hooks for this request to avoid false failures.
-            remove_all_actions('latepoint_model_validate');
-        }
         $customer->set_data($customerPayload);
-        $saved = $customer->save();
+        $saved = $this->saveCustomerWithScopedModelValidationBypass(
+            $customer,
+            intval($bookingObject->agent_id ?? 0) === 30
+        );
 
         if (!$saved || !($customer->id ?? false)) {
             global $wpdb;
@@ -1018,6 +1021,91 @@ trait ProcessStepTrait
         }
 
         return null;
+    }
+
+    protected function normalizeAgent30ServicesCustomField(&$customFieldsData)
+    {
+        if (!is_array($customFieldsData)) {
+            return;
+        }
+
+        foreach (['cf_eDaxd83r', 'cf_edaxd83r'] as $fieldKey) {
+            if (!array_key_exists($fieldKey, $customFieldsData)) {
+                continue;
+            }
+            $customFieldsData[$fieldKey] = $this->normalizeMultiValueCustomField($customFieldsData[$fieldKey]);
+        }
+    }
+
+    protected function normalizeMultiValueCustomField($value)
+    {
+        $items = [];
+        if (is_array($value)) {
+            $items = $value;
+        } elseif (is_string($value)) {
+            $items = preg_split('/\s*(?:\||,|\n)\s*/', $value);
+        } elseif ($value !== null && $value !== false) {
+            $items = [(string)$value];
+        }
+
+        $normalized = [];
+        foreach ($items as $item) {
+            $clean = trim((string)$item);
+            if ($clean === '') {
+                continue;
+            }
+            $isDuplicate = false;
+            foreach ($normalized as $existing) {
+                if (strcasecmp($existing, $clean) === 0) {
+                    $isDuplicate = true;
+                    break;
+                }
+            }
+            if (!$isDuplicate) {
+                $normalized[] = $clean;
+            }
+        }
+
+        return implode(' | ', $normalized);
+    }
+
+    protected function saveCustomerWithScopedModelValidationBypass($customer, $shouldBypass = false)
+    {
+        if (!$shouldBypass) {
+            return $customer->save();
+        }
+
+        global $wp_filter;
+        $hookName = 'latepoint_model_validate';
+        $originalCallbacks = null;
+        if (
+            isset($wp_filter[$hookName])
+            && is_object($wp_filter[$hookName])
+            && property_exists($wp_filter[$hookName], 'callbacks')
+        ) {
+            $originalCallbacks = $wp_filter[$hookName]->callbacks;
+            $wp_filter[$hookName]->callbacks = [];
+        }
+
+        try {
+            return $customer->save();
+        } finally {
+            if ($originalCallbacks !== null) {
+                if (
+                    (!isset($wp_filter[$hookName]) || !is_object($wp_filter[$hookName]) || !property_exists($wp_filter[$hookName], 'callbacks'))
+                    && class_exists('WP_Hook')
+                ) {
+                    $wp_filter[$hookName] = new WP_Hook();
+                }
+                if (
+                    isset($wp_filter[$hookName])
+                    && is_object($wp_filter[$hookName])
+                    && property_exists($wp_filter[$hookName], 'callbacks')
+                ) {
+                    $wp_filter[$hookName]->callbacks = $originalCallbacks;
+                }
+            }
+        }
     }
 
     protected function ensureAgent30DefaultDateTime($bookingObject)

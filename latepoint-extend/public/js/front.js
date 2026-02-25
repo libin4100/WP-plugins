@@ -363,6 +363,11 @@ jQuery(function ($) {
         if ($(serviceFieldSelectors).length && !$(serviceFieldSelectors).first().hasClass('gtd-services-ready')) {
             var $el = $(serviceFieldSelectors).first();
             var initialRawValue = $el.val();
+            var sourceName = String($el.attr('name') || '');
+            var multipleName = sourceName;
+            if (multipleName && !/\[\]$/.test(multipleName)) {
+                multipleName += '[]';
+            }
             var services = [];
             $el.find('option').each(function() {
                 var value = $.trim(String($(this).val() || $(this).text() || ''));
@@ -374,11 +379,20 @@ jQuery(function ($) {
                 }
             });
             if (!$el.is('select')) {
-                var $select = $('<select></select>').attr({ id: $el.attr('id'), name: $el.attr('name'), multiple: 'multiple' });
+                var selectAttrs = { id: $el.attr('id'), multiple: 'multiple' };
+                if (multipleName) {
+                    selectAttrs.name = multipleName;
+                } else if ($el.attr('name')) {
+                    selectAttrs.name = $el.attr('name');
+                }
+                var $select = $('<select></select>').attr(selectAttrs);
                 $el.replaceWith($select);
                 $el = $select;
             } else {
                 $el.attr('multiple', 'multiple');
+                if (multipleName) {
+                    $el.attr('name', multipleName);
+                }
             }
             if (services.length && !$el.find('option[value!=""]').length) {
                 $el.empty();
