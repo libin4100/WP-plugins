@@ -264,7 +264,7 @@ jQuery(function ($) {
                 var uploadHtml = [
                     '<div class="gtd-additional-upload-wrap os-form-group os-form-group-transparent">',
                         '<label for="gtd_additional_file_upload">',
-                            'Please upload all the relevent documents for our Employee Family Assistance Program staff to review',
+                            'Please upload any relevant documents for our Employee Family Assistance Program staff to review',
                             '<div class="btn btn-block latepoint-btn latepoint-btn-secondary">',
                                 '<strong>Add Files</strong>',
                                 '<input type="file" name="booking_file" value="" class="os-form-control" style="display:none" id="gtd_additional_file_upload">',

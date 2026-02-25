@@ -1345,14 +1345,13 @@ EOT;
         public function confirmationInfoBefore($booking)
         {
             if ($this->resolveFlowAgentId($booking) === 30) {
-                $accessLinkSentence = 'Access link: <br><a href="https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en">https://app2.connectedwellness.com/ui/pub/reg?org=gtd&id=6462769585b0a7766da9ef3b&locale=en</a>';
-                $passcodeSentence = 'Passcode: <br><span style="color: #1f222b; font-weight: bold;">GTDGROUP3368</span>';
-                $accessLinkSentenceJs = wp_json_encode($accessLinkSentence);
-                $passcodeSentenceJs = wp_json_encode($passcodeSentence);
                 $requestTypeRaw = strtolower(trim((string)$this->getRequestTypeForConfirmation($booking)));
                 $requestTypeNormalized = str_replace(' ', '', $requestTypeRaw);
-                $showPasscode = ($requestTypeNormalized !== 'followup');
-                $showPasscodeJs = $showPasscode ? 'true' : 'false';
+                $followup = ($requestTypeNormalized !== 'followup');
+                $accessLinkSentence = $followup
+                    ? 'Thank you for your follow-up EFAP request. <br>Our team will contact you shortly to set up your appointment. '
+                    : 'Thank you for submitting your EFAP request. <br>Your request has been received, and our team will connect with you shortly to guide you.';
+                $accessLinkSentenceJs = wp_json_encode($accessLinkSentence);
                 echo <<<EOT
 <script>
 jQuery(function($) {
@@ -1372,14 +1371,12 @@ jQuery(function($) {
         \$appInfoList.after(
             '<div class="agent30-access-passcode-block" style="width:100%;margin-top:12px;">'
             + '<p class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</p>'
-            + ({$showPasscodeJs} ? '<p class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</p>' : '')
             + '</div>'
         );
     } else if (\$appInfoWrapper.length) {
         \$appInfoWrapper.append(
             '<div class="agent30-access-passcode-block" style="width:100%;margin-top:12px;">'
             + '<p class="agent30-access-link-row">' + {$accessLinkSentenceJs} + '</p>'
-            + ({$showPasscodeJs} ? '<p class="agent30-passcode-row">' + {$passcodeSentenceJs} + '</p>' : '')
             + '</div>'
         );
     }
