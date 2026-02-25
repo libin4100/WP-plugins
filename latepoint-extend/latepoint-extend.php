@@ -1732,6 +1732,7 @@ EOT;
 
         public function resetStepsCache()
         {
+            $this->normalizeCustomFieldValuesBeforeRouteCall();
             if (class_exists('OsStepsHelper')) {
                 OsStepsHelper::$step_names_in_order = false;
                 if ($this->resolveFlowAgentId() === 30) {
@@ -1892,6 +1893,121 @@ EOT;
                 return is_array($parsed) ? $parsed : [];
             }
             return is_array($rawParams) ? $rawParams : [];
+        }
+
+        /**
+         * Some field widgets (for example multi-select services) submit arrays.
+         * Latepoint custom field validation expects scalar strings and calls trim(),
+         * so normalize arrays before route handlers/actions execute.
+         */
+        protected function normalizeCustomFieldValuesBeforeRouteCall()
+        {
+            if (!isset($_POST) || !is_array($_POST)) {
+                return;
+            }
+
+            if (isset($_POST['params'])) {
+                if (is_string($_POST['params'])) {
+                    $parsed = [];
+                    parse_str($_POST['params'], $parsed);
+                    if (is_array($parsed) && $this->normalizeCustomFieldValuesInParamsArray($parsed)) {
+                        $_POST['params'] = http_build_query($parsed);
+                    }
+                } elseif (is_array($_POST['params'])) {
+                    $parsed = $_POST['params'];
+                    if ($this->normalizeCustomFieldValuesInParamsArray($parsed)) {
+                        $_POST['params'] = $parsed;
+                    }
+                }
+            }
+
+            if (isset($_POST['booking']) && is_array($_POST['booking'])) {
+                $booking = $_POST['booking'];
+                if ($this->normalizeCustomFieldValuesInContainer($booking)) {
+                    $_POST['booking'] = $booking;
+                }
+            }
+
+            if (isset($_POST['customer']) && is_array($_POST['customer'])) {
+                $customer = $_POST['customer'];
+                if ($this->normalizeCustomFieldValuesInContainer($customer)) {
+                    $_POST['customer'] = $customer;
+                }
+            }
+        }
+
+        protected function normalizeCustomFieldValuesInParamsArray(&$params)
+        {
+            if (!is_array($params)) {
+                return false;
+            }
+
+            $changed = false;
+            if (isset($params['booking']) && is_array($params['booking'])) {
+                if ($this->normalizeCustomFieldValuesInContainer($params['booking'])) {
+                    $changed = true;
+                }
+            }
+            if (isset($params['customer']) && is_array($params['customer'])) {
+                if ($this->normalizeCustomFieldValuesInContainer($params['customer'])) {
+                    $changed = true;
+                }
+            }
+
+            return $changed;
+        }
+
+        protected function normalizeCustomFieldValuesInContainer(&$container)
+        {
+            if (!is_array($container) || !isset($container['custom_fields']) || !is_array($container['custom_fields'])) {
+                return false;
+            }
+
+            $changed = false;
+            foreach ($container['custom_fields'] as $key => $value) {
+                if (is_array($value)) {
+                    $container['custom_fields'][$key] = $this->flattenCustomFieldArrayValue($value);
+                    $changed = true;
+                }
+            }
+            return $changed;
+        }
+
+        protected function flattenCustomFieldArrayValue($value)
+        {
+            if (!is_array($value)) {
+                return trim((string)$value);
+            }
+
+            $flat = [];
+            array_walk_recursive($value, function ($item) use (&$flat) {
+                if (is_scalar($item)) {
+                    $clean = trim((string)$item);
+                    if ($clean !== '') {
+                        $flat[] = $clean;
+                    }
+                }
+            });
+
+            if (empty($flat)) {
+                return '';
+            }
+
+            $normalized = [];
+            foreach ($flat as $item) {
+                $exists = false;
+                foreach ($normalized as $existing) {
+                    if (strcasecmp($existing, $item) === 0) {
+                        $exists = true;
+                        break;
+                    }
+                }
+                if (!$exists) {
+                    $normalized[] = $item;
+                }
+            }
+
+            return implode(' | ', $normalized);
         }
 
         protected function getRequestTypeForConfirmation($bookingObject = null)
