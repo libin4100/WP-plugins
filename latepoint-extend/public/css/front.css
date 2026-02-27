@@ -120,6 +120,15 @@
     font-weight: 700;
 }
 
+.latepoint-w .gtd-heading-required-note {
+    margin-left: 6px;
+    white-space: nowrap;
+}
+
+.latepoint-w .gtd-heading-required-note .gtd-heading-required-asterisk {
+    margin-left: 0;
+}
+
 .latepoint-w .gtd-additional-file-help {
     margin-top: 10px;
     color: #8e97b3;
