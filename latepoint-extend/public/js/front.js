@@ -58,6 +58,59 @@ jQuery(function ($) {
             });
         });
     };
+    var syncPatientDetailsRequiredHeading = function () {
+        var $headings = $('.latepoint-form-w .latepoint-heading-w .os-heading-text, .latepoint-form-w .latepoint-heading-w .os-heading-text-library[data-step-name="custom_fields_for_booking"]');
+        if (!$headings.length) return;
+
+        var $label = $('.latepoint-body .step-custom-fields-for-booking-w .os-form-group label:visible, .latepoint-body .latepoint-step-content[data-step-name="custom_fields_for_booking"] .os-form-group label:visible').first();
+        if (!$label.length) {
+            $label = $('.latepoint-body .os-form-group label:visible').first();
+        }
+
+        var labelStyles = null;
+        if ($label.length && window.getComputedStyle) {
+            var computed = window.getComputedStyle($label[0]);
+            labelStyles = {
+                color: computed.color,
+                fontFamily: computed.fontFamily,
+                fontSize: computed.fontSize,
+                fontWeight: computed.fontWeight,
+                lineHeight: computed.lineHeight,
+                letterSpacing: computed.letterSpacing
+            };
+        }
+        var asteriskColor = null;
+        var $labelAsterisk = $label.find('.gtd-required-asterisk').first();
+        if (!$labelAsterisk.length) {
+            $labelAsterisk = $('.latepoint-body .os-form-group label .gtd-required-asterisk:visible').first();
+        }
+        if ($labelAsterisk.length && window.getComputedStyle) {
+            asteriskColor = window.getComputedStyle($labelAsterisk[0]).color;
+        }
+
+        $headings.each(function () {
+            var $heading = $(this);
+            var $note = $heading.find('.gtd-heading-required-note');
+            var $clone = $heading.clone();
+            $clone.find('.gtd-heading-required-note').remove();
+            var baseText = $.trim($clone.text().replace(/\s+/g, ' '));
+
+            if (baseText === 'Patient Details') {
+                if (!$note.length) {
+                    $heading.append('<span class="gtd-heading-required-note"><span class="gtd-heading-required-asterisk">*</span> Required</span>');
+                    $note = $heading.find('.gtd-heading-required-note');
+                }
+                if (labelStyles) {
+                    $note.css(labelStyles);
+                }
+                if (asteriskColor) {
+                    $note.find('.gtd-heading-required-asterisk').css('color', asteriskColor);
+                }
+            } else if ($note.length) {
+                $note.remove();
+            }
+        });
+    };
     var getSelectedAgentId = function () {
         var agentId = $('input[name="restrictions[selected_agent]"]').val()
             || $('input[name="booking[agent_id]"]').val()
@@ -140,6 +193,7 @@ jQuery(function ($) {
         }
         markLastVisibleProgressItem();
         markRequiredLabels();
+        syncPatientDetailsRequiredHeading();
         for (let key in fields) {
             let id = '#booking_custom_fields_cf_' + key;
             if ($(id).length) {
@@ -456,7 +510,7 @@ jQuery(function ($) {
             var $picker = $('<div class="gtd-services-picker"></div>');
             var $trigger = $('<input type="text" class="gtd-services-trigger os-form-control" readonly placeholder="---Select services---">');
             var $panel = $('<div class="gtd-services-panel" style="display:none;"></div>');
-            var $search = $('<input type="text" class="gtd-services-search os-form-control" placeholder="Search services">');
+            var $search = $('<input type="text" class="gtd-services-search os-form-control" placeholder="Type to search">');
             var $actions = $('<div class="gtd-services-actions"><a href="#" class="gtd-services-select-all">Select all</a><a href="#" class="gtd-services-clear">Clear</a></div>');
             var $options = $('<div class="gtd-services-options"></div>');
             var $noMatch = $('<div class="gtd-services-no-match" style="display:none;"></div>');

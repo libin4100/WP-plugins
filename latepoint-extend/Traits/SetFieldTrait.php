@@ -240,7 +240,7 @@ trait SetFieldTrait
                 'email' => 'Email',
                 'phone' => 'Phone',
                 'cf_6A3SfgET' => 'Where are you or patient currently located?',
-                'cf_eDaxd83r' => 'Type to select an option or enter a new value',
+                'cf_eDaxd83r' => 'Let us know what area of service you would like',
             ]
             : [
                 'cf_ipbMUSJA' => 'Are you experiencing a life-threatening emergency or require immediate medical attention?',
@@ -255,7 +255,7 @@ trait SetFieldTrait
                 'email' => 'Email',
                 'phone' => 'Phone',
                 'cf_6A3SfgET' => 'Where are you or patient currently located?',
-                'cf_eDaxd83r' => 'Type to select an option or enter a new value',
+                'cf_eDaxd83r' => 'Let us know what area of service you would like',
                 'cf_khYzMsWi' => 'Alternate Contact Information (if different from above)',
                 'cf_fPU4Ka1m' => 'Contact person name',
                 'cf_PfyXBFfM' => 'Preferred contact phone number',
@@ -330,6 +330,7 @@ trait SetFieldTrait
             } elseif ($fieldId === 'cf_6A3SfgET') {
                 $extra = [
                     'required' => 'on',
+                    'options' => "Saskatchewan\nAlberta\nBritish Columbia\nManitoba\nNew Brunswick\nNewfoundland and Labrador\nNova Scotia\nOntario\nPrince Edward Island\nQuebec\nOutside Canada",
                 ];
             } elseif ($fieldId === 'email') {
                 $extra = [
