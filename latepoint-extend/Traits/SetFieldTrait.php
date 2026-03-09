@@ -111,6 +111,12 @@ trait SetFieldTrait
                 // GTD dedicated flow
                 $this->setAgent30Fields($bookingObject);
                 return;
+            case $bookingObject->agent_id == 31:
+                // MGT
+                $certKey = 'cf_KA23OTHg';
+                $care = $bookingObject->service_id == 13;
+                $fields = $this->_fields('sp', false, compact('certKey', 'care'));
+                break;
             case in_array($bookingObject->service_id, [2, 3]):
                 $this->_fields('located');
                 break;
