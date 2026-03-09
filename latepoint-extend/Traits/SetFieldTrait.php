@@ -112,7 +112,7 @@ trait SetFieldTrait
                 $this->setAgent30Fields($bookingObject);
                 return;
             case $bookingObject->agent_id == 31:
-                // MGT
+                // S2 Careby 
                 $certKey = 'cf_KA23OTHg';
                 $care = $bookingObject->service_id == 13;
                 $fields = $this->_fields('sp', false, compact('certKey', 'care'));
