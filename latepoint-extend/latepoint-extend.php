@@ -1625,7 +1625,7 @@ EOT;
                 $steps['qhc_service'] = [
                     'title' => __('Services Required', 'latepoint-extand-master'),
                     'order_number' => 4,
-                    'sub_title' => __('Services Required', 'latepoint-extand-master'),
+                    'sub_title' => __('Services Required', 'latepoint-extand-master') . '  <span class="gtd-required-asterisk">*</span>',
                     'description' => '',
                 ];
                 $steps['qhc_contact'] = [

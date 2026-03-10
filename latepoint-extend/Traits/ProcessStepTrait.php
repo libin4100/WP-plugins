@@ -313,7 +313,7 @@ trait ProcessStepTrait
 
             case 'qhc_service':
                 $booking = OsParamsHelper::get_param('booking');
-                if ($bookingObject->service_id == 15) {
+                if (in_array($bookingObject->service_id, [13, 15])) {
                     $_err = true;
                     if (!isset($booking['qhc']['services']) || !is_array($booking['qhc']['services'])) {
                     } else {
