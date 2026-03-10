@@ -155,7 +155,12 @@ trait ProcessStepTrait
                         'vpi' => ['agent_id' => 20, 'field' => 'cf_9OaDIkYh'],
                         'cleveland_clinic' => ['agent_id' => 21, 'field' => 'cf_yjnZIZ1D'],
                         'hunters' => ['agent_id' => 22, 'field' => 'cf_9e1mhF4v'],
+                        'cpsm' => ['agent_id' => 23, 'field' => 'cf_zdwWTAsg'],
+                        'asylum' => ['agent_id' => 24, 'field' => 'cf_FRhzp65m'],
+                        'local711' => ['agent_id' => 25, 'field' => 'cf_lbBtEi3k'],
+                        'mgt' => ['agent_id' => 28, 'field' => 'cf_EwHB7H3K'],
                         'bestbuy' => ['agent_id' => 29, 'field' => 'cf_ryf56IpW'],
+                        'careby' => ['agent_id' => 31, 'field' => 'cf_KA23OTHg'],
                     ];
                     foreach ($lists as $key => $list) {
                         if ($bookingObject->agent_id == $list['agent_id'] && $k == $list['field']) {
