@@ -326,7 +326,7 @@ trait ProcessStepTrait
                     }
                     if ($_err) {
                         remove_all_actions('latepoint_process_step');
-                        wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['You need to select at least one service.']));
+                        wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['Please select at least one service.']));
                         return;
                     }
                 }
