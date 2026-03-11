@@ -700,11 +700,11 @@ jQuery(function ($) {
             $('.os-col-12 > div > #booking_custom_fields_cf_dq70wnrg').parents('.os-col-12').hide();
         }
         if ($('#booking_custom_fields_cf_wfhtigvf').length && $('#booking_custom_fields_cf_wfhtigvf').attr('type') == 'text') {
-            $('#booking_custom_fields_cf_wfhtigvf').attr('type', 'date');
+            $('#booking_custom_fields_cf_wfhtigvf').attr('type', 'date').prop('max', new Date().toISOString().split('T')[0]);
             $('#booking_custom_fields_cf_wfhtigvf').parent('div.os-form-group').addClass('os-form-select-group').removeClass('os-form-textfield-group')
         }
         if ($('#booking_custom_fields_cf_6nqyulpc').length && $('#booking_custom_fields_cf_6nqyulpc').attr('type') == 'text') {
-            $('#booking_custom_fields_cf_6nqyulpc').attr('type', 'date');
+            $('#booking_custom_fields_cf_6nqyulpc').attr('type', 'date').prop('max', new Date().toISOString().split('T')[0]);
             $('#booking_custom_fields_cf_6nqyulpc').parent('div.os-form-group').addClass('os-form-select-group').removeClass('os-form-textfield-group')
         }
         if ($('#booking_custom_fields_cf_9e1mhf4v').length && $('#customer_email').length) {
@@ -799,6 +799,14 @@ jQuery(function ($) {
                 }
             });
             $('.confirmation-app-info').addClass('replaced');
+        }
+        if ($('.confirmation-customer-info:not(.replaced) li').length) {
+            $('.confirmation-customer-info li').each(function () {
+                if ($(this).text().includes(' (Click to Edit)')) {
+                    $(this).html($(this).html().replace(' (Click to Edit)', ''));
+                }
+            });
+            $('.confirmation-customer-info').addClass('replaced');
         }
         if ($('.os-months:not(.binded)').length) {
             $('.os-months').each(function () {
