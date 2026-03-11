@@ -704,7 +704,7 @@ jQuery(function ($) {
             $('#booking_custom_fields_cf_wfhtigvf').parent('div.os-form-group').addClass('os-form-select-group').removeClass('os-form-textfield-group')
         }
         if ($('#booking_custom_fields_cf_6nqyulpc').length && $('#booking_custom_fields_cf_6nqyulpc').attr('type') == 'text') {
-            $('#booking_custom_fields_cf_6nqyulpc').attr('type', 'date').attr.('max', new Date().toISOString().split('T')[0]);
+            $('#booking_custom_fields_cf_6nqyulpc').attr('type', 'date').attr('max', new Date().toISOString().split('T')[0]);
             $('#booking_custom_fields_cf_6nqyulpc').parent('div.os-form-group').addClass('os-form-select-group').removeClass('os-form-textfield-group')
         }
         if ($('#booking_custom_fields_cf_9e1mhf4v').length && $('#customer_email').length) {
