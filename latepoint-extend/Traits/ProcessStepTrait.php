@@ -155,7 +155,12 @@ trait ProcessStepTrait
                         'vpi' => ['agent_id' => 20, 'field' => 'cf_9OaDIkYh'],
                         'cleveland_clinic' => ['agent_id' => 21, 'field' => 'cf_yjnZIZ1D'],
                         'hunters' => ['agent_id' => 22, 'field' => 'cf_9e1mhF4v'],
+                        'cpsm' => ['agent_id' => 23, 'field' => 'cf_zdwWTAsg'],
+                        'asylum' => ['agent_id' => 24, 'field' => 'cf_FRhzp65m'],
+                        'local711' => ['agent_id' => 25, 'field' => 'cf_lbBtEi3k'],
+                        'mgt' => ['agent_id' => 28, 'field' => 'cf_EwHB7H3K'],
                         'bestbuy' => ['agent_id' => 29, 'field' => 'cf_ryf56IpW'],
+                        'careby' => ['agent_id' => 31, 'field' => 'cf_KA23OTHg'],
                     ];
                     foreach ($lists as $key => $list) {
                         if ($bookingObject->agent_id == $list['agent_id'] && $k == $list['field']) {
@@ -308,7 +313,7 @@ trait ProcessStepTrait
 
             case 'qhc_service':
                 $booking = OsParamsHelper::get_param('booking');
-                if ($bookingObject->service_id == 15) {
+                if (in_array($bookingObject->service_id, [13, 15])) {
                     $_err = true;
                     if (!isset($booking['qhc']['services']) || !is_array($booking['qhc']['services'])) {
                     } else {
@@ -321,7 +326,7 @@ trait ProcessStepTrait
                     }
                     if ($_err) {
                         remove_all_actions('latepoint_process_step');
-                        wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['You need to select at least one service.']));
+                        wp_send_json(array('status' => LATEPOINT_STATUS_ERROR, 'message' => ['Please select at least one service.']));
                         return;
                     }
                 }
