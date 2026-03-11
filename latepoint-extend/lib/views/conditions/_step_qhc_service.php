@@ -23,7 +23,7 @@
             'Pain management',
             'Rehab services',
             'Respiratory care',
-            'social and community support services',
+            'Social and community support services',
             'sr' => 'Specialist referral',
             'Other'
         ];
