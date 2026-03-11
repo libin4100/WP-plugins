@@ -130,11 +130,14 @@ if (!class_exists('LatePointExt')) :
                     case 'Location':
                         $translation = 'Health Card';
                         break;
+                    case 'Cell Phone Number':
+                        $translation = 'Cell Phone Number*';
+                        break;
                     case 'Your Email Address':
                         if ((OsStepsHelper::$booking_object->agent_id ?? null) == 2) {
                             $translation = 'Email Address';
                         } else {
-                            $translation = 'Contact Email Address';
+                            $translation = 'Contact Email Address*';
                         }
                         break;
                 }
